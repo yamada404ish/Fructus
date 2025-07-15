@@ -1,12 +1,12 @@
 package com.example.fructus.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-
-import  com.example.fructus.R
-
-import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
+import com.example.fructus.R
 
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
@@ -47,5 +47,14 @@ val AppTypography = Typography(
     labelLarge = baseline.labelLarge.copy(fontFamily = bodyFontFamily),
     labelMedium = baseline.labelMedium.copy(fontFamily = bodyFontFamily),
     labelSmall = baseline.labelSmall.copy(fontFamily = bodyFontFamily),
+)
+
+val poppinsFontFamily = FontFamily (
+    Font(R.font.poppins_bold, FontWeight.Bold),
+    Font(R.font.poppins_light, FontWeight.Light),
+    Font(R.font.poppins_medium, FontWeight.Medium),
+    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
+    Font(R.font.poppins_italic, FontWeight.Normal)
 )
 

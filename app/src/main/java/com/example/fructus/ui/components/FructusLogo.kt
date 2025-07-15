@@ -17,13 +17,13 @@ fun FructusLogo(modifier: Modifier = Modifier) {
         painter = painterResource(R.drawable.fructus_logo),
         contentDescription = "Fructus Logo",
         modifier = modifier
-            .height(40.dp) // Adjust height as needed
+            .height(36.dp) // Adjust height as needed
             .wrapContentWidth()
     )
 }
 
 @Preview
 @Composable
-private fun fructuslogoPrev() {
+private fun FructuslogoPrev() {
     FructusLogo()
 }

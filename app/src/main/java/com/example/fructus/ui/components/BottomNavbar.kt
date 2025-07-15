@@ -35,20 +35,20 @@ class BottomAppBarCutoutShape(
         val fabMarginPx = with(density) { fabMargin.toPx() }
         val notchRadius = fabDiameter / 2 + fabMarginPx
         val centerX = size.width / 2
-        val notchDepth = 85f
+        val notchDepth = 66f
 
         val path = Path().apply {
             moveTo(0f, 0f)
             lineTo(centerX - notchRadius, 0f)
 
             cubicTo(
-                centerX - notchRadius * 0.86f, 0f,
-                centerX - notchRadius * 0.86f, notchDepth,
+                centerX - notchRadius * 0.82f, 0f,
+                centerX - notchRadius * 0.82f, notchDepth,
                 centerX, notchDepth
             )
             cubicTo(
-                centerX + notchRadius * 0.86f, notchDepth,
-                centerX + notchRadius * 0.86f, 0f,
+                centerX + notchRadius * 0.82f, notchDepth,
+                centerX + notchRadius * 0.82f, 0f,
                 centerX + notchRadius, 0f
             )
 
@@ -67,8 +67,8 @@ class BottomAppBarCutoutShape(
 @Composable
 fun CutoutBottomAppBar(
     modifier: Modifier = Modifier,
-    fabSize: Dp = 56.dp,
-    fabMargin: Dp = 16.dp,
+    fabSize: Dp = 70.dp,
+    fabMargin: Dp = 20.dp,
     color: Color = MaterialTheme.colorScheme.surfaceVariant,
     content: @Composable RowScope. () -> Unit
 ) {
@@ -80,12 +80,12 @@ fun CutoutBottomAppBar(
     )
 
     Surface(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .height(74.dp),
+            .height(80.dp),
         shape = cutoutShape,
-        shadowElevation = 8.dp,
-        color = color
+        color = color,
+
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
