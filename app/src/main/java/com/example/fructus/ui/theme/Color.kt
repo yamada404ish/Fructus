@@ -1,6 +1,22 @@
 package com.example.fructus.ui.theme
 import androidx.compose.ui.graphics.Color
 
+val fructusBackground = Color(0xFFF0EFE9)
+
+val fructusSwitchOff = Color(0xFFD7C6C6)
+val fructusSwitchOn = Color(0xFFF0C35C)
+
+val progressBarTrack = Color(0xFF7F7E7B)
+val progressBarProgress = Color(0xFFFFA150)
+
+val fructusSaveButton = Color(0xFFF0B52D)
+
+val fructusCardNewNotification = Color(0xFFF5E5BE)
+
+val fructusTextGray = Color(0xFFA19A9A)
+val fructusCardBackground = Color(0xFFFFE586)
+
+
 //PRIMARY LIGHT
 val primaryLight = Color(0xFF795900)
 val onPrimaryLight = Color(0xFFFFFFFF)

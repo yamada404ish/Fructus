@@ -14,11 +14,12 @@ import androidx.compose.ui.platform.LocalContext
 
 
 private val lightScheme = lightColorScheme(
-    primary = primaryLight,
+
+    primary = fructusSwitchOn,
     onPrimary = onPrimaryLight,
     primaryContainer = primaryContainerLight,
     onPrimaryContainer = onPrimaryContainerLight,
-    secondary = secondaryLight,
+    secondary = fructusSwitchOff,
     onSecondary = onSecondaryLight,
     secondaryContainer = secondaryContainerLight,
     onSecondaryContainer = onSecondaryContainerLight,
@@ -30,9 +31,9 @@ private val lightScheme = lightColorScheme(
     onError = onErrorLight,
     errorContainer = errorContainerLight,
     onErrorContainer = onErrorContainerLight,
-    background = backgroundLight,
+    background = fructusBackground,
     onBackground = onBackgroundLight,
-    surface = surfaceLight,
+    surface = fructusBackground,
     onSurface = onSurfaceLight,
     surfaceVariant = surfaceVariantLight,
     onSurfaceVariant = onSurfaceVariantLight,

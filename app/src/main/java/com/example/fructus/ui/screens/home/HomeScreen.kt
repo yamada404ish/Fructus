@@ -73,13 +73,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         Row (
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(top = 30.dp)
+                .padding(10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                modifier = Modifier.padding(start = 16.dp),
                 text = "Your Fruits",
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
@@ -90,8 +89,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 painter = painterResource(R.drawable.bell),
                 contentDescription = "Notification",
                 modifier = Modifier
-                    .size(50.dp)
-                    .padding(end = 16.dp)
+                    .size(30.dp)
                     .clickable(
                         onClick = {},
                         indication = null,
