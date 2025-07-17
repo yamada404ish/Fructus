@@ -2,18 +2,20 @@
 
 package com.example.fructus.ui.screens.notification
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,11 +31,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.components.CustomSwitchButton
+import com.example.fructus.ui.components.NotificationListNew
+import com.example.fructus.ui.components.NotificationListYesterday
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
-fun NotificationScreen(modifier: Modifier = Modifier) {
+fun NotificationScreen(
+    onNavigateUp: () -> Unit = {}
+) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -43,7 +49,11 @@ fun NotificationScreen(modifier: Modifier = Modifier) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        Modifier.size(30.dp)
+                        Modifier
+                            .size(30.dp)
+                            .clickable(
+                                onClick = onNavigateUp
+                            )
                     )
                 },
                 title = {}
@@ -51,33 +61,52 @@ fun NotificationScreen(modifier: Modifier = Modifier) {
         }
     ){ innerPadding ->
         var isChecked by remember { mutableStateOf(false)}
-        Row (
+        Column (
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(10.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Notifications",
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize =  22.sp,
+                    letterSpacing = 0.1.sp
+                )
+
+                CustomSwitchButton(
+                    isChecked = isChecked,
+                    onCheckedChange = {isChecked = it}
+                )
+
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             Text(
-                text = "Notifications",
+                "Today",
                 fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize =  24.sp,
-                letterSpacing = 0.1.sp
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.tertiary,
             )
-
-            CustomSwitchButton(
-                isChecked = isChecked,
-                onCheckedChange = {isChecked = it}
+            Spacer(modifier = Modifier.height(14.dp))
+            NotificationListNew()
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                "Yesterday",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.tertiary,
             )
-
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        LazyColumn {
-
+            Spacer(modifier = Modifier.height(14.dp))
+            NotificationListYesterday()
         }
 
 
@@ -89,7 +118,6 @@ fun NotificationScreen(modifier: Modifier = Modifier) {
 private fun NotificationScreenPrev() {
     FructusTheme {
         NotificationScreen()
-
     }
 
 }

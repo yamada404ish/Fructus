@@ -12,6 +12,8 @@ val progressBarProgress = Color(0xFFFFA150)
 val fructusSaveButton = Color(0xFFF0B52D)
 
 val fructusCardNewNotification = Color(0xFFF5E5BE)
+val fructusCardOldNotification = Color(0xFFF8F6F6)
+val fructusNotificationText = Color(0xFF9C8282)
 
 val fructusTextGray = Color(0xFFA19A9A)
 val fructusCardBackground = Color(0xFFFFE586)

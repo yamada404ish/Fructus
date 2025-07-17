@@ -29,17 +29,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.fructus.R
 import com.example.fructus.ui.components.CutoutBottomAppBar
 import com.example.fructus.ui.components.FructusLogo
+import com.example.fructus.ui.navigation.Notification
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    navController: NavController
+) {
     Scaffold (
-        modifier = modifier,
         topBar = {
             Column(
                 modifier = Modifier
@@ -60,7 +63,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 Image(
                     painter = painterResource(R.drawable.scan),
                     contentDescription = null,
-                    modifier = Modifier.size(100.dp)
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clickable(
+                            onClick = {},
+                            indication = null,
+                            interactionSource = remember {MutableInteractionSource()}
+                        ),
                 )
             }
         },
@@ -91,7 +100,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(30.dp)
                     .clickable(
-                        onClick = {},
+                        onClick = {
+                            navController.navigate(Notification)
+                        },
                         indication = null,
                         interactionSource = remember {MutableInteractionSource()}
                     )
@@ -104,6 +115,5 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun HomeScreenPrev() {
     FructusTheme {
-        HomeScreen()
     }
 }
