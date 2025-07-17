@@ -2,11 +2,14 @@
 
 package com.example.fructus.ui.screens.notification
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,10 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.R
 import com.example.fructus.ui.components.CustomSwitchButton
 import com.example.fructus.ui.components.NotificationListNew
 import com.example.fructus.ui.components.NotificationListYesterday
@@ -44,13 +49,13 @@ fun NotificationScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-                    .padding(top = 50.dp),
+                    .padding(top = 50.dp, start = 16.dp, end = 16.dp),
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
                         Modifier
-                            .size(30.dp)
+                            .size(32.dp)
                             .clickable(
                                 onClick = onNavigateUp
                             )
@@ -58,6 +63,21 @@ fun NotificationScreen(
                 },
                 title = {}
             )
+        },
+        bottomBar = {
+            Box (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.fructus_logo_w_copyright),
+                    contentDescription = "Fructus Logo",
+                    modifier = Modifier
+                        .size(120.dp)
+                )
+            }
         }
     ){ innerPadding ->
         var isChecked by remember { mutableStateOf(false)}
@@ -65,7 +85,7 @@ fun NotificationScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
         ) {
             Row (
                 modifier = Modifier
@@ -92,6 +112,7 @@ fun NotificationScreen(
 
             Text(
                 "Today",
+                fontSize = 16.sp,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.tertiary,
@@ -101,6 +122,7 @@ fun NotificationScreen(
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 "Yesterday",
+                fontSize = 16.sp,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.tertiary,
