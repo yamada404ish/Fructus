@@ -16,11 +16,11 @@ import androidx.compose.ui.platform.LocalContext
 private val lightScheme = lightColorScheme(
 
     primary = fructusSwitchOn,
-    onPrimary = onPrimaryLight,
+    onPrimary = fructusDaysLeft,
     primaryContainer = fructusCardNewNotification,
     onPrimaryContainer = fructusCardBackground,
     secondary = fructusSwitchOff,
-    onSecondary = onSecondaryLight,
+    onSecondary = fructusText,
     secondaryContainer = fructusCardOldNotification,
     onSecondaryContainer = onSecondaryContainerLight,
     tertiary = fructusNotificationText,
