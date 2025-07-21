@@ -49,7 +49,7 @@ fun NotificationScreen(
         topBar = {
             TopAppBar(
                 modifier = Modifier
-                    .padding(top = 50.dp, start = 16.dp, end = 16.dp),
+                    .padding(top = 6.dp, start = 16.dp, end = 16.dp),
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -84,7 +84,7 @@ fun NotificationScreen(
         Column (
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(start = 24.dp, end = 24.dp)
                 .fillMaxSize()
         ) {
             Row (

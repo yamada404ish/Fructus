@@ -41,7 +41,7 @@ fun NotificationCardYesterday(
             .fillMaxWidth()
             .height(80.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(1.dp),
 
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.theme.FructusTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-// Enum to represent ripeness stages
 enum class RipenessStage(val displayName: String, val progress: Float) {
     UNRIPE("Unripe", 0.25f),
     RIPE("Ripe", 0.5f),
@@ -37,36 +35,49 @@ enum class RipenessStage(val displayName: String, val progress: Float) {
 fun RipenessProgressBar(
     currentStage: RipenessStage,
     modifier: Modifier = Modifier,
-    height: Dp = 12.dp,
+    height: Dp = 10.dp,
     backgroundColor: Color = Color(0xFFE0E0E0),
-    cornerRadius: Dp = 6.dp
+    cornerRadius: Dp = 10.dp,
+    segmentSpacing: Dp = 4.dp
 ) {
-    val progressColor = when (currentStage) {
-        RipenessStage.UNRIPE -> Color(0xFF4CAF50)      // Green
-        RipenessStage.RIPE -> Color(0xFFFFC107)        // Amber/Yellow
-        RipenessStage.OVERRIPE -> Color(0xFFFF9800)    // Orange
-        RipenessStage.SPOILED -> Color(0xFFF44336)     // Red
+    val stageColors = mapOf(
+        RipenessStage.UNRIPE to Color(0xFFE0E0E0),      // Light gray for inactive
+        RipenessStage.RIPE to Color(0xFFFFC107),        // Yellow/Amber for active
+        RipenessStage.OVERRIPE to Color(0xFFE0E0E0),    // Light gray for inactive
+        RipenessStage.SPOILED to Color(0xFFE0E0E0)      // Light gray for inactive
+    )
+
+    // Update colors based on current stage - only current stage lights up
+    val segmentColors = RipenessStage.values().map { stage ->
+        when {
+            stage == currentStage -> when (stage) {
+                RipenessStage.UNRIPE -> Color(0xFF4CAF50)      // Green
+                RipenessStage.RIPE -> Color(0xFFFFC107)        // Yellow
+                RipenessStage.OVERRIPE -> Color(0xFFFF9800)    // Orange
+                RipenessStage.SPOILED -> Color(0xFFF44336)     // Red
+            }
+            else -> backgroundColor
+        }
     }
 
     Column(modifier = modifier) {
-        // Progress bar
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height)
-                .clip(RoundedCornerShape(cornerRadius))
-                .background(backgroundColor)
+        // Segmented progress bar
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(segmentSpacing)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(currentStage.progress)
-                    .clip(RoundedCornerShape(cornerRadius))
-                    .background(progressColor)
-            )
+            RipenessStage.values().forEachIndexed { index, stage ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(height)
+                        .clip(RoundedCornerShape(cornerRadius))
+                        .background(segmentColors[index])
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Stage labels
         Row(
@@ -74,11 +85,18 @@ fun RipenessProgressBar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             RipenessStage.values().forEach { stage ->
+                val isActive = stage == currentStage
+                val textColor = if (isActive) {
+                    Color.Black
+                } else {
+                    Color.Gray
+                }
+
                 Text(
                     text = stage.displayName,
-                    fontSize = 12.sp,
-                    color = if (stage == currentStage) progressColor else Color.Gray,
-                    fontWeight = if (stage == currentStage) FontWeight.Bold else FontWeight.Normal
+                    fontSize = 14.sp,
+                    color = textColor,
+                    fontWeight = FontWeight.Normal
                 )
             }
         }
@@ -90,7 +108,7 @@ fun RipenessProgressBar(
 private fun ProgressPrev() {
     FructusTheme {
         RipenessProgressBar(
-            currentStage = RipenessStage.UNRIPE,
+            currentStage = RipenessStage.RIPE,
             modifier = Modifier.fillMaxWidth()
         )
     }

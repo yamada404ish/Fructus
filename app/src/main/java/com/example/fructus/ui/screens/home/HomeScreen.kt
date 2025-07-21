@@ -82,7 +82,7 @@ fun HomeScreen(
         Row (
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(10.dp)
+                .padding(24.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -115,5 +115,6 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPrev() {
     FructusTheme {
+
     }
 }
