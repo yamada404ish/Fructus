@@ -20,10 +20,12 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,14 +45,19 @@ fun HomeScreen(
     navController: NavController
 ) {
     Scaffold (
+        containerColor = Color.Transparent,
         topBar = {
             Column(
                 modifier = Modifier
-                    .padding(top = 50.dp)
+                    .padding(top = 50.dp),
             ) {
                 CenterAlignedTopAppBar(
-                    title = { FructusLogo() }
+                    title = { FructusLogo() },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent
+                    )
                 )
+
             }
         },
         floatingActionButton = {
@@ -115,6 +122,5 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPrev() {
     FructusTheme {
-
     }
 }

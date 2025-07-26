@@ -7,3 +7,6 @@ object Home
 
 @Serializable
 data object Notification
+
+@Serializable
+data object Detail

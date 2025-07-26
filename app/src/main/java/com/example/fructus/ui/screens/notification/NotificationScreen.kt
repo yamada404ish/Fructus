@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,8 +47,12 @@ fun NotificationScreen(
     onNavigateUp: () -> Unit = {}
 ) {
     Scaffold (
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
+                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 modifier = Modifier
                     .padding(top = 6.dp, start = 16.dp, end = 16.dp),
                 navigationIcon = {

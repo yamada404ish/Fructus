@@ -31,6 +31,7 @@ enum class RipenessStage(val displayName: String, val progress: Float) {
     SPOILED("Spoiled", 1.0f)
 }
 
+
 @Composable
 fun RipenessProgressBar(
     currentStage: RipenessStage,

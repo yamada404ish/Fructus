@@ -67,7 +67,7 @@ fun BottomSheetInformation() {
                         modifier = Modifier.height(30.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
-                    DaysLeft()
+//                    DaysLeft(shelfLife = shelfLife)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(

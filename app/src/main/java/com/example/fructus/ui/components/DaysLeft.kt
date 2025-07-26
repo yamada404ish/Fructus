@@ -15,7 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.example.fructus.ui.theme.FructusTheme
 
 @Composable
-fun DaysLeft(modifier: Modifier = Modifier) {
+fun DaysLeft(
+    modifier: Modifier = Modifier,
+    shelfLife: Int
+) {
     Box(
         modifier = Modifier
             .width(100.dp)
@@ -24,7 +27,7 @@ fun DaysLeft(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ){
         Text(
-            text = "1 day",
+            text = "${shelfLife} day",
             color = MaterialTheme.colorScheme.onSecondary
         )
     }
@@ -35,6 +38,6 @@ fun DaysLeft(modifier: Modifier = Modifier) {
 @Composable
 private fun DaysLeftPrev() {
     FructusTheme {
-        DaysLeft()
+//        DaysLeft()
     }
 }

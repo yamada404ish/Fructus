@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,9 +20,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,22 +32,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
+import com.example.fructus.data.DummyFruitDataSource
 import com.example.fructus.data.FoodData
 import com.example.fructus.ui.components.DaysLeft
 import com.example.fructus.ui.components.DetailCard
 import com.example.fructus.ui.components.RipenessProgressBar
-import com.example.fructus.ui.components.RipenessStage
 import com.example.fructus.ui.components.SuggestedRecipe
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.toRipenessStage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(modifier: Modifier = Modifier) {
+fun DetailScreen(
+    modifier: Modifier = Modifier,
+    index: Int
+) {
     val foods = FoodData.foods
     Scaffold (
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 modifier = Modifier
                     .padding(top = 6.dp, start = 16.dp, end = 16.dp),
                 navigationIcon = {
@@ -65,6 +73,7 @@ fun DetailScreen(modifier: Modifier = Modifier) {
             )
         }
     ) { innerPadding ->
+        val fruit = DummyFruitDataSource.fruitList[index]
         Column (
             modifier = Modifier
                 .padding(innerPadding)
@@ -74,7 +83,7 @@ fun DetailScreen(modifier: Modifier = Modifier) {
             DetailCard()
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                "Lakatan",
+                "${fruit.name}",
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 40.sp
@@ -84,13 +93,10 @@ fun DetailScreen(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Top
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.artificial_label),
-                    contentDescription = null,
-                    modifier = Modifier.height(30.dp)
+                FruitStatus(
+                    ripeningProcess = fruit.ripeningProcess,
+                    shelfLife = fruit.shelfLife
                 )
-                Spacer(modifier = Modifier.width(10.dp))
-                DaysLeft()
             }
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -102,7 +108,7 @@ fun DetailScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(10.dp))
 
             RipenessProgressBar(
-                currentStage = RipenessStage.UNRIPE,
+                currentStage = fruit.ripeningStage.toRipenessStage(),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(3.dp))
@@ -121,9 +127,8 @@ fun DetailScreen(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Medium,
                 fontSize = 24.sp
             )
-
-            LazyColumn {
-                items(foods) {food ->
+            Column {
+                foods.forEach { food ->
                     SuggestedRecipe(
                         title = food.name,
                         description = food.description,
@@ -131,15 +136,48 @@ fun DetailScreen(modifier: Modifier = Modifier) {
                     )
                 }
             }
+
+
+            /*            LazyColumn {
+                            items(foods) {food ->
+                                SuggestedRecipe(
+                                    title = food.name,
+                                    description = food.description,
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            }
+                        }*/
         }
     }
 }
+
+@Composable
+fun FruitStatus(
+    ripeningProcess: Boolean,
+    shelfLife: Int
+
+) {
+    Image(
+        painter = painterResource( if (ripeningProcess) R.drawable.natural_label else R.drawable
+            .artificial_label),
+        contentDescription = null,
+        modifier = Modifier.height(30.dp)
+    )
+    Spacer(modifier = Modifier.width(10.dp))
+    DaysLeft(
+        shelfLife = shelfLife
+    )
+}
+
+
 
 @Preview
 @Composable
 private fun DetailScreenPrev() {
     FructusTheme {
-        DetailScreen()
+        DetailScreen(
+            index = 0
+        )
     }
 
 }
