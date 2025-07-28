@@ -1,4 +1,4 @@
-package com.example.fructus.ui.screens.Detail
+package com.example.fructus.ui.screens.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -45,8 +45,8 @@ import com.example.fructus.util.toRipenessStage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    modifier: Modifier = Modifier,
-    index: Int
+    index: Int,
+    onNavigate: () -> Unit
 ) {
     val foods = FoodData.foods
     Scaffold (
@@ -64,9 +64,9 @@ fun DetailScreen(
                         contentDescription = "Back",
                         Modifier
                             .size(32.dp)
-                            .clickable(
-                                onClick = {}
-                            )
+                            .clickable{
+                                onNavigate.invoke()
+                            }
                     )
                 },
                 title = {}
@@ -83,7 +83,7 @@ fun DetailScreen(
             DetailCard()
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                "${fruit.name}",
+                fruit.name,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 40.sp
@@ -175,9 +175,9 @@ fun FruitStatus(
 @Composable
 private fun DetailScreenPrev() {
     FructusTheme {
-        DetailScreen(
-            index = 0
-        )
+//        DetailScreen(
+//            index = 0
+//        )
     }
 
 }

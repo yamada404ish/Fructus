@@ -6,12 +6,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -33,8 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.fructus.R
-import com.example.fructus.ui.components.CutoutBottomAppBar
+import com.example.fructus.data.DummyFruitDataSource.fruitList
 import com.example.fructus.ui.components.FructusLogo
+import com.example.fructus.ui.components.FruitItem
 import com.example.fructus.ui.navigation.Notification
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
@@ -42,7 +45,8 @@ import com.example.fructus.ui.theme.poppinsFontFamily
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    onFruitClick: ( Int) -> Unit
 ) {
     Scaffold (
         containerColor = Color.Transparent,
@@ -63,57 +67,70 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton (
                 onClick = {},
-                shape = CircleShape,
-                modifier = Modifier.offset(y = 40.dp),
-                elevation = FloatingActionButtonDefaults.loweredElevation()
+                modifier = Modifier.offset(y = -10.dp),
+                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+                containerColor = Color.Transparent
             ) {
                 Image(
                     painter = painterResource(R.drawable.scan),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(110.dp)
                         .clickable(
                             onClick = {},
                             indication = null,
-                            interactionSource = remember {MutableInteractionSource()}
+                            interactionSource = remember { MutableInteractionSource() }
                         ),
                 )
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = {
-            CutoutBottomAppBar(modifier = Modifier.navigationBarsPadding()){}
-        }
+        bottomBar = {}
     ){ innerPadding ->
-
-        Row (
+        Column (
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(24.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Your Fruits",
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize =  24.sp,
-                letterSpacing = 0.1.sp
-            )
-            Icon (
-                painter = painterResource(R.drawable.bell),
-                contentDescription = "Notification",
+            Row (
                 modifier = Modifier
-                    .size(30.dp)
-                    .clickable(
-                        onClick = {
-                            navController.navigate(Notification)
-                        },
-                        indication = null,
-                        interactionSource = remember {MutableInteractionSource()}
-                    )
-            )
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Your Fruits",
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize =  24.sp,
+                    letterSpacing = 0.1.sp
+                )
+                Icon (
+                    painter = painterResource(R.drawable.bell),
+                    contentDescription = "Notification",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable(
+                            onClick = {
+                                navController.navigate(Notification)
+                            },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        )
+                )
+            }
+            Spacer(Modifier.size(16.dp))
+            LazyVerticalGrid(
+                GridCells.Fixed(2)
+            ){
+                itemsIndexed(fruitList) { index, fruit ->
+                    FruitItem (
+                        fruit = fruit,
+                    ) {
+                        onFruitClick(index)
+                    }
+                }
+            }
         }
     }
 }
@@ -122,5 +139,6 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPrev() {
     FructusTheme {
+//        HomeScreen()
     }
 }
