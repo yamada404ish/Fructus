@@ -4,6 +4,7 @@ package com.example.fructus.ui.screens.notification
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,7 +63,9 @@ fun NotificationScreen(
                         Modifier
                             .size(32.dp)
                             .clickable(
-                                onClick = onNavigateUp
+                                onClick = onNavigateUp,
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
                             )
                     )
                 },
