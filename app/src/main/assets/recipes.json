@@ -1,0 +1,196 @@
+[
+  {
+    "name": "Banana Flour",
+    "description": "Serves as a versatile substitute for wheat-based flours, ideal for those with gluten sensitivities.",
+    "imageResName": "recipe_banana_flour",
+    "fruitType": "cavendish",
+    "stage": "unripe"
+  },
+
+  {
+    "name": "Banana Smoothie",
+    "description": "Banana smoothies are delicious beverages that can even be meal replacements for weight loss.",
+    "imageResName": "recipe_banana_smoothie",
+    "fruitType": "cavendish",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Banana Bread",
+    "description": "Sweet bread or cake made from mashed bananas.",
+    "imageResName": "recipe_banana_bread",
+    "fruitType": "cavendish",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Banana Smoothie",
+    "description": "Banana smoothies are delicious beverages that can even be meal replacements for weight loss.",
+    "imageResName": "recipe_banana_smoothie",
+    "fruitType": "cavendish",
+    "stage": "overripe"
+  },
+
+  {
+    "name": "Banana Bread",
+    "description": "Sweet bread or cake made from mashed bananas.",
+    "imageResName": "recipe_banana_bread",
+    "fruitType": "cavendish",
+    "stage": "overripe"
+  },
+
+
+
+  {
+    "name": "Banana Chips",
+    "description": "Crisp slices of bananas that are usually consumed as a snack.",
+    "imageResName": "recipe_banana_chips",
+    "fruitType": "lakatan",
+    "stage": "unripe"
+  },
+
+  {
+    "name": "Maruya",
+    "description": "Fried concoction made from ripe bananas or plantains.",
+    "imageResName": "recipe_banana_maruya",
+    "fruitType": "lakatan",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Banana Pudding",
+    "description": "a creamy dessert made with layers of sliced bananas, vanilla pudding, and vanilla wafers, topped with whipped cream or meringue.",
+    "imageResName": "recipe_banana_pudding",
+    "fruitType": "lakatan",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Banana Buchi",
+    "description": "A beloved Filipino treat that perfectly balances a crispy, golden-brown shell with a soft and chewy, sweet-filled center.",
+    "imageResName": "recipe_banana_buchi",
+    "fruitType": "lakatan",
+    "stage": "overripe"
+  },
+
+  {
+    "name": "Banana Bread",
+    "description": "Sweet bread or cake made from mashed bananas.",
+    "imageResName": "recipe_banana_bread",
+    "fruitType": "lakatan",
+    "stage": "overripe"
+  },
+
+
+
+  {
+    "name": "Banana Chips",
+    "description": "Crisp slices of bananas that are usually consumed as a snack.",
+    "imageResName": "recipe_banana_chips",
+    "fruitType": "saba",
+    "stage": "unripe"
+  },
+
+  { "name": "Bananacue",
+    "description": "Filipino street food is made from fried saba bananas coated in caramelized brown sugar.",
+    "imageResName": "recipe_banana_cue",
+    "fruitType": "saba",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Turon",
+    "description": "Fried banana and jackfruit wrapped in lumpia wrapper and coated with caramel.",
+    "imageResName": "recipe_banana_turon",
+    "fruitType": "saba",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Banana Bread",
+    "description": "Sweet bread or cake made from mashed bananas.",
+    "imageResName": "recipe_banana_bread",
+    "fruitType": "saba",
+    "stage": "overripe"
+  },
+
+
+  {
+    "name": "Pickled Mango",
+    "description": "Tangy, sweet, and salty snack made by soaking unripe mango slices in a vinegar-based brine with sugar, salt, and spices.",
+    "imageResName": "recipe_mango_pickled",
+    "fruitType": "carabao",
+    "stage": "unripe"
+  },
+
+  {
+    "name": "Mango Jelly",
+    "description": "Delicious and refreshing dessert made from mango juice, gelatin, sugar, and water.",
+    "imageResName": "recipe_mango_jelly",
+    "fruitType": "carabao",
+    "stage": "ripe"
+  },
+
+  { "name": "Mango Salad",
+    "description": "simple concoction of semi ripe mangoes, tomatoes and white onions using sauteed bagoong as a dressing.",
+    "imageResName": "recipe_mango_salad",
+    "fruitType": "carabao",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Mango Pudding",
+    "description": "Delectable dessert that combines the vibrant sweetness of ripe mangoes with the creamy richness of pudding.",
+    "imageResName": "recipe_mango_pudding",
+    "fruitType": "carabao",
+    "stage": "overripe"
+  },
+
+  {
+    "name": "Mango Cheesecake",
+    "description": "Variation of the classic cheesecake that is either topped with mango jelly or flavored in some other way with this tropical fruit.",
+    "imageResName": "recipe_mango_cake",
+    "fruitType": "carabao",
+    "stage": "overripe"
+  },
+
+
+  {
+    "name": "Fried Green Tomato",
+    "description": "Tart green tomatoes coated w/ panko and fried perfectly.",
+    "imageResName": "recipe_tomato_fried",
+    "fruitType": "tomato",
+    "stage": "unripe"
+  },
+
+  {
+    "name": "Sauteed Tomatoes",
+    "description": "A pinoy version of scrambled egg with tomatoes and onions.",
+    "imageResName": "recipe_tomato_sauteed",
+    "fruitType": "tomato",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Tomato Juice",
+    "description": "A healthy beverage made from the juice of fresh tomatoes.",
+    "imageResName": "recipe_tomato_juice",
+    "fruitType": "tomato",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Tomato Sauce",
+    "description": "A thick sauce made with tomatoes, oil, and herbs, often served with pasta",
+    "imageResName": "recipe_tomato_sauce",
+    "fruitType": "tomato",
+    "stage": "overripe"
+  },
+
+  { "name": "Salsa",
+    "description": "Homemade salsa with a hint of spice is the perfect condiment for snacking.",
+    "imageResName": "recipe_tomato_salsa",
+    "fruitType": "tomato",
+    "stage": "overripe"
+  }
+]

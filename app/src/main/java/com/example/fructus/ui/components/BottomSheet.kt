@@ -1,6 +1,6 @@
 package com.example.fructus.ui.components
 
-import androidx.compose.foundation.Image
+//import com.example.fructus.data.FoodData
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,22 +18,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
-import com.example.fructus.data.FoodData
+import com.example.fructus.data.Fruit
+import com.example.fructus.ui.screens.detail.FruitStatus
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.getDrawableIdByName
+import com.example.fructus.util.loadRecipesFromJson
+import com.example.fructus.util.toRipenessStage
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetInformation() {
-    val foods = FoodData.foods
+fun BottomSheetInformation(fruit: Fruit) {
+    val context = LocalContext.current
+    val allRecipes = context.loadRecipesFromJson()
+
+    val matchedRecipes = allRecipes.filter {
+        it.fruitType.equals(fruit.name, ignoreCase = true) &&
+                it.stage.equals(fruit.ripeningStage, ignoreCase = true)
+    }
 
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -51,7 +58,7 @@ fun BottomSheetInformation() {
                     .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
             ) {
                 Text(
-                    "Lakatan",
+                    fruit.name,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 40.sp
@@ -61,13 +68,10 @@ fun BottomSheetInformation() {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Top
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.artificial_label),
-                        contentDescription = null,
-                        modifier = Modifier.height(30.dp)
+                    FruitStatus(
+                        ripeningProcess = fruit.ripeningProcess,
+                        shelfLife = fruit.shelfLife
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
-//                    DaysLeft(shelfLife = shelfLife)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
@@ -79,7 +83,7 @@ fun BottomSheetInformation() {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 RipenessProgressBar(
-                    currentStage = RipenessStage.RIPE,
+                    currentStage = fruit.ripeningStage.toRipenessStage(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -100,11 +104,12 @@ fun BottomSheetInformation() {
                     fontSize = 24.sp
                 )
 
-                LazyColumn {
-                    items(foods) {food ->
+                Column {
+                    matchedRecipes.forEach { recipe ->
                         SuggestedRecipe(
-                            title = food.name,
-                            description = food.description,
+                            title = recipe.name,
+                            description = recipe.description,
+                            imageRes = context.getDrawableIdByName(recipe.imageResName),
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                     }
@@ -122,7 +127,16 @@ fun BottomSheetInformation() {
 @Composable
 private fun BottomSheetInformationPrev() {
     FructusTheme {
-        BottomSheetInformation()
+        BottomSheetInformation(
+            fruit = Fruit(
+                id = 1,
+                name = "Cavendish",
+                shelfLife = 5,
+                ripeningStage = "overripe",
+                ripeningProcess = false,
+                image = R.drawable.lakatan
+            )
+        )
     }
 }
 

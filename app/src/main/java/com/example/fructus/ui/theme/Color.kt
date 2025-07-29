@@ -17,6 +17,7 @@ val fructusCardOldNotification = Color(0xFFF8F6F6)
 val fructusNotificationText = Color(0xFF9C8282)
 
 val fructusTextGray = Color(0xFFA19A9A)
+val fructusExtraTextGray = Color (0xFF7D7D7D)
 val fructusCardBackground = Color(0xFFFFE586)
 
  val fructusDaysLeft = Color(0xFFD25959)

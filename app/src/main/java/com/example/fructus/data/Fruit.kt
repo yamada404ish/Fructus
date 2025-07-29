@@ -10,8 +10,6 @@ data class Fruit (
     val ripeningStage: String,
     val ripeningProcess: Boolean,
 
-
     @DrawableRes val image: Int
-
 )
 

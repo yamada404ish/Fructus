@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,13 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.data.DummyFruitDataSource
-import com.example.fructus.data.FoodData
+//import com.example.fructus.data.FoodData
 import com.example.fructus.ui.components.DaysLeft
 import com.example.fructus.ui.components.DetailCard
 import com.example.fructus.ui.components.RipenessProgressBar
 import com.example.fructus.ui.components.SuggestedRecipe
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.getDrawableIdByName
+import com.example.fructus.util.loadRecipesFromJson
 import com.example.fructus.util.toRipenessStage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +51,15 @@ fun DetailScreen(
     index: Int,
     onNavigate: () -> Unit
 ) {
-    val foods = FoodData.foods
+    val context = LocalContext.current
+    val fruit = DummyFruitDataSource.fruitList[index]
+
+    val allRecipes = context.loadRecipesFromJson()
+    val matchedRecipes = allRecipes.filter {
+        it.fruitType.equals(fruit.name, ignoreCase = true) &&
+                it.stage.equals(fruit.ripeningStage, ignoreCase = true)
+    }
+
     Scaffold (
         containerColor = Color.Transparent,
         topBar = {
@@ -128,25 +139,15 @@ fun DetailScreen(
                 fontSize = 24.sp
             )
             Column {
-                foods.forEach { food ->
+                matchedRecipes.forEach { recipe ->
                     SuggestedRecipe(
-                        title = food.name,
-                        description = food.description,
+                        title = recipe.name,
+                        description = recipe.description,
+                        imageRes = context.getDrawableIdByName(recipe.imageResName),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
             }
-
-
-            /*            LazyColumn {
-                            items(foods) {food ->
-                                SuggestedRecipe(
-                                    title = food.name,
-                                    description = food.description,
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
-                            }
-                        }*/
         }
     }
 }
@@ -175,9 +176,6 @@ fun FruitStatus(
 @Composable
 private fun DetailScreenPrev() {
     FructusTheme {
-//        DetailScreen(
-//            index = 0
-//        )
     }
 
 }

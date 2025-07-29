@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -121,7 +122,12 @@ fun HomeScreen(
             }
             Spacer(Modifier.size(16.dp))
             LazyVerticalGrid(
-                GridCells.Fixed(2)
+                GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(bottom = 130.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(18.dp)
             ){
                 itemsIndexed(fruitList) { index, fruit ->
                     FruitItem (
