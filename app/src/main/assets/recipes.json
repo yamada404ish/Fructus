@@ -1,7 +1,7 @@
 [
   {
     "name": "Banana Flour",
-    "description": "Serves as a versatile substitute for wheat-based flours, ideal for those with gluten sensitivities.",
+    "description": "A flexible alternative to wheat flour, perfect for gluten-free diets.",
     "imageResName": "recipe_banana_flour",
     "fruitType": "cavendish",
     "stage": "unripe"
@@ -9,7 +9,7 @@
 
   {
     "name": "Banana Smoothie",
-    "description": "Banana smoothies are delicious beverages that can even be meal replacements for weight loss.",
+    "description": "Tasty banana smoothies that double as nutritious meal replacements.",
     "imageResName": "recipe_banana_smoothie",
     "fruitType": "cavendish",
     "stage": "ripe"
@@ -25,7 +25,7 @@
 
   {
     "name": "Banana Smoothie",
-    "description": "Banana smoothies are delicious beverages that can even be meal replacements for weight loss.",
+    "description": "Tasty banana smoothies that double as nutritious meal replacements.",
     "imageResName": "recipe_banana_smoothie",
     "fruitType": "cavendish",
     "stage": "overripe"
@@ -59,7 +59,7 @@
 
   {
     "name": "Banana Pudding",
-    "description": "a creamy dessert made with layers of sliced bananas, vanilla pudding, and vanilla wafers, topped with whipped cream or meringue.",
+    "description": "A layered dessert of bananas, pudding, wafers, and airy topping.",
     "imageResName": "recipe_banana_pudding",
     "fruitType": "lakatan",
     "stage": "ripe"
@@ -67,7 +67,7 @@
 
   {
     "name": "Banana Buchi",
-    "description": "A beloved Filipino treat that perfectly balances a crispy, golden-brown shell with a soft and chewy, sweet-filled center.",
+    "description": "A cherished Filipino snack with a crisp shell and gooey, sweet center.",
     "imageResName": "recipe_banana_buchi",
     "fruitType": "lakatan",
     "stage": "overripe"
@@ -92,7 +92,7 @@
   },
 
   { "name": "Bananacue",
-    "description": "Filipino street food is made from fried saba bananas coated in caramelized brown sugar.",
+    "description": "A popular Filipino snack of caramelized fried saba bananas.",
     "imageResName": "recipe_banana_cue",
     "fruitType": "saba",
     "stage": "ripe"
@@ -100,7 +100,7 @@
 
   {
     "name": "Turon",
-    "description": "Fried banana and jackfruit wrapped in lumpia wrapper and coated with caramel.",
+    "description": "Crispy lumpia filled with banana and jackfruit, glazed in rich caramel.",
     "imageResName": "recipe_banana_turon",
     "fruitType": "saba",
     "stage": "ripe"
@@ -117,7 +117,7 @@
 
   {
     "name": "Pickled Mango",
-    "description": "Tangy, sweet, and salty snack made by soaking unripe mango slices in a vinegar-based brine with sugar, salt, and spices.",
+    "description": "Tangy and salty snack made by soaking unripe mango slices in a vinegar-based brine.",
     "imageResName": "recipe_mango_pickled",
     "fruitType": "carabao",
     "stage": "unripe"
@@ -132,7 +132,7 @@
   },
 
   { "name": "Mango Salad",
-    "description": "simple concoction of semi ripe mangoes, tomatoes and white onions using sauteed bagoong as a dressing.",
+    "description": "Concoction of ripe mangoes, tomatoes and white onions using sauteed bagoong.",
     "imageResName": "recipe_mango_salad",
     "fruitType": "carabao",
     "stage": "ripe"
@@ -140,7 +140,7 @@
 
   {
     "name": "Mango Pudding",
-    "description": "Delectable dessert that combines the vibrant sweetness of ripe mangoes with the creamy richness of pudding.",
+    "description": "A luscious blend of ripe mangoes and silky pudding.",
     "imageResName": "recipe_mango_pudding",
     "fruitType": "carabao",
     "stage": "overripe"
@@ -148,7 +148,7 @@
 
   {
     "name": "Mango Cheesecake",
-    "description": "Variation of the classic cheesecake that is either topped with mango jelly or flavored in some other way with this tropical fruit.",
+    "description": "A twist on classic cheesecake, enhanced with mango jelly or tropical mango flavor.",
     "imageResName": "recipe_mango_cake",
     "fruitType": "carabao",
     "stage": "overripe"

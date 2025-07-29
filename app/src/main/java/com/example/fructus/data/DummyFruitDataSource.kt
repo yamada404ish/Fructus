@@ -18,7 +18,7 @@ object DummyFruitDataSource {
             shelfLife = 4,
             ripeningProcess = false,
             image = R.drawable.img_placeholder,
-            ripeningStage = "ripe",
+            ripeningStage = "unripe",
         ),
         Fruit(
             id = 2,
@@ -42,7 +42,7 @@ object DummyFruitDataSource {
             shelfLife = 4,
             ripeningProcess = true,
             image = R.drawable.img_placeholder,
-            ripeningStage = "unripe",
+            ripeningStage = "overripe",
         )
     )
 }
