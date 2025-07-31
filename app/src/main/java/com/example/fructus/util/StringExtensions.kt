@@ -1,6 +1,6 @@
 package com.example.fructus.util
 
-import com.example.fructus.ui.components.RipenessStage
+import com.example.fructus.ui.shared.RipenessStage
 
 fun String.toRipenessStage(): RipenessStage {
     return when (this.trim().lowercase()) {

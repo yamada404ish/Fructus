@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.fructus.R
 import com.example.fructus.data.DummyFruitDataSource.fruitList
-import com.example.fructus.ui.components.FructusLogo
-import com.example.fructus.ui.components.FruitItem
+import com.example.fructus.ui.shared.FructusLogo
+import com.example.fructus.ui.shared.FruitItem
 import com.example.fructus.ui.navigation.Notification
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily

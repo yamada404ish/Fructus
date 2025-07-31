@@ -12,6 +12,9 @@ object Home
 data object Notification
 
 @Serializable
+data object Settings
+
+@Serializable
 data class Detail (
     val id: Int
 )

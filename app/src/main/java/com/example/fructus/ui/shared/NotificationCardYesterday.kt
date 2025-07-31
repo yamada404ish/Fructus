@@ -1,4 +1,5 @@
-package com.example.fructus.ui.components
+package com.example.fructus.ui.shared
+
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -31,7 +31,7 @@ import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
-fun NotificationCard(
+fun NotificationCardYesterday(
     image: Painter,
     itemName: String,
     daysLeft: Int,
@@ -44,7 +44,7 @@ fun NotificationCard(
         elevation = CardDefaults.cardElevation(1.dp),
 
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         ),
 
 
@@ -54,7 +54,7 @@ fun NotificationCard(
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -74,17 +74,17 @@ fun NotificationCard(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 0.1.sp,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onTertiary
             )
         }
     }
 }
 
 @Composable
-fun NotificationListNew() {
+fun NotificationListYesterday() {
     val image = painterResource(id = R.drawable.fruit) // Replace with your own image
 
-    NotificationCard(
+    NotificationCardYesterday(
         image = image,
         itemName = "Cavendish",
         daysLeft = 2,
@@ -94,9 +94,9 @@ fun NotificationListNew() {
 
 @Preview
 @Composable
-private fun NotificationCardPrev() {
+private fun NotificationCardYesterdayPrev() {
     FructusTheme {
-        NotificationListNew()
+        NotificationListYesterday()
     }
 }
 

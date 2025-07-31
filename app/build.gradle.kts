@@ -66,4 +66,9 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.1.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation ("com.google.code.gson:gson:2.10")
+
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
+    // Kotlin coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }

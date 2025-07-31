@@ -36,10 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.data.DummyFruitDataSource
-import com.example.fructus.ui.components.DaysLeft
-import com.example.fructus.ui.components.DetailCard
-import com.example.fructus.ui.components.RipenessProgressBar
-import com.example.fructus.ui.components.SuggestedRecipe
+import com.example.fructus.ui.shared.DaysLeft
+import com.example.fructus.ui.shared.DetailCard
+import com.example.fructus.ui.shared.RipenessProgressBar
+import com.example.fructus.ui.shared.SuggestedRecipe
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDrawableIdByName

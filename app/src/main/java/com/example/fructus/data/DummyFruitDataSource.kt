@@ -7,7 +7,7 @@ object DummyFruitDataSource {
         Fruit(
             id = 0,
             name = "Lakatan",
-            shelfLife = 2,
+            shelfLife = 24,
             ripeningProcess = true,
             image = R.drawable.img_placeholder,
             ripeningStage = "unripe",
@@ -15,7 +15,7 @@ object DummyFruitDataSource {
         Fruit(
             id = 1,
             name = "Cavendish",
-            shelfLife = 4,
+            shelfLife = 25,
             ripeningProcess = false,
             image = R.drawable.img_placeholder,
             ripeningStage = "unripe",
@@ -23,13 +23,13 @@ object DummyFruitDataSource {
         Fruit(
             id = 2,
             name = "Saba",
-            shelfLife = 4,
+            shelfLife = 41,
             ripeningProcess = true,
             image = R.drawable.img_placeholder,
             ripeningStage = "ripe",
         ),
         Fruit(
-            id = 3,
+            id = 22,
             name = "Tomato",
             shelfLife = 4,
             ripeningProcess = false,
@@ -37,7 +37,7 @@ object DummyFruitDataSource {
             ripeningStage = "spoiled",
         ),
         Fruit(
-            id = 4,
+            id = 14,
             name = "Carabao",
             shelfLife = 4,
             ripeningProcess = true,

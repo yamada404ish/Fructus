@@ -1,4 +1,4 @@
-package com.example.fructus.ui.components
+package com.example.fructus.ui.shared
 
 //import com.example.fructus.data.FoodData
 import androidx.compose.foundation.layout.Arrangement
