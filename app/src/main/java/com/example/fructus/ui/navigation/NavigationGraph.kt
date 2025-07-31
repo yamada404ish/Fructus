@@ -76,7 +76,7 @@ fun FructusNav() {
 
             composable<Settings> {
                 SettingsScreen(
-//                    onNavigateUp = { navController.navigateUp() }
+                    onNavigateUp = { navController.navigateUp() }
                 )
             }
             composable<Detail> {

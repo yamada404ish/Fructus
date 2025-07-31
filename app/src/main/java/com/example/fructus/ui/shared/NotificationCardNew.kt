@@ -39,7 +39,6 @@ fun NotificationCard(
 ) {
     val backgroundColor = if (isRead) Color.White else Color(0xFFFFF8E1)
 
-
     Card (
         modifier = Modifier
             .fillMaxWidth()
@@ -127,7 +126,7 @@ fun NotificationListNew() {
 @Composable
 private fun NotificationCardPrev() {
     FructusTheme {
-//        NotificationListNew()
+        NotificationListNew()
     }
 }
 

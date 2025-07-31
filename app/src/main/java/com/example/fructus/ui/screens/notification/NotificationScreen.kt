@@ -56,11 +56,11 @@ fun NotificationScreen(
 
 
     Scaffold (
-//        containerColor = Color.Transparent,
+        containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
-//                    containerColor = Color.Transparent
+                    containerColor = Color.Transparent
                 ),
                 modifier = Modifier
                     .padding(top = 6.dp, start = 16.dp, end = 16.dp),
@@ -165,7 +165,8 @@ fun NotificationScreen(
                         if (index != -1) {
                             onNotificationClick(index)
                         }
-                    }
+                    },
+
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -213,7 +214,13 @@ fun NotificationScreen(
 @Composable
 private fun NotificationScreenPrev() {
     FructusTheme {
-//        NotificationScreen()
+        NotificationScreen(
+            notifications = notificationList,
+            onNotificationClick = {},
+            onMarkAllAsRead = {},
+            filter = Filter.All,
+            onSelectedFilter = {}
+        )
     }
 
 }

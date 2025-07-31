@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomSwitchButton(
     switchPadding: Dp = 3.dp,
-    buttonWidth: Dp = 52.dp,
-    buttonHeight: Dp = 26.dp,
+    buttonWidth: Dp = 42.dp,
+    buttonHeight: Dp = 22.dp,
     isChecked: Boolean,
     onCheckedChange:(Boolean) ->Unit
 ) {
