@@ -49,7 +49,8 @@ fun NotificationScreen(
     filter: Filter,
     onSelectedFilter: (Filter) -> Unit,
     onNavigateUp: () -> Unit = {},
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
+//    onClearAllClick: () -> Unit
 ) {
 
     val scope = rememberCoroutineScope()
@@ -219,7 +220,8 @@ private fun NotificationScreenPrev() {
             onNotificationClick = {},
             onMarkAllAsRead = {},
             filter = Filter.All,
-            onSelectedFilter = {}
+            onSelectedFilter = {},
+//            onClearAllClick = {}
         )
     }
 

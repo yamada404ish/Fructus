@@ -15,3 +15,7 @@ fun loadNotificationsIfNeeded() {
         }
     }
 }
+
+fun clearAllNotifications() {
+    notificationList.clear()
+}

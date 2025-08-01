@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,14 +24,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
+import com.example.fructus.ui.screens.notification.notificationList
 import com.example.fructus.ui.shared.EnableNotificationBottomSheet
 import com.example.fructus.ui.shared.SettingsOptionCard
 import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.isNotificationPermissionGranted
 import com.example.fructus.util.navigateToNotificationSettings
 
@@ -45,6 +51,7 @@ fun SettingsScreen(
     var showSheet by remember { mutableStateOf(false)}
     var isChecked by remember { mutableStateOf(false) }
     var fromSettings by remember { mutableStateOf(false) }
+    var showClearDialog by remember {mutableStateOf(false)}
 
 
     LaunchedEffect(fromSettings) {
@@ -105,7 +112,7 @@ fun SettingsScreen(
                 title = "Clear All Notifications",
                 subtitle = "Remove all existing notifications",
                 onClick = {
-                    // TODO: Add delete logic here
+                    showClearDialog = true
                 }
             )
         }
@@ -126,6 +133,54 @@ fun SettingsScreen(
                 isChecked = false
                 showSheet = false
             }
+        )
+    }
+
+    if (showClearDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showClearDialog = false },
+            title = {
+                Text(
+                    text = "Clear All Notifications?",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you sure you want to permanently delete all notifications?",
+                    fontFamily = poppinsFontFamily
+                )
+            },
+            confirmButton = {
+                Text(
+                    text = "Clear All",
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            // TODO: Clear all notifications here
+                            notificationList.clear()
+                            showClearDialog = false
+                        },
+                    color = Color.Red,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily
+                )
+            },
+            dismissButton = {
+                Text(
+                    text = "Cancel",
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            showClearDialog = false
+                        },
+                    color = Color.Gray,
+                    fontFamily = poppinsFontFamily
+                )
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(12.dp)
         )
     }
 }
