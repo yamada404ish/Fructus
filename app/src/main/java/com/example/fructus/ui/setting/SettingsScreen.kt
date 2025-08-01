@@ -1,4 +1,4 @@
-package com.example.fructus.ui.screens.setting
+package com.example.fructus.ui.setting
 
 
 import androidx.compose.foundation.clickable
@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -31,9 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
-import com.example.fructus.ui.screens.notification.notificationList
-import com.example.fructus.ui.shared.EnableNotificationBottomSheet
-import com.example.fructus.ui.shared.SettingsOptionCard
+import com.example.fructus.ui.notification.notificationList
+import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
+import com.example.fructus.ui.setting.components.SettingsOptionCard
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.isNotificationPermissionGranted
@@ -137,7 +138,7 @@ fun SettingsScreen(
     }
 
     if (showClearDialog) {
-        androidx.compose.material3.AlertDialog(
+        AlertDialog(
             onDismissRequest = { showClearDialog = false },
             title = {
                 Text(

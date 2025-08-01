@@ -1,4 +1,4 @@
-package com.example.fructus.ui.shared
+package com.example.fructus.ui.notification.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -7,7 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.fructus.ui.screens.notification.model.Filter
+import com.example.fructus.ui.notification.model.Filter
 
 @Composable
 fun NotificationFilters(

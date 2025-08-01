@@ -1,4 +1,4 @@
-package com.example.fructus.ui.shared
+package com.example.fructus.ui.setting.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
+import com.example.fructus.ui.notification.components.CustomSwitchButton
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -73,7 +75,7 @@ fun SettingsOptionCard(
                     color = Color.Black,
                     lineHeight = 18.sp,
                     style = LocalTextStyle.current.copy(
-                        platformStyle = androidx.compose.ui.text.PlatformTextStyle(
+                        platformStyle = PlatformTextStyle(
                             includeFontPadding = false
                         )
                     )
@@ -87,7 +89,7 @@ fun SettingsOptionCard(
                     letterSpacing = 0.5.sp,
                     lineHeight = 12.sp,
                     style = LocalTextStyle.current.copy(
-                        platformStyle = androidx.compose.ui.text.PlatformTextStyle(
+                        platformStyle = PlatformTextStyle(
                             includeFontPadding = false
                         )
                     )

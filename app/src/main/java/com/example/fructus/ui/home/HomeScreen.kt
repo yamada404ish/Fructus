@@ -1,4 +1,4 @@
-package com.example.fructus.ui.screens.home
+package com.example.fructus.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.fructus.R
 import com.example.fructus.data.DummyFruitDataSource.fruitList
-import com.example.fructus.ui.shared.FructusLogo
-import com.example.fructus.ui.shared.FruitItem
-import com.example.fructus.ui.navigation.Notification
+import com.example.fructus.navigation.Notification
+import com.example.fructus.ui.home.components.FructusLogo
+import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -68,7 +68,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton (
                 onClick = {},
-                modifier = Modifier.offset(y = -10.dp),
+                modifier = Modifier.offset(y = (-10).dp),
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 containerColor = Color.Transparent
             ) {

@@ -26,7 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.data.Fruit
-import com.example.fructus.ui.screens.detail.FruitStatus
+import com.example.fructus.ui.detail.FruitStatus
+import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDrawableIdByName

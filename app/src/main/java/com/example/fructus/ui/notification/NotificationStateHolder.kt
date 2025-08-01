@@ -1,4 +1,4 @@
-package com.example.fructus.ui.screens.notification
+package com.example.fructus.ui.notification
 
 import androidx.compose.runtime.mutableStateListOf
 import com.example.fructus.data.DummyFruitDataSource

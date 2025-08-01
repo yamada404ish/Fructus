@@ -1,4 +1,4 @@
-package com.example.fructus.ui.screens.detail
+package com.example.fructus.ui.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -36,10 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.data.DummyFruitDataSource
-import com.example.fructus.ui.shared.DaysLeft
-import com.example.fructus.ui.shared.DetailCard
+import com.example.fructus.ui.detail.components.DaysLeft
+import com.example.fructus.ui.detail.components.DetailCard
 import com.example.fructus.ui.shared.RipenessProgressBar
-import com.example.fructus.ui.shared.SuggestedRecipe
+import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDrawableIdByName

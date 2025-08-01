@@ -1,4 +1,4 @@
-package com.example.fructus.ui.shared
+package com.example.fructus.ui.detail.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

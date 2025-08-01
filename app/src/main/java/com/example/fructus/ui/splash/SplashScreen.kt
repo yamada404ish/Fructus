@@ -1,4 +1,4 @@
-package com.example.fructus.ui.screens.splash
+package com.example.fructus.ui.splash
 
 
 import androidx.compose.foundation.background

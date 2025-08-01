@@ -1,4 +1,4 @@
-package com.example.fructus.ui.navigation
+package com.example.fructus.navigation
 
 import kotlinx.serialization.Serializable
 

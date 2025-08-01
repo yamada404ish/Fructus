@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.fructus.ui.screens.notification
+package com.example.fructus.ui.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,10 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.data.FruitNotification
-import com.example.fructus.ui.screens.notification.model.Filter
-import com.example.fructus.ui.shared.NotificationCard
-import com.example.fructus.ui.shared.NotificationFilters
-import com.example.fructus.ui.shared.displayName
+import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.ui.notification.components.NotificationCard
+import com.example.fructus.ui.notification.components.NotificationFilters
+import com.example.fructus.ui.notification.components.displayName
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -60,7 +61,7 @@ fun NotificationScreen(
         containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
-                colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
                 ),
                 modifier = Modifier
