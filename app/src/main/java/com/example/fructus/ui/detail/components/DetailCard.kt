@@ -50,12 +50,3 @@ fun DetailCard(fruitName: String) {
         )
     }
 }
-//
-//@Preview
-//@Composable
-//private fun DetailCardPrev() {
-//    FructusTheme {
-//        DetailCard()
-//    }
-//
-//}
