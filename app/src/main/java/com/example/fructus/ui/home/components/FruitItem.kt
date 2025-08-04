@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,19 +22,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fructus.data.DummyFruitDataSource.fruitList
-import com.example.fructus.data.Fruit
-import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
 fun FruitItem(
     modifier: Modifier = Modifier,
-    fruit: Fruit,
-    onFruitClick: (Fruit) -> Unit
+    fruit: FruitEntity,
+    onFruitClick: (FruitEntity) -> Unit
 ) {
     Card (
         modifier = modifier
@@ -49,9 +47,8 @@ fun FruitItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.Start // Align everything left by default
+            horizontalAlignment = Alignment.Start
         ) {
-            // Centered image using Box
             Box(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -60,20 +57,21 @@ fun FruitItem(
                 Image(
                     painter = painterResource(fruit.image),
                     contentDescription = null,
-                    modifier = Modifier.clip(RoundedCornerShape(4.dp)),
-                    contentScale = ContentScale.Fit
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .size(150.dp),
+                    contentScale = ContentScale.Crop
                 )
             }
 
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "${fruit.name}",
+                text = fruit.name,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
-//            Spacer(Modifier.height(2.dp))
             Text(
                 text = "${fruit.shelfLife} days",
                 fontFamily = poppinsFontFamily,
@@ -83,18 +81,5 @@ fun FruitItem(
             )
             Spacer(Modifier.height(6.dp))
         }
-    }
-}
-
-
-@Preview
-@Composable
-private fun FruitItemPrev() {
-    FructusTheme {
-        FruitItem(
-            modifier = Modifier,
-            fruit = fruitList[0],
-            onFruitClick = {}
-        )
     }
 }

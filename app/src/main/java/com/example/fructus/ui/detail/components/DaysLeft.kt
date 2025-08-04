@@ -16,7 +16,6 @@ import com.example.fructus.ui.theme.FructusTheme
 
 @Composable
 fun DaysLeft(
-    modifier: Modifier = Modifier,
     shelfLife: Int
 ) {
     Box(
@@ -27,7 +26,7 @@ fun DaysLeft(
         contentAlignment = Alignment.Center
     ){
         Text(
-            text = "${shelfLife} day",
+            text = "$shelfLife day",
             color = MaterialTheme.colorScheme.onSecondary
         )
     }

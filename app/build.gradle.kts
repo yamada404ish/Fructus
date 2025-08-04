@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+
+    id("kotlin-kapt")
 }
 
 android {
@@ -71,4 +73,22 @@ dependencies {
     // Kotlin coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    implementation(libs.androidx.runtime.livedata)
+
+    // Room components
+    implementation("androidx.room:room-runtime")
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx")
+    testImplementation("androidx.room:room-testing")
+    implementation("androidx.room:room-paging")
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+
+
+
+
 }

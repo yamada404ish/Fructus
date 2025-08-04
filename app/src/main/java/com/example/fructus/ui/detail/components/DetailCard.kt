@@ -10,17 +10,26 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.fructus.R
-import com.example.fructus.ui.theme.FructusTheme
 
 @Composable
-fun DetailCard() {
+fun DetailCard(fruitName: String) {
+
+    val context = LocalContext.current
+
+    val imageResId = remember (fruitName) {
+        context.resources.getIdentifier(
+            fruitName.lowercase(),
+            "drawable",
+            context.packageName
+        )
+    }
     Box (
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +38,7 @@ fun DetailCard() {
         contentAlignment = Alignment.TopCenter
     ) {
         Image(
-            painter = painterResource(id = R.drawable.lakatan),
+            painter = painterResource(imageResId),
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -39,12 +48,12 @@ fun DetailCard() {
         )
     }
 }
-
-@Preview
-@Composable
-private fun DetailCardPrev() {
-    FructusTheme {
-        DetailCard()
-    }
-    
-}
+//
+//@Preview
+//@Composable
+//private fun DetailCardPrev() {
+//    FructusTheme {
+//        DetailCard()
+//    }
+//
+//}

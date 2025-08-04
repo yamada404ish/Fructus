@@ -1,7 +1,6 @@
 package com.example.fructus.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,9 +9,7 @@ import androidx.navigation.toRoute
 import com.example.fructus.ui.detail.DetailScreen
 import com.example.fructus.ui.home.HomeScreen
 import com.example.fructus.ui.notification.NotificationScreen
-import com.example.fructus.ui.notification.loadNotificationsIfNeeded
-import com.example.fructus.ui.notification.model.Filter
-import com.example.fructus.ui.notification.notificationList
+import com.example.fructus.ui.notification.NotificationViewModel
 import com.example.fructus.ui.setting.SettingsScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
 import com.example.fructus.ui.splash.SplashScreen
@@ -38,39 +35,17 @@ fun FructusNav() {
             composable<Home> {
                 HomeScreen(
                     navController = navController
-                ){
-                    navController.navigate(Detail(it))
+                ){ id ->
+                    navController.navigate(Detail(id))
                 }
 
             }
             composable<Notification> {
-                val (filter, onSelectedFilter) = remember { mutableStateOf(Filter.All) }
-
-                loadNotificationsIfNeeded()
-                val notifications = notificationList
-
+                val viewModel = remember { NotificationViewModel() }
                 NotificationScreen(
-                    notifications = notifications,
-                    filter = filter,
-                    onSelectedFilter = onSelectedFilter,
-                    onNotificationClick = { index ->
-                        notificationList[index] = notificationList[index].copy(isRead = true)
-                    },
-//                    onNotificationClick = { index ->
-//                        notifications[index] = notifications[index].copy(isRead = true)
-//                    },
-                    onMarkAllAsRead = {
-                        notifications.forEachIndexed { index, notification ->
-                            if (!notification.isRead) {
-                                notifications[index] = notification.copy(isRead = true)
-
-                            }
-                        }
-                    },
+                    viewModel = viewModel,
                     onNavigateUp = { navController.navigateUp() },
-                    onSettingsClick = {
-                        navController.navigate(Settings) // <<< Navigate to your Settings destination/route
-                    }
+                    onSettingsClick = { navController.navigate(Settings) }
                 )
             }
 
@@ -79,16 +54,15 @@ fun FructusNav() {
                     onNavigateUp = { navController.navigateUp() }
                 )
             }
+
+
             composable<Detail> {
-                val details: Detail = it.toRoute()
-                DetailScreen(
-                    details.id
-                ){
+                val args = it.toRoute<Detail>()
+                DetailScreen(fruitId = args.id) {
                     navController.navigateUp()
                 }
             }
         }
 
     }
-
 }

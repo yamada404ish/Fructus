@@ -12,7 +12,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-
 private val lightScheme = lightColorScheme(
 
     primary = fructusSwitchOn,

@@ -1,6 +1,7 @@
 package com.example.fructus.ui.setting
 
 
+//import com.example.fructus.ui.notification.notificationList
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -9,14 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,18 +23,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
-import com.example.fructus.ui.notification.notificationList
 import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
+import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
-import com.example.fructus.ui.theme.FructusTheme
-import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.isNotificationPermissionGranted
 import com.example.fructus.util.navigateToNotificationSettings
 
@@ -47,7 +39,6 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     var showSheet by remember { mutableStateOf(false)}
     var isChecked by remember { mutableStateOf(false) }
@@ -98,9 +89,9 @@ fun SettingsScreen(
                 isChecked = isChecked,
                 onCheckedChange = {
                     if (!isChecked) {
-                    showSheet = true // show bottom sheet before confirming
+                    showSheet = true
                     } else {
-                        isChecked = false // allow turning OFF instantly
+                        isChecked = false
                     }
                 }
             )
@@ -121,7 +112,6 @@ fun SettingsScreen(
     if (showSheet) {
         EnableNotificationBottomSheet(
             onEnableClick = {
-                // Confirm enabling logic
                 navigateToNotificationSettings(context = context)
                 fromSettings = true
                 showSheet = false
@@ -138,60 +128,12 @@ fun SettingsScreen(
     }
 
     if (showClearDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearDialog = false },
-            title = {
-                Text(
-                    text = "Clear All Notifications?",
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
-            },
-            text = {
-                Text(
-                    text = "Are you sure you want to permanently delete all notifications?",
-                    fontFamily = poppinsFontFamily
-                )
-            },
-            confirmButton = {
-                Text(
-                    text = "Clear All",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .clickable {
-                            // TODO: Clear all notifications here
-                            notificationList.clear()
-                            showClearDialog = false
-                        },
-                    color = Color.Red,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily
-                )
-            },
-            dismissButton = {
-                Text(
-                    text = "Cancel",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .clickable {
-                            showClearDialog = false
-                        },
-                    color = Color.Gray,
-                    fontFamily = poppinsFontFamily
-                )
-            },
-            containerColor = Color.White,
-            shape = RoundedCornerShape(12.dp)
+        ClearNotificationsDialog(
+            onDismiss = { showClearDialog = false },
+            onClearAll = {
+                showClearDialog = false
+                // Perform your clear logic here
+            }
         )
-    }
-}
-
-
-
-@Preview
-@Composable
-private fun SettingScreenPrev() {
-    FructusTheme {
-        SettingsScreen()
     }
 }
