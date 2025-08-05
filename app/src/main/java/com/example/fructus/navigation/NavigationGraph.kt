@@ -1,8 +1,10 @@
 package com.example.fructus.navigation
 
+import SettingsScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,8 +19,8 @@ import com.example.fructus.ui.notification.NotificationViewModel
 import com.example.fructus.ui.onboard.OnboardingCarousel
 import com.example.fructus.ui.onboard.OnboardingViewModel
 import com.example.fructus.ui.onboard.OnboardingViewModelFactory
-import com.example.fructus.ui.setting.SettingsScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
+import com.example.fructus.ui.shared.RequestNotificationPermission
 import com.example.fructus.ui.splash.SplashScreen
 import com.example.fructus.util.DataStoreManager
 
@@ -70,9 +72,29 @@ fun FructusNav() {
             }
 
             composable<Home> {
+
+                val showPermissionDialog = remember { mutableStateOf(false) }
+
+                if (showPermissionDialog.value) {
+                    RequestNotificationPermission(
+                        onGranted = {
+                            showPermissionDialog.value = false
+                            navController.navigate(Home) {
+                                popUpTo(OnBoard) { inclusive = true }
+                            }
+                        },
+                        onDenied = {
+                            showPermissionDialog.value = false
+                            navController.navigate(Home) {
+                                popUpTo(OnBoard) { inclusive = true }
+                            }
+                        }
+                    )
+                }
                 HomeScreen(
                     navController = navController
                 ){ id ->
+                    showPermissionDialog.value = true
                     navController.navigate(Detail(id))
                 }
 

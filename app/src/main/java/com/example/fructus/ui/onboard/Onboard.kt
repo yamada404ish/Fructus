@@ -36,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ import com.example.fructus.ui.onboard.components.OnboardingPage5
 import com.example.fructus.ui.onboard.components.OnboardingWelcomePage
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.DataStoreManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -54,7 +56,10 @@ import kotlinx.coroutines.launch
 fun OnboardingCarousel(
     onGetStarted: () -> Unit = {},
     viewModel: OnboardingViewModel
+
 ) {
+    val context = LocalContext.current
+    val dataStore = remember { DataStoreManager(context) }
     val pagerState = rememberPagerState(pageCount = { 5 })
     val scope = rememberCoroutineScope()
 
@@ -99,6 +104,7 @@ fun OnboardingCarousel(
                     onGetStarted = {
                         scope.launch {
                             viewModel.completeOnboarding()
+                            dataStore.setRequestNotificationPermission(true)
                             onGetStarted()
                         }
                     }
