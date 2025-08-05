@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 object Splash
 
 @Serializable
+object OnBoard
+
+@Serializable
 object Home
 
 @Serializable

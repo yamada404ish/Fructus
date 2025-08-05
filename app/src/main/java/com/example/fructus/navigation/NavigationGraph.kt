@@ -1,7 +1,11 @@
 package com.example.fructus.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -10,9 +14,13 @@ import com.example.fructus.ui.detail.DetailScreen
 import com.example.fructus.ui.home.HomeScreen
 import com.example.fructus.ui.notification.NotificationScreen
 import com.example.fructus.ui.notification.NotificationViewModel
+import com.example.fructus.ui.onboard.OnboardingCarousel
+import com.example.fructus.ui.onboard.OnboardingViewModel
+import com.example.fructus.ui.onboard.OnboardingViewModelFactory
 import com.example.fructus.ui.setting.SettingsScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
 import com.example.fructus.ui.splash.SplashScreen
+import com.example.fructus.util.DataStoreManager
 
 @Composable
 fun FructusNav() {
@@ -24,14 +32,43 @@ fun FructusNav() {
             startDestination = Splash
         ) {
             composable<Splash> {
+                val context = LocalContext.current
+                val dataStore = remember { DataStoreManager(context) }
+
+                val viewModel: OnboardingViewModel = viewModel(
+                    factory = OnboardingViewModelFactory(dataStore)
+                )
+
+                val onboardingCompleted by viewModel.isOnboardingCompleted.collectAsState()
+
                 SplashScreen(
                     onAnimationFinished = {
-                        navController.navigate(Home) {
+                        navController.navigate(
+                            if (onboardingCompleted) Home else OnBoard
+                        ) {
                             popUpTo(Splash) { inclusive = true }
                         }
                     }
                 )
             }
+            composable<OnBoard> {
+                val context = LocalContext.current
+                val dataStore = remember { DataStoreManager(context) }
+
+                val viewModel: OnboardingViewModel = viewModel(
+                    factory = OnboardingViewModelFactory(dataStore)
+                )
+
+                OnboardingCarousel(
+                    onGetStarted = {
+                        navController.navigate(Home) {
+                            popUpTo(OnBoard) { inclusive = true }
+                        }
+                    },
+                    viewModel = viewModel
+                )
+            }
+
             composable<Home> {
                 HomeScreen(
                     navController = navController
