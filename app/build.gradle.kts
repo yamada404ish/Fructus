@@ -7,6 +7,13 @@ plugins {
     id("kotlin-kapt")
 }
 
+dependencies {
+    // ... other dependencies
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+}
+
 android {
     namespace = "com.example.fructus"
     compileSdk = 36
