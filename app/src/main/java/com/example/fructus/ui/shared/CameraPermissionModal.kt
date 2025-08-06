@@ -47,9 +47,9 @@ fun CameraPermissionModal(
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(top = 16.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
             ) {
-                // Title
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "Camera Permission Required",
                     fontSize = 20.sp,
