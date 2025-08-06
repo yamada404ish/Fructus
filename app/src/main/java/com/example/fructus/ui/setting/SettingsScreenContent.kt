@@ -1,4 +1,5 @@
 package com.example.fructus.ui.setting
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ fun SettingsScreenContent(
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
+            // Transparent top app bar with back arrow
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
@@ -56,16 +58,18 @@ fun SettingsScreenContent(
                             ) { onNavigateUp() }
                     )
                 },
-                title = {},
+                title = {}, // No title
             )
         }
     ) { innerPadding ->
+        // Main content: two setting cards
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .fillMaxSize()
         ) {
+            // Toggle notification switch
             SettingsOptionCard(
                 iconRes = R.drawable.bell_icon,
                 title = "Allow Notifications",
@@ -77,6 +81,7 @@ fun SettingsScreenContent(
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            // Clear notifications card
             SettingsOptionCard(
                 iconRes = R.drawable.fructus_trash_settings_icon,
                 iconSize = 34,
@@ -87,6 +92,7 @@ fun SettingsScreenContent(
         }
     }
 
+    // Show bottom sheet if permission is needed
     if (state.showSheet) {
         EnableNotificationBottomSheet(
             onEnableClick = onEnableNotifications,
@@ -95,6 +101,7 @@ fun SettingsScreenContent(
         )
     }
 
+    // Show dialog to confirm clearing notifications
     if (state.showClearDialog) {
         ClearNotificationsDialog(
             onDismiss = onDismissClearDialog,

@@ -2,6 +2,7 @@
 
 package com.example.fructus.ui.notification
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +36,6 @@ import com.example.fructus.R
 import com.example.fructus.data.FruitNotification
 import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
-import com.example.fructus.ui.notification.components.displayName
 import com.example.fructus.ui.notification.model.Filter
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -141,24 +141,41 @@ fun NotificationScreenContent(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            notifications.forEach { notification ->
-                NotificationCard(
-                    fruit = notification.fruit,
-                    isRead = notification.isRead,
-                    onClick = {
-                        onNotificationClick(notification.fruit.id)
-                    }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-            }
+
 
             if (notifications.isEmpty()) {
-                Text(
-                    "No ${filter.displayName().lowercase()} notifications",
-                    color = Color.Gray,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 100.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image (
+                        painter = painterResource(R.drawable.fructus_empty_icon),
+                        contentDescription = "No notification available",
+                        modifier = Modifier
+                            .size(200.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "No notification available",
+                        color = Color(0xFF9D9076),
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp
+                    )
+                }
+            } else {
+                notifications.forEach { notification ->
+                    NotificationCard(
+                        fruit = notification.fruit,
+                        isRead = notification.isRead,
+                        onClick = {
+                            onNotificationClick(notification.fruit.id)
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
