@@ -21,3 +21,6 @@ data object Settings
 data class Detail (
     val id: Int
 )
+
+@Serializable
+object Test

@@ -56,4 +56,3 @@ It stores the result in HomeState, which the UI collects using state.
 
 A HomeViewModelFactory is used to provide the FruitDao dependency when creating the ViewModel.
 */
-

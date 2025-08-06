@@ -46,6 +46,7 @@ fun HomeScreenContent(
     state: HomeState,
     onFruitClick: (Int) -> Unit,
     onNotificationClick: () -> Unit,
+    onScanClick: () -> Unit
 ) {
 
     Scaffold (
@@ -80,7 +81,9 @@ fun HomeScreenContent(
                     modifier = Modifier
                         .size(110.dp)
                         .clickable(
-                            onClick = { },
+                            onClick = {
+                                onScanClick()
+                            },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ),
@@ -121,7 +124,8 @@ fun HomeScreenContent(
                             onClick = { onNotificationClick() },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
-                        )
+                        ),
+                    tint = Color.Unspecified
                 )
             }
             Spacer(Modifier.size(16.dp))

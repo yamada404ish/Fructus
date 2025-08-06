@@ -1,5 +1,8 @@
 package com.example.fructus.navigation
 
+import TextScreen
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
@@ -15,6 +18,7 @@ import com.example.fructus.ui.setting.SettingsScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
 import com.example.fructus.ui.splash.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun FructusNav() {
     // Create and remember the NavController to manage navigation between screens
@@ -61,7 +65,9 @@ fun FructusNav() {
                 HomeScreen(
                     navController = navController,
                     // When fruit is clicked, navigate to Detail screen with its ID
-                    onFruitClick = { id -> navController.navigate(Detail(id)) }
+                    onFruitClick = { id -> navController.navigate(Detail(id)) },
+                    // When scan button is clicked, navigate to Scan screen
+                    onNavigateToScan = { navController.navigate(Test) }
                 )
             }
 
@@ -90,6 +96,10 @@ fun FructusNav() {
                 SettingsScreen(
                     onNavigateUp = { navController.navigateUp() } // Back to previous screen
                 )
+            }
+
+            composable<Test> {
+                TextScreen()
             }
         }
     }

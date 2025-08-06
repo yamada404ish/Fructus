@@ -1,60 +1,88 @@
 package com.example.fructus.ui.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fructus.data.local.FruitDatabase
 import com.example.fructus.navigation.Notification
-import com.example.fructus.ui.shared.RequestNotificationPermission
+import com.example.fructus.ui.shared.CameraPermissionModal
 import com.example.fructus.util.DataStoreManager
-import com.example.fructus.util.isNotificationPermissionGranted
+import com.example.fructus.util.SequentialPermissionRequest
+import com.example.fructus.util.isCameraPermissionGranted
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeScreen(
-    navController: NavController, // Used to navigate between screens
-    onFruitClick: (Int) -> Unit// Callback function to handle fruit click event
+    navController: NavController,
+    onFruitClick: (Int) -> Unit,
+    onNavigateToScan: () -> Unit,
 ) {
     val context = LocalContext.current
     val db = remember { FruitDatabase.getDatabase(context) }
     val dataStore = remember { DataStoreManager(context) }
 
-    // Creates HomeViewModel with a custom factory passing in the FruitDao
     val viewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(db.fruitDao())
     )
 
     val state by viewModel.state.collectAsState()
     val shouldRequestPermission by dataStore.shouldRequestNotificationFlow.collectAsState(initial = false)
-    val showDialog = remember { mutableStateOf(false) }
 
+    var showInitialPermissions by remember { mutableStateOf(false) }
+    var showCameraPermissionModal by remember { mutableStateOf(false) }
 
-    // Runs when shouldRequestPermission changes
+    // Check for initial permissions on first launch
     LaunchedEffect(shouldRequestPermission) {
-        // If DataStore says we should request permission and it's not granted yet
-        if (shouldRequestPermission && !isNotificationPermissionGranted(context)) {
-            showDialog.value = true
+        if (shouldRequestPermission) {
+            showInitialPermissions = true
             dataStore.setRequestNotificationPermission(false)
         }
     }
 
-    // If dialog state is true, show the permission request dialog
-    if (showDialog.value) {
-        RequestNotificationPermission(
-            onGranted = { showDialog.value = false },
-            onDenied = { showDialog.value = false }
+    // Show initial permission flow (notification + camera)
+    if (showInitialPermissions) {
+        SequentialPermissionRequest(
+            context = context,
+            onAllPermissionsGranted = {
+                showInitialPermissions = false
+            },
+            onPermissionsDenied = {
+                showInitialPermissions = false
+            }
+        )
+    }
+
+    // Show camera permission modal
+    if (showCameraPermissionModal) {
+        CameraPermissionModal(
+            onDismiss = {
+                showCameraPermissionModal = false
+            }
         )
     }
 
     HomeScreenContent(
         state = state,
         onFruitClick = onFruitClick,
-        onNotificationClick = { navController.navigate(Notification) }
+        onNotificationClick = { navController.navigate(Notification) },
+        onScanClick = {
+            if (isCameraPermissionGranted(context)) {
+                // Camera permission granted, navigate to scan
+                onNavigateToScan()
+            } else {
+                // Camera permission not granted, show modal
+                showCameraPermissionModal = true
+            }
+        }
     )
 }
 

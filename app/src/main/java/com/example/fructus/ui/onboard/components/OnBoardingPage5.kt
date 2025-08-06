@@ -87,7 +87,8 @@ fun OnboardingPage5(onGetStarted: () -> Unit) {
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
-                )            }
+                )
+            }
 
             //Description
             AnimatedVisibility(

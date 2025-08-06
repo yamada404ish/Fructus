@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.core.content.ContextCompat
 
 // Function to check if notification permission is granted
 fun isNotificationPermissionGranted(context: Context): Boolean {
@@ -31,3 +32,12 @@ fun navigateToNotificationSettings(context: Context) {
     }
     context.startActivity(intent) // Launch the settings intent
 }
+
+fun isCameraPermissionGranted(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        android.Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+
