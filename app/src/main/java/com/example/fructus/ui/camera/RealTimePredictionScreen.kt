@@ -194,7 +194,7 @@ private fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context
         else -> return "Unknown"
     }
 
-    val labels = listOf("Unripe", "Ripe", "Overripe", "Spoiled")
+    val labels = listOf("Overripe", "Ripe", "Spoiled", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(bitmap)
     val output = Array(1) { FloatArray(labels.size) }
