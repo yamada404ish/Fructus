@@ -49,10 +49,9 @@ fun HomeScreenContent(
     onScanClick: () -> Unit
 ) {
 
-    Scaffold (
+    Scaffold(
         containerColor = Color.Transparent,
 
-        // Top app bar with logo
         topBar = {
             Column(
                 modifier = Modifier
@@ -64,26 +63,23 @@ fun HomeScreenContent(
                         containerColor = Color.Transparent
                     )
                 )
-
             }
         },
-        // Large floating scan button
+
         floatingActionButton = {
-            FloatingActionButton (
-                onClick = {},
+            FloatingActionButton(
+                onClick = { onScanClick() }, // ✅ enabled scan function
                 modifier = Modifier.offset(y = (-10).dp),
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 containerColor = Color.Transparent
             ) {
                 Image(
                     painter = painterResource(R.drawable.scan),
-                    contentDescription = null,
+                    contentDescription = "Scan Fruits",
                     modifier = Modifier
                         .size(110.dp)
                         .clickable(
-                            onClick = {
-                                onScanClick()
-                            },
+                            onClick = { onScanClick() },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ),
@@ -92,16 +88,14 @@ fun HomeScreenContent(
         },
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {}
-    ){ innerPadding ->
+    ) { innerPadding ->
 
-        // Main content area
-        Column (
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(24.dp)
         ) {
-            // Top Row with title and notification icon
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -111,11 +105,10 @@ fun HomeScreenContent(
                     text = "Your Fruits",
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize =  24.sp,
+                    fontSize = 24.sp,
                     letterSpacing = 0.1.sp
                 )
-                // Notification bell icon
-                Icon (
+                Icon(
                     painter = painterResource(R.drawable.bell),
                     contentDescription = "Notification",
                     modifier = Modifier
@@ -137,11 +130,10 @@ fun HomeScreenContent(
                         .padding(top = 100.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image (
+                    Image(
                         painter = painterResource(R.drawable.fructus_empty_icon),
                         contentDescription = "No fruits available",
-                        modifier = Modifier
-                            .size(200.dp)
+                        modifier = Modifier.size(200.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -152,9 +144,7 @@ fun HomeScreenContent(
                         fontSize = 16.sp
                     )
                 }
-
             } else {
-                // Grid of fruit items (2 per row)
                 LazyVerticalGrid(
                     GridCells.Fixed(2),
                     modifier = Modifier
@@ -162,8 +152,8 @@ fun HomeScreenContent(
                         .padding(bottom = 130.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalArrangement = Arrangement.spacedBy(18.dp)
-                ){
-                    itemsIndexed(state.fruits) { index, fruit ->
+                ) {
+                    itemsIndexed(state.fruits) { _, fruit ->
                         FruitItem(
                             fruit = fruit,
                             onFruitClick = { onFruitClick(fruit.id) }

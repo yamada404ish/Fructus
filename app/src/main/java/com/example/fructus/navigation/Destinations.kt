@@ -15,6 +15,9 @@ object Home
 data object Notification
 
 @Serializable
+data object Scan
+
+@Serializable
 data object Settings
 
 @Serializable

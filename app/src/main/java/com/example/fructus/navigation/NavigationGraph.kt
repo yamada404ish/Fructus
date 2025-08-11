@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -17,87 +18,83 @@ import com.example.fructus.ui.onboard.OnboardingScreen
 import com.example.fructus.ui.setting.SettingsScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
 import com.example.fructus.ui.splash.SplashScreen
+import com.example.fructus.ui.screens.camera.RealTimePredictionScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun FructusNav() {
-    // Create and remember the NavController to manage navigation between screens
     val navController = rememberNavController()
 
     AppBackgroundScaffold {
-
-        // Define the navigation host with the starting screen (Splash)
         NavHost(
             navController = navController,
-            startDestination = Splash // The very first screen shown when the app opens
+            startDestination = Splash
         ) {
-
-            // Splash screen composable
+            // Splash screen
             composable<Splash> {
-                SplashScreen(
-                    // Callback called after the animation finishes
-                    onAnimationFinished = { onboardingCompleted ->
-                        // Navigate to either Home or Onboarding screen based on user state
-                        navController.navigate(
-                            if (onboardingCompleted) Home else OnBoard
-                        ) {
-                            // Remove Splash from backstack so user can't return to it
-                            popUpTo(Splash) { inclusive = true }
-                        }
+                SplashScreen { onboardingCompleted ->
+                    navController.navigate(
+                        if (onboardingCompleted) Home else OnBoard
+                    ) {
+                        popUpTo(Splash) { inclusive = true }
                     }
-                )
+                }
             }
 
-            // Onboarding screen composable
+            // Onboarding screen
             composable<OnBoard> {
-                OnboardingScreen(
-                    // After "Get Started", go to Home and remove Onboarding from backstack
-                    onGetStarted = {
-                        navController.navigate(Home) {
-                            popUpTo(OnBoard) { inclusive = true }
-                        }
+                OnboardingScreen {
+                    navController.navigate(Home) {
+                        popUpTo(OnBoard) { inclusive = true }
                     }
-                )
+                }
             }
 
-            // Home screen composable
+            // Home screen
             composable<Home> {
                 HomeScreen(
                     navController = navController,
-                    // When fruit is clicked, navigate to Detail screen with its ID
                     onFruitClick = { id -> navController.navigate(Detail(id)) },
-                    // When scan button is clicked, navigate to Scan screen
-                    onNavigateToScan = { navController.navigate(Test) }
+                    onNavigateToScan = { navController.navigate(Scan) } // Added Scan here
                 )
             }
 
-            // Detail screen composable with arguments
+            // Detail screen
             composable<Detail> {
-                val args = it.toRoute<Detail>() // Get the ID passed from Home
+                val args = it.toRoute<Detail>()
                 DetailScreen(
                     fruitId = args.id,
-                    onNavigate = { navController.navigateUp() } // Go back when needed
+                    onNavigate = { navController.navigateUp() }
                 )
             }
 
-            // Notification screen composable
+            // Notification screen
             composable<Notification> {
-                // Create a NotificationViewModel instance
                 val viewModel = remember { NotificationViewModel() }
                 NotificationScreen(
                     viewModel = viewModel,
-                    onNavigateUp = { navController.navigateUp() }, // Back button behavior
-                    onSettingsClick = { navController.navigate(Settings) } // Go to settings
+                    onNavigateUp = { navController.navigateUp() },
+                    onSettingsClick = { navController.navigate(Settings) }
                 )
             }
 
-            // Settings screen composable
+            // Settings screen
             composable<Settings> {
                 SettingsScreen(
-                    onNavigateUp = { navController.navigateUp() } // Back to previous screen
+                    onNavigateUp = { navController.navigateUp() }
                 )
             }
 
+            // Scan (Real-time prediction)
+            composable<Scan> {
+                val context = LocalContext.current
+                RealTimePredictionScreen(
+                    context = context,
+                    navController = navController
+                )
+            }
+
+            // Extra test screen
             composable<Test> {
                 TextScreen()
             }
