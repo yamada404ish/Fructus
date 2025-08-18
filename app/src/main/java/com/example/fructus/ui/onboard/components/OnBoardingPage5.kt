@@ -70,7 +70,8 @@ fun OnboardingPage5(onGetStarted: () -> Unit) {
                     modifier = Modifier
                         .size(250.dp)
                         .padding(bottom = 32.dp)
-                )            }
+                )
+            }
 
             //Title
             AnimatedVisibility(

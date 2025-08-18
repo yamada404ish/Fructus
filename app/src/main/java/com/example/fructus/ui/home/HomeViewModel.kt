@@ -12,14 +12,15 @@ import kotlinx.coroutines.launch
 
 // Holds the list of fruits to be shown on the Home screen
 data class HomeState(
-    val fruits: List<FruitEntity> = emptyList()
+    val fruits: List<FruitEntity> = emptyList(),
+    val isLoading: Boolean = true
 )
 
 // ViewModel handles business logic and provides data to the Home screen
 class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
 
     // Private mutable state (can only be changed inside ViewModel)
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(HomeState(isLoading = true))
 
     // Public read-only version exposed to the UI
     val state: StateFlow<HomeState> get() = _state
@@ -30,7 +31,10 @@ class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
         viewModelScope.launch {
             // Whenever the fruit list changes in Room, update UI state
             fruitDao.getAllFruits().collectLatest { fruits ->
-                _state.value = HomeState(fruits = fruits) // Update state with new list
+                _state.value = HomeState(
+                    fruits = fruits,
+                    isLoading = false
+                ) // Update state with new list
             }
         }
     }

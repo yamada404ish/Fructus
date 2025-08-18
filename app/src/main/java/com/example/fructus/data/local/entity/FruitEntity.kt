@@ -13,5 +13,5 @@ data class FruitEntity (
     val ripeningStage: String,
     val ripeningProcess: Boolean,
 
-    val image: Int
+//    val image: Int
 )

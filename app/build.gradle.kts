@@ -4,7 +4,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-kapt")
+//    alias(libs.plugins.google.ksp)
+
 }
+
 
 android {
     namespace = "com.example.fructus"
@@ -92,18 +95,30 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+//    ksp(libs.androidx.room.compiler)
     testImplementation("androidx.room:room-testing")
     implementation("androidx.room:room-paging")
+    implementation ("androidx.appcompat:appcompat:1.7.0")
+
 
     // TensorFlow Lite
-    implementation("org.tensorflow:tensorflow-lite:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-api:2.17.0")
-    implementation("org.tensorflow:tensorflow-lite-support:0.5.0") {
-        exclude(group = "com.google.ai.edge.litert")
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.api)
+
+    implementation(libs.tensorflow.lite.support) {
+        exclude(group = "com.google.ai.edge.litert") // Exclusions stay here
     }
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0") {
-        exclude(group = "com.google.ai.edge.litert")
+    implementation(libs.tensorflow.lite.gpu) {
+        exclude(group = "com.google.ai.edge.litert") // Exclusions stay here
     }
+//    implementation("org.tensorflow:tensorflow-lite:2.17.0")
+//    implementation("org.tensorflow:tensorflow-lite-api:2.17.0")
+//    implementation("org.tensorflow:tensorflow-lite-support:0.5.0") {
+//        exclude(group = "com.google.ai.edge.litert")
+//    }
+//    implementation("org.tensorflow:tensorflow-lite-gpu:2.17.0") {
+//        exclude(group = "com.google.ai.edge.litert")
+//    }
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
 
     // CameraX

@@ -20,6 +20,6 @@ interface FruitDao {
     suspend fun deleteAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(fruits: List<FruitEntity>)
+    suspend fun insertFruit(fruits: FruitEntity)
 
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.getFruitDrawableId
 
 @Composable
 fun FruitItem(
@@ -55,7 +56,7 @@ fun FruitItem(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(fruit.image),
+                    painter = painterResource(getFruitDrawableId(fruit.name)),
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))

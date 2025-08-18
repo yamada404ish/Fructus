@@ -1,9 +1,11 @@
 package com.example.fructus.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -123,41 +126,65 @@ fun HomeScreenContent(
             }
             Spacer(Modifier.size(16.dp))
 
-            if (state.fruits.isEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 100.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.fructus_empty_icon),
-                        contentDescription = "No fruits available",
-                        modifier = Modifier.size(200.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "No fruits available",
-                        color = Color(0xFF9D9076),
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
-                    )
+            when {
+                state.isLoading -> {
+                    LazyVerticalGrid(
+                        GridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(bottom = 130.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        items(4) { // Show 6 skeleton items
+                            Box(
+                                modifier = Modifier
+                                    .height(180.dp)
+                                    .background(
+                                        Color.Gray.copy(alpha = 0.3f),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                            )
+                        }
+                    }
                 }
-            } else {
-                LazyVerticalGrid(
-                    GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(bottom = 130.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(18.dp)
-                ) {
-                    itemsIndexed(state.fruits) { _, fruit ->
-                        FruitItem(
-                            fruit = fruit,
-                            onFruitClick = { onFruitClick(fruit.id) }
+                state.fruits.isEmpty() -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 100.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.fructus_empty_icon),
+                            contentDescription = "No fruits available",
+                            modifier = Modifier.size(200.dp)
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No fruits available",
+                            color = Color(0xFF9D9076),
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+                else -> {
+                    LazyVerticalGrid(
+                        GridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(bottom = 130.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        itemsIndexed(state.fruits) { _, fruit ->
+                            FruitItem(
+                                fruit = fruit,
+                                onFruitClick = { onFruitClick(fruit.id) }
+                            )
+                        }
                     }
                 }
             }
