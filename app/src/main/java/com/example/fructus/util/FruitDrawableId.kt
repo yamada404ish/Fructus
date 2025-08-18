@@ -9,6 +9,6 @@ fun getFruitDrawableId(fruitName: String): Int {
         "lakatan" -> R.drawable.lakatan_ph
         "saba" -> R.drawable.saba_ph
         "carabao" -> R.drawable.carabao_ph
-        else -> R.drawable.tomato_ph
+        else -> R.drawable.unknown_fruit
     }
 }
