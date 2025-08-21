@@ -25,7 +25,10 @@ fun HomeScreen(
     navController: NavController,
     onFruitClick: (Int) -> Unit,
     onNavigateToScan: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
+    var selectedFilter by remember { mutableStateOf("All") }
+
     val context = LocalContext.current
     val db = remember { FruitDatabase.getDatabase(context) }
     val dataStore = remember { DataStoreManager(context) }
@@ -74,6 +77,9 @@ fun HomeScreen(
         state = state,
         onFruitClick = onFruitClick,
         onNotificationClick = { navController.navigate(Notification) },
+        selectedFilter = selectedFilter,
+        onFilterChange = { selectedFilter = it },
+        onSettingsClick = onSettingsClick,
         onScanClick = {
             if (isCameraPermissionGranted(context)) {
                 // Camera permission granted, navigate to scan

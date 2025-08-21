@@ -17,7 +17,7 @@ fun FructusLogo(modifier: Modifier = Modifier) {
         painter = painterResource(R.drawable.fructus_logo),
         contentDescription = "Fructus Logo",
         modifier = modifier
-            .height(36.dp) // Adjust height as needed
+            .height(20.dp) // Adjust height as needed
             .wrapContentWidth()
     )
 }

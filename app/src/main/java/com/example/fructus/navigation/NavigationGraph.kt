@@ -66,7 +66,8 @@ fun FructusNav() {
                             launchSingleTop = true
                             popUpTo(Home) { inclusive = false }
                         }
-                    }
+                    },
+                    onSettingsClick = { navController.navigate(Settings) }
                 )
             }
         }

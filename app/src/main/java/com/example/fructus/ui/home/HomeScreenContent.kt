@@ -36,11 +36,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
+import com.example.fructus.ui.home.components.BottomNavBar
 import com.example.fructus.ui.home.components.FructusLogo
+import com.example.fructus.ui.home.components.FruitFilterToggle
 import com.example.fructus.ui.home.components.FruitItem
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +53,11 @@ fun HomeScreenContent(
     state: HomeState,
     onFruitClick: (Int) -> Unit,
     onNotificationClick: () -> Unit,
-    onScanClick: () -> Unit
+    onScanClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    selectedFilter: String,
+    onFilterChange: (String) -> Unit
+
 ) {
 
     Scaffold(
@@ -58,7 +66,7 @@ fun HomeScreenContent(
         topBar = {
             Column(
                 modifier = Modifier
-                    .padding(top = 50.dp),
+                    .padding(top = 30.dp),
             ) {
                 CenterAlignedTopAppBar(
                     title = { FructusLogo() },
@@ -72,7 +80,7 @@ fun HomeScreenContent(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onScanClick() }, // ✅ enabled scan function
-                modifier = Modifier.offset(y = (-10).dp),
+                modifier = Modifier.offset(y = (60).dp),
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 containerColor = Color.Transparent
             ) {
@@ -80,7 +88,7 @@ fun HomeScreenContent(
                     painter = painterResource(R.drawable.scan),
                     contentDescription = "Scan Fruits",
                     modifier = Modifier
-                        .size(110.dp)
+                        .size(88.dp)
                         .clickable(
                             onClick = { onScanClick() },
                             indication = null,
@@ -90,7 +98,12 @@ fun HomeScreenContent(
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = {}
+        bottomBar = {
+            BottomNavBar(
+                onNotificationClick = onNotificationClick,
+                onSettingsClick = onSettingsClick
+            )
+        }
     ) { innerPadding ->
 
         Column(
@@ -98,26 +111,31 @@ fun HomeScreenContent(
                 .padding(innerPadding)
                 .padding(24.dp)
         ) {
+            Text(
+                text = "Your Fruits",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                letterSpacing = 0.1.sp
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "Your Fruits",
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    letterSpacing = 0.1.sp
+                FruitFilterToggle(
+                    selected = selectedFilter,
+                    onSelect = { onFilterChange(it) }
                 )
+
                 Icon(
-                    painter = painterResource(R.drawable.bell),
+                    painter = painterResource(R.drawable.sort_newest),
                     contentDescription = "Notification",
                     modifier = Modifier
                         .size(30.dp)
                         .clickable(
-                            onClick = { onNotificationClick() },
+                            onClick = {  },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ),
@@ -132,7 +150,7 @@ fun HomeScreenContent(
                         GridCells.Fixed(2),
                         modifier = Modifier
                             .fillMaxHeight()
-                            .padding(bottom = 130.dp),
+                            .padding(bottom = 30.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
@@ -156,7 +174,7 @@ fun HomeScreenContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.fructus_empty_icon),
+                            painter = painterResource(R.drawable.empty),
                             contentDescription = "No fruits available",
                             modifier = Modifier.size(200.dp)
                         )
@@ -175,7 +193,7 @@ fun HomeScreenContent(
                         GridCells.Fixed(2),
                         modifier = Modifier
                             .fillMaxHeight()
-                            .padding(bottom = 130.dp),
+                            .padding(bottom = 30.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
@@ -189,5 +207,22 @@ fun HomeScreenContent(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun HomeScreenPrev() {
+    FructusTheme {
+        HomeScreenContent(
+            state = HomeState(),
+            onFruitClick = {},
+            onNotificationClick = {},
+            onScanClick = {},
+            onSettingsClick = {},
+            selectedFilter = "All",
+            onFilterChange = {}
+        )
+
     }
 }
