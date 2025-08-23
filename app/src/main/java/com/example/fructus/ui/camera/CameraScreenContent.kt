@@ -36,8 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
-import com.example.fructus.ui.shared.BottomSheetInformation
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
 import com.example.fructus.util.classifyRipeness
@@ -64,7 +65,7 @@ fun CameraScreenContent(
 ) {
     val isSaved = remember { mutableStateOf(false) }
     val showSuccessMessage = remember { mutableStateOf(false) }
-    val flashEnabled = remember { mutableStateOf(false) }
+//    val flashEnabled = remember { mutableStateOf(false) }
 
     val handleResumeScanning = {
         isSaved.value = false  // Reset save state when rescanning
@@ -254,12 +255,12 @@ fun CameraScreenContent(
             }
 
             // Bottom sheet (without buttons inside)
-            BottomSheetInformation(
-                fruitName = detectedFruit,
-                ripeningStage = detectedRipeness,
-                ripeningProcess = false,
-                shelfLife = 3
-            )
+//            BottomSheetInformation(
+//                fruitName = detectedFruit,
+//                ripeningStage = detectedRipeness,
+//                ripeningProcess = false,
+//                shelfLife = 3
+//            )  
 
         } else {
             Text(
@@ -271,5 +272,24 @@ fun CameraScreenContent(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview
+@Composable
+private fun CameraScreenPrev() {
+    FructusTheme {
+        CameraScreenContent(
+            detected = false,
+            detectedFruit = "",
+            detectedRipeness = "",
+            onResumeScanning = {},
+            lifecycleOwner = LocalLifecycleOwner.current,
+            detectedState = remember { mutableStateOf(false) },
+            detectedFruitState = remember { mutableStateOf("") },
+            detectedRipenessState = remember { mutableStateOf("") },
+            onSaveFruit = { _, _ -> },
+            onNavigateUp = {}
+        )
     }
 }

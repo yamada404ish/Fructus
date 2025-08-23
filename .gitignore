@@ -1,8 +1,10 @@
 # Android Studio/IntelliJ
 *.iml
 .idea/
-.gradle/
-local.properties
+.gradle/            # Gradle cache (safe to ignore)
+!gradle/wrapper/    # Keep Gradle wrapper
+
+local.properties    # SDK location (local only)
 
 # Build outputs
 /build/
