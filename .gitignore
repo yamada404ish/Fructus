@@ -1,10 +1,16 @@
 # Android Studio/IntelliJ
 *.iml
 .idea/
-.gradle/            # Gradle cache (safe to ignore)
-!gradle/wrapper/    # Keep Gradle wrapper
 
-local.properties    # SDK location (local only)
+# Gradle
+.gradle/                     # Gradle cache (ignore)
+local.properties             # Local SDK settings (ignore)
+
+# Keep Gradle wrapper (required for builds on other machines)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
 
 # Build outputs
 /build/
