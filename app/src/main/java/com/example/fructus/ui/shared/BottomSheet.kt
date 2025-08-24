@@ -20,10 +20,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.detail.components.FruitStatus
 import com.example.fructus.ui.detail.components.SuggestedRecipe
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.loadRecipesFromJson
@@ -139,5 +141,16 @@ fun BottomSheetInformation(
 }
 
 
-
+@Preview
+@Composable
+private fun BottomSheetPrev() {
+    FructusTheme {
+        BottomSheetInformation(
+            fruitName = "Apple",
+            ripeningStage = "Ripe",
+            ripeningProcess = false,
+            shelfLife = 3
+        )
+    }
+}
 

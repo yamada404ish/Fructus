@@ -23,10 +23,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -43,11 +42,8 @@ fun SuggestedRecipe(
             .wrapContentHeight(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = Color(0xFFE8E6D5)
         ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
-        )
     ) {
         Row(
             modifier = Modifier
@@ -73,29 +69,23 @@ fun SuggestedRecipe(
             ) {
                 Text(
                     text = title,
-                    fontSize = 20.sp,
+                    fontSize = 14.sp,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    text = description,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Gray,
                     modifier = Modifier
                         .fillMaxWidth(),
+                    text = description,
+                    fontSize = 10.sp,
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.Gray,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     lineHeight = 16.sp
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun SuggestedRecipePrev() {
-    FructusTheme {
-
     }
 }

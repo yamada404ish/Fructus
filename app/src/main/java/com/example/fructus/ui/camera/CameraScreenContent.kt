@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
+import com.example.fructus.ui.shared.BottomSheetInformation
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
@@ -255,12 +256,12 @@ fun CameraScreenContent(
             }
 
             // Bottom sheet (without buttons inside)
-//            BottomSheetInformation(
-//                fruitName = detectedFruit,
-//                ripeningStage = detectedRipeness,
-//                ripeningProcess = false,
-//                shelfLife = 3
-//            )  
+            BottomSheetInformation(
+                fruitName = detectedFruit,
+                ripeningStage = detectedRipeness,
+                ripeningProcess = false,
+                shelfLife = 3
+            )
 
         } else {
             Text(
