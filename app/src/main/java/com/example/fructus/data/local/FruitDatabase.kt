@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.fructus.data.local.dao.FruitDao
 import com.example.fructus.data.local.entity.FruitEntity
 
-@Database(entities = [FruitEntity::class], version = 1)
+@Database(entities = [FruitEntity::class], version = 2) // ⬅️ bumped version
 abstract class FruitDatabase : RoomDatabase() {
     abstract fun fruitDao(): FruitDao
 
@@ -24,17 +24,15 @@ abstract class FruitDatabase : RoomDatabase() {
                     FruitDatabase::class.java,
                     DATABASE_NAME
                 )
-                    // For now, during development only:
+                    // Development only: wipes DB when schema changes
                     .fallbackToDestructiveMigration()
 
                     // For production later:
                     // .addMigrations(MIGRATION_1_2, MIGRATION_2_3, ...)
-
-                .build()
+                    .build()
                 INSTANCE = instance
                 instance
             }
         }
-
     }
 }

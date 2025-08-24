@@ -97,4 +97,6 @@ fun OnboardingPage4() {
                     modifier = Modifier.padding(horizontal = 40.dp),
                     color = MaterialTheme.colorScheme.tertiary,
                 )            }
-        }    }}
+        }
+    }
+}

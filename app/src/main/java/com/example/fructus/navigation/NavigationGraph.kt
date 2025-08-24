@@ -51,6 +51,7 @@ fun FructusNav() {
                     navController.navigate(Home) {
                         popUpTo(OnBoard) { inclusive = true }
                     }
+
                 }
             }
         }

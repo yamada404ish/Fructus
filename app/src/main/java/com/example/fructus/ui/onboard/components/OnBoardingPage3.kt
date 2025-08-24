@@ -1,5 +1,6 @@
 package com.example.fructus.ui.onboard.components
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -22,13 +23,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
+import com.example.fructus.ui.onboard.OnboardingScreenContent
+import com.example.fructus.ui.onboard.OnboardingViewModel
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.DataStoreManager
 
 
 @Composable
@@ -40,64 +48,87 @@ fun OnboardingPage3() {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // image
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = fadeIn(animationSpec = tween(800)) + scaleIn(
-                    animationSpec = tween(800),
-                    initialScale = 0.8f
-                )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.cam),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(250.dp)
-                        .padding(bottom = 32.dp)
-                )            }
+        // Background Image
+        Image(
+            painter = painterResource(id = R.drawable.onbg3),
+            contentDescription = "",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
 
-            //Title
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = fadeIn(animationSpec = tween(600, delayMillis = 200)) + slideInVertically(
-                    animationSpec = tween(600, delayMillis = 200),
-                    initialOffsetY = { it / 4 }
-                )
-            ) {
+        // Welcome text in upper left
+        AnimatedVisibility(
+            visible = isVisible,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 60.dp, end = 40.dp), // Adjust padding as needed
+            enter = fadeIn(animationSpec = tween(600, delayMillis = 200)) + slideInVertically(
+                animationSpec = tween(600, delayMillis = 200),
+                initialOffsetY = { -it / 4 } // Slide from top instead of bottom
+            )
+        ) {
+            Column(modifier = Modifier
+                .padding(bottom = 14.dp)) {
                 Text(
-                    "Know your fruits",
+                    "Stay informed with",
                     fontFamily = poppinsFontFamily,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )            }
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Normal
+                )
 
-            // Description
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = fadeIn(animationSpec = tween(600, delayMillis = 400)) + slideInVertically(
-                    animationSpec = tween(600, delayMillis = 400),
-                    initialOffsetY = { it / 4 }
-                )
-            ) {
-                Text(
-                    "Get detailed information about how long your fruits will stay fresh through camera detection!",
-                    fontFamily = poppinsFontFamily,
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.padding(horizontal = 40.dp),
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
             }
+
         }
+        AnimatedVisibility(
+            visible = isVisible,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 60.dp, end = 40.dp), // Adjust padding as needed
+            enter = fadeIn(animationSpec = tween(800, delayMillis = 400)) + slideInVertically(
+                animationSpec = tween(600, delayMillis = 200),
+                initialOffsetY = { -it / 4 } // Slide from top instead of bottom
+            )
+        ) {
+            Column(modifier = Modifier
+                .padding(top = 24.dp)) {
+                Text(
+                    "Reminders",
+                    fontFamily = poppinsFontFamily,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+            }
+
+        }
+
+        // Description text above carousel (bottom area)
+        AnimatedVisibility(
+            visible = isVisible,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 50.dp)
+                .padding(horizontal = 40.dp), // Adjust bottom padding based on your carousel height
+            enter = fadeIn(animationSpec = tween(600, delayMillis = 400)) + slideInVertically(
+                animationSpec = tween(600, delayMillis = 400),
+                initialOffsetY = { it / 3 }
+            )
+        ) {
+            Text(
+                "Notifications remind you when your fruits are about to go bad!",
+                fontFamily = poppinsFontFamily,
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.tertiary,
+            )
+        }
+
     }
 }
+
+

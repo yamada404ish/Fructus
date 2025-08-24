@@ -25,6 +25,7 @@ fun OnboardingScreen(
     // Show the actual UI content of the onboarding screen
     OnboardingScreenContent(
         viewModel = viewModel,           // Pass the ViewModel to the content composable
-        onGetStarted = onGetStarted      // Pass the callback to trigger when onboarding finishes
+        onGetStarted = onGetStarted,    // Pass the callback to trigger when onboarding finishes
+        //onStarted = onGetStarted         // Empty callback for now
     )
 }

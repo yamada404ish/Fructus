@@ -15,7 +15,12 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 
-fun classifyFruit(bitmap: Bitmap, context: Context): String {
+data class ClassificationResult(
+    val label: String,
+    val confidence: Float
+)
+
+fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.99f): ClassificationResult {
     val modelName = "fruit_type_model.tflite"
     val labels = listOf("Cavendish", "Lakatan", "Tomato")
 
@@ -27,17 +32,21 @@ fun classifyFruit(bitmap: Bitmap, context: Context): String {
     model.close()
 
     val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
-    return if (maxIndex != -1) labels[maxIndex] else "Unknown"
+    val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+
+    return if (maxIndex != -1 && confidence >= threshold) {
+        ClassificationResult(labels[maxIndex], confidence)
+    } else {
+        ClassificationResult("No fruit detected", confidence)
+    }
 }
 
-
-
-fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): String {
+fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, threshold: Float = 0.7f): ClassificationResult {
     val modelName = when (fruitType.lowercase()) {
         "lakatan" -> "banana_lakatan_model.tflite"
         "cavendish" -> "banana_cavendish_model.tflite"
         "tomato" -> "tomato_model.tflite"
-        else -> return "Unknown"
+        else -> return ClassificationResult("Unknown", 0f)
     }
 
     val labels = listOf("Overripe", "Ripe", "Spoiled", "Unripe")
@@ -49,7 +58,13 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Strin
     model.close()
 
     val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
-    return if (maxIndex != -1) labels[maxIndex] else "Unknown"
+    val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+
+    return if (maxIndex != -1 && confidence >= threshold) {
+        ClassificationResult(labels[maxIndex], confidence)
+    } else {
+        ClassificationResult("Unknown", confidence)
+    }
 }
 
 fun loadModelFile(context: Context, modelFileName: String): ByteBuffer {
@@ -81,7 +96,6 @@ fun preprocessBitmap(bitmap: Bitmap): ByteBuffer {
 
     return byteBuffer
 }
-
 
 @androidx.camera.core.ExperimentalGetImage
 fun ImageProxy.toBitmap(): Bitmap? {
