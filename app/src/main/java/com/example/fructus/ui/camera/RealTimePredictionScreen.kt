@@ -1,6 +1,5 @@
 package com.example.fructus.ui.camera
 
-
 import android.content.Context
 import android.content.pm.PackageManager
 import android.widget.Toast
@@ -17,9 +16,7 @@ import androidx.lifecycle.LifecycleOwner
 fun RealTimePredictionScreen(
     context: Context,
     onNavigateUp: () -> Unit = {},
-
 ) {
-
     val lifecycleOwner = context as LifecycleOwner
     val permissionState = remember { mutableStateOf(false) }
 
@@ -31,6 +28,7 @@ fun RealTimePredictionScreen(
     val cameraViewModel: CameraViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
         factory = CameraViewModelFactory(db.fruitDao())
     )
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
@@ -41,6 +39,7 @@ fun RealTimePredictionScreen(
         }
     )
 
+    // Request camera permission
     LaunchedEffect(Unit) {
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) -> {
