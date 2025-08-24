@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+
 
 package com.example.fructus.ui.notification
 
@@ -39,6 +39,7 @@ import com.example.fructus.ui.notification.components.NotificationFilters
 import com.example.fructus.ui.notification.model.Filter
 import com.example.fructus.ui.theme.poppinsFontFamily
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreenContent(
     notifications: List<FruitNotification>,

@@ -1,5 +1,6 @@
 package com.example.fructus.ui.onboard
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -36,6 +37,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.onboard.components.OnboardingPage2
@@ -43,7 +46,9 @@ import com.example.fructus.ui.onboard.components.OnboardingPage3
 import com.example.fructus.ui.onboard.components.OnboardingPage4
 import com.example.fructus.ui.onboard.components.OnboardingPage5
 import com.example.fructus.ui.onboard.components.OnboardingWelcomePage
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.DataStoreManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -153,5 +158,18 @@ fun OnboardingScreenContent(
                 }
             )
         }
+    }
+}
+
+@SuppressLint("ViewModelConstructorInComposable")
+@Preview
+@Composable
+private fun OnboardPrev() {
+    FructusTheme {
+        OnboardingScreenContent(
+            viewModel = OnboardingViewModel(DataStoreManager(LocalContext.current)),
+            onGetStarted = {}
+        )
+
     }
 }
