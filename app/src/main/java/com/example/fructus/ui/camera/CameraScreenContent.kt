@@ -3,6 +3,7 @@ package com.example.fructus.ui.camera
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -38,7 +40,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
-import com.example.fructus.ui.shared.BottomSheetInformation
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
@@ -48,7 +49,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+import com.example.fructus.ui.shared.BottomSheetInformation
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,19 +67,22 @@ fun CameraScreenContent(
 ) {
     val isSaved = remember { mutableStateOf(false) }
     val showSuccessMessage = remember { mutableStateOf(false) }
-//    val flashEnabled = remember { mutableStateOf(false) }
+    val flashEnabled = remember { mutableStateOf(false) }
+    val cameraRef = remember { mutableStateOf<Camera?>(null) }
+    val isScanning = remember { mutableStateOf(false) } // ✅ control scanning start
 
     val handleResumeScanning = {
-        isSaved.value = false  // Reset save state when rescanning
-        showSuccessMessage.value = false  // Hide success message
+        isSaved.value = false
+        showSuccessMessage.value = false
+        detectedState.value = false
+        isScanning.value = true // resume scanning
         onResumeScanning()
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
-        // CAMERA PREVIEW (Full screen background)
+        // CAMERA PREVIEW
         AndroidView(
             factory = {
                 val previewView = PreviewView(it)
@@ -90,7 +94,8 @@ fun CameraScreenContent(
                     .also { analysis ->
                         analysis.setAnalyzer(ContextCompat.getMainExecutor(it)) { imageProxy ->
 
-                            if (!detectedState.value) {
+                            // ✅ Only run analyzer when scanning is active
+                            if (isScanning.value && !detectedState.value) {
                                 val bitmap = imageProxy.toBitmap() ?: run {
                                     imageProxy.close()
                                     return@setAnalyzer
@@ -99,17 +104,20 @@ fun CameraScreenContent(
                                     bitmap.rotate(imageProxy.imageInfo.rotationDegrees)
 
                                 try {
-                                    val fruitType = classifyFruit(rotatedBitmap, it)
-                                    val ripeness =
-                                        classifyRipeness(fruitType, rotatedBitmap, it)
+                                    val fruitResult = classifyFruit(rotatedBitmap, it)
+                                    val ripenessResult =
+                                        classifyRipeness(fruitResult.label, rotatedBitmap, it)
 
-                                    detectedFruitState.value = fruitType
-                                    detectedRipenessState.value = ripeness
+                                    // ✅ assign label (String) instead of ClassificationResult
+                                    detectedFruitState.value = fruitResult.label
+                                    detectedRipenessState.value = ripenessResult.label
                                     detectedState.value = true
+                                    isScanning.value = false // stop scanning after detect
 
                                     Log.d(
                                         "Prediction",
-                                        "Fruit: $fruitType, Ripeness: $ripeness"
+                                        "Fruit: ${fruitResult.label} (${fruitResult.confidence}), " +
+                                                "Ripeness: ${ripenessResult.label} (${ripenessResult.confidence})"
                                     )
                                 } catch (e: Exception) {
                                     Log.e("PredictionError", "Error during classification", e)
@@ -130,12 +138,13 @@ fun CameraScreenContent(
 
                     try {
                         cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
+                        val camera = cameraProvider.bindToLifecycle(
                             lifecycleOwner,
                             cameraSelector,
                             preview,
                             analyzer
                         )
+                        cameraRef.value = camera // ✅ keep reference for flashlight toggle
                     } catch (e: Exception) {
                         Log.e("CameraX", "Use case binding failed", e)
                         Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT)
@@ -148,6 +157,7 @@ fun CameraScreenContent(
             modifier = Modifier.fillMaxSize()
         )
 
+        // Top bar (Back + Flash)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -169,12 +179,17 @@ fun CameraScreenContent(
             )
 
             Icon(
-                painter = painterResource(R.drawable.flash_off_button),
+                painter = painterResource(
+                    if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
+                ),
                 contentDescription = "Flashlight",
                 modifier = Modifier
                     .size(50.dp)
                     .clickable(
-                        onClick = {},
+                        onClick = {
+                            cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
+                            flashEnabled.value = !flashEnabled.value
+                        },
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ),
@@ -182,19 +197,29 @@ fun CameraScreenContent(
             )
         }
 
-        // Overlay content when detected
+        // ✅ Start Scan button (only show if not detected & not scanning)
+        if (!detected && !isScanning.value) {
+            Button(
+                onClick = { isScanning.value = true },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 100.dp)
+            ) {
+                Text("Start Scan")
+            }
+        }
+
+        // Overlay when detected
         if (detected) {
-            // Buttons positioned above the bottom sheet with success message
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .padding(start = 16.dp, end = 16.dp)
-                    .padding(bottom = 280.dp + 16.dp), // sheetPeekHeight + some spacing
+                    .padding(bottom = 280.dp + 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // RETRY BUTTON (Left side)
                 Icon(
                     painter = painterResource(R.drawable.retry_button),
                     contentDescription = "Retry",
@@ -208,7 +233,6 @@ fun CameraScreenContent(
                     tint = Color.Unspecified
                 )
 
-                // SUCCESS MESSAGE (Center) - Only show when saved
                 if (showSuccessMessage.value) {
                     Text(
                         "Saved Successfully!",
@@ -220,11 +244,9 @@ fun CameraScreenContent(
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     )
                 } else {
-                    // Empty space to maintain layout balance when message is not shown
                     Spacer(modifier = Modifier.width(1.dp))
                 }
 
-                // SAVE BUTTON (Right side)
                 Icon(
                     painter = painterResource(
                         if (isSaved.value) R.drawable.save_on_button
@@ -241,7 +263,6 @@ fun CameraScreenContent(
                                     isSaved.value = true
                                     showSuccessMessage.value = true
 
-                                    // Auto-hide message after 3 seconds
                                     CoroutineScope(Dispatchers.Main).launch {
                                         delay(3000)
                                         showSuccessMessage.value = false
@@ -255,15 +276,14 @@ fun CameraScreenContent(
                 )
             }
 
-            // Bottom sheet (without buttons inside)
             BottomSheetInformation(
                 fruitName = detectedFruit,
                 ripeningStage = detectedRipeness,
                 ripeningProcess = false,
                 shelfLife = 3
             )
-
-        } else {
+        } else if (isScanning.value) {
+            // ✅ Show scanning status while analyzer is active
             Text(
                 "Scanning...",
                 fontFamily = poppinsFontFamily,
