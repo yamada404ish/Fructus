@@ -143,15 +143,4 @@ fun OnboardingWelcomePage() {
     }
 }
 
-@SuppressLint("ViewModelConstructorInComposable")
-@Preview
-@Composable
-private fun OnboardingPage1() {
-    FructusTheme {
-        OnboardingScreenContent(
-            viewModel = OnboardingViewModel(DataStoreManager(context = LocalContext.current)),
-            onGetStarted = {},
-            onStarted = {}
-        )
-    }
-}
+

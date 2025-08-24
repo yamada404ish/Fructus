@@ -66,7 +66,7 @@ import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 fun OnboardingScreenContent(
     viewModel: OnboardingViewModel,
     onGetStarted: () -> Unit,
-    onStarted: () -> Unit
+//    onStarted: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
@@ -141,7 +141,13 @@ fun OnboardingScreenContent(
 
 
                         Button(
-                            onClick = { /*...*/ },
+                            onClick = {
+                                scope.launch {
+                                    viewModel.completeOnboarding()
+                                    viewModel.setRequestNotificationOnce()
+                                    onGetStarted()
+                                }
+                            },
                             modifier = Modifier
                                 .padding(bottom = 12.dp)
                                 .fillMaxWidth()
@@ -166,7 +172,7 @@ fun OnboardingScreenContent(
 
 
 
-@SuppressLint("ViewModelConstructorInComposable")
+/*@SuppressLint("ViewModelConstructorInComposable")
 @Preview
 @Composable
 private fun OnboardingScreenContent() {
@@ -177,4 +183,4 @@ private fun OnboardingScreenContent() {
             onGetStarted = {}
         )
     }
-}
+}*/
