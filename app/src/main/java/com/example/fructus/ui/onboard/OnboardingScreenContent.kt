@@ -150,8 +150,9 @@ fun OnboardingScreenContent(
                             },
                             modifier = Modifier
                                 .padding(bottom = 12.dp)
+                                .height(50.dp)
                                 .fillMaxWidth()
-                                .padding(horizontal = 12.dp),
+                                .padding(horizontal = 30.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFBADBA2), // background
                                 contentColor = Color.Black

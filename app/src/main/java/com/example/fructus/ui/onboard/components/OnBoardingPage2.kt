@@ -93,12 +93,12 @@ fun OnboardingPage2() {
             )
         ) {
             Column(modifier = Modifier
-                .padding(top = 24.dp)) {
+                .padding(top = 14.dp)) {
                 Text(
                     "Fruits",
                     fontFamily = poppinsFontFamily,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 36.sp,
+                    fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -119,7 +119,7 @@ fun OnboardingPage2() {
             )
         ) {
             Text(
-                "Know your fruits and keep track of them befor they spoil!",
+                "Know your fruits and keep track of them before they spoil!",
                 fontFamily = poppinsFontFamily,
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
