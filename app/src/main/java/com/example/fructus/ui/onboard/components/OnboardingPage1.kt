@@ -105,12 +105,12 @@ fun OnboardingWelcomePage() {
             )
         ) {
             Column(modifier = Modifier
-                .padding(top = 24.dp)) {
+                .padding(top = 14.dp)) {
                 Text(
                     "Fructus",
                     fontFamily = poppinsFontFamily,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 32.sp,
+                    fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
                 )
 
