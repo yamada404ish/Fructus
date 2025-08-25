@@ -131,7 +131,7 @@ fun OnboardingWelcomePage() {
             )
         ) {
             Text(
-                "An app that can help you track and find out the shelf life of your fruits!",
+                "An application that helps you find out the shelf life of your fruits!",
                 fontFamily = poppinsFontFamily,
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
