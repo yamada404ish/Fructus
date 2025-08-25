@@ -105,12 +105,12 @@ fun OnboardingWelcomePage() {
             )
         ) {
             Column(modifier = Modifier
-                .padding(top = 24.dp)) {
+                .padding(top = 14.dp)) {
                 Text(
                     "Fructus",
                     fontFamily = poppinsFontFamily,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 32.sp,
+                    fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -131,7 +131,7 @@ fun OnboardingWelcomePage() {
             )
         ) {
             Text(
-                "An app that can help you track and find out the shelf life of your fruits!",
+                "An application that helps you find out the shelf life of your fruits!",
                 fontFamily = poppinsFontFamily,
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,

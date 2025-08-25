@@ -126,12 +126,13 @@ fun OnboardingScreenContent(
 
                             Box(
                                 modifier = Modifier
+                                    .padding(bottom = 10.dp)
                                     .padding(horizontal = 4.dp)
                                     .width(dotWidth)
                                     .height(8.dp) // Fixed height
                                     .background(
                                         color = if (isSelected) Color(0xFFBADBA2) else Color(0xFFD1CEBA),
-                                        shape = RoundedCornerShape(4.dp) // Half of height for pill shape
+                                        shape = RoundedCornerShape(3.dp) // Half of height for pill shape
                                     )
                             )
                         }
@@ -149,9 +150,10 @@ fun OnboardingScreenContent(
                                 }
                             },
                             modifier = Modifier
-                                .padding(bottom = 12.dp)
+                                .padding(bottom = 20.dp)
+                                .height(50.dp)
                                 .fillMaxWidth()
-                                .padding(horizontal = 12.dp),
+                                .padding(horizontal = 30.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFBADBA2), // background
                                 contentColor = Color.Black
