@@ -131,7 +131,7 @@ fun OnboardingScreenContent(
                                     .height(8.dp) // Fixed height
                                     .background(
                                         color = if (isSelected) Color(0xFFBADBA2) else Color(0xFFD1CEBA),
-                                        shape = RoundedCornerShape(4.dp) // Half of height for pill shape
+                                        shape = RoundedCornerShape(3.dp) // Half of height for pill shape
                                     )
                             )
                         }
@@ -149,7 +149,7 @@ fun OnboardingScreenContent(
                                 }
                             },
                             modifier = Modifier
-                                .padding(bottom = 12.dp)
+                                .padding(bottom = 20.dp)
                                 .height(50.dp)
                                 .fillMaxWidth()
                                 .padding(horizontal = 30.dp),
