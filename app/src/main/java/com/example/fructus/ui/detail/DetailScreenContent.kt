@@ -52,13 +52,13 @@ fun DetailScreenContent(
     fruit: FruitEntity,
     onNavigate: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    val allRecipes = context.loadRecipesFromJson()
-    val matchedRecipes = allRecipes.filter {
-        it.fruitType.equals(fruit.name.trim(), ignoreCase = true) &&
-        it.stage.equals(fruit.ripeningStage.trim(), ignoreCase = true)
-    }
+//    val context = LocalContext.current
+//
+//    val allRecipes = context.loadRecipesFromJson()
+//    val matchedRecipes = allRecipes.filter {
+//        it.fruitType.equals(fruit.name.trim(), ignoreCase = true) &&
+//        it.stage.equals(fruit.ripeningStage.trim(), ignoreCase = true)
+//    }
 
     Scaffold(
         containerColor = Color.Transparent
@@ -199,11 +199,13 @@ fun CustomBottomSheetDetail(
                 it.stage.equals(ripeningStage, ignoreCase = true)
     }
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent)
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -238,7 +240,7 @@ fun CustomBottomSheetDetail(
                         )
                         Spacer(modifier = Modifier.width(20.dp))
 
-                        Column () {
+                        Column {
                             Text(
                                 text = "$fruitName Banana",
                                 fontFamily = poppinsFontFamily,

@@ -66,7 +66,7 @@ fun HomeScreenContent(
         topBar = {
             Column(
                 modifier = Modifier
-                    .padding(top = 30.dp),
+                    .padding(top = 10.dp),
             ) {
                 CenterAlignedTopAppBar(
                     title = { FructusLogo() },
