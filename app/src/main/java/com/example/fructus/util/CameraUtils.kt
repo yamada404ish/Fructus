@@ -22,7 +22,7 @@ data class ClassificationResult(
 
 // --------------------- FRUIT TYPE CLASSIFIER ---------------------
 
-fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): ClassificationResult {
+fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.95f): ClassificationResult {
     // ✅ Added Spoiled Tomato and Spoiled Banana
     val modelName = "fruit_type_model.tflite"
     val labels = listOf("Cavendish", "Lakatan","Spoiled Banana", "Spoiled Tomato", "Tomato")
