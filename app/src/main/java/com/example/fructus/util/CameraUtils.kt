@@ -20,9 +20,12 @@ data class ClassificationResult(
     val confidence: Float
 )
 
-fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.99f): ClassificationResult {
+// --------------------- FRUIT TYPE CLASSIFIER ---------------------
+
+fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): ClassificationResult {
+    // ✅ Added Spoiled Tomato and Spoiled Banana
     val modelName = "fruit_type_model.tflite"
-    val labels = listOf("Cavendish", "Lakatan", "Tomato")
+    val labels = listOf("Cavendish", "Lakatan","Spoiled Banana", "Spoiled Tomato", "Tomato")
 
     val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(bitmap)
@@ -41,7 +44,14 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.99f): C
     }
 }
 
+// --------------------- RIPENESS CLASSIFIER ---------------------
+
 fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, threshold: Float = 0.7f): ClassificationResult {
+    // ✅ Only classify ripeness if it's NOT spoiled
+    if (fruitType.equals("Spoiled Banana", true) || fruitType.equals("Spoiled Tomato", true)) {
+        return ClassificationResult("Spoiled", 1f)
+    }
+
     val modelName = when (fruitType.lowercase()) {
         "lakatan" -> "banana_lakatan_model.tflite"
         "cavendish" -> "banana_cavendish_model.tflite"
@@ -49,7 +59,8 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, thresh
         else -> return ClassificationResult("Unknown", 0f)
     }
 
-    val labels = listOf("Overripe", "Ripe", "Spoiled", "Unripe")
+    // ✅ Removed Spoiled from ripeness stages
+    val labels = listOf("Overripe", "Ripe", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(bitmap)
     val output = Array(1) { FloatArray(labels.size) }
@@ -66,6 +77,23 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, thresh
         ClassificationResult("Unknown", confidence)
     }
 }
+
+// --------------------- RIPENING STAGE MAPPER ---------------------
+
+fun mapRipeningStage(fruitResult: ClassificationResult): String {
+    return when {
+        // ✅ Spoiled detected from fruit type
+        fruitResult.label.contains("Spoiled", ignoreCase = true) -> "Spoiled"
+
+        fruitResult.label.contains("Unripe", ignoreCase = true) -> "Unripe"
+        fruitResult.label.contains("Ripe", ignoreCase = true) -> "Ripe"
+        fruitResult.label.contains("Overripe", ignoreCase = true) -> "Overripe"
+
+        else -> "Unknown"
+    }
+}
+
+// --------------------- HELPERS ---------------------
 
 fun loadModelFile(context: Context, modelFileName: String): ByteBuffer {
     val fileDescriptor = context.assets.openFd(modelFileName)

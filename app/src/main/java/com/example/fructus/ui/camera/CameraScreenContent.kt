@@ -11,23 +11,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,16 +26,20 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
+import com.example.fructus.ui.camera.composable.BottomSheetInformation
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClassificationResult
 import com.example.fructus.util.classifyFruit
 import com.example.fructus.util.classifyRipeness
 import com.example.fructus.util.rotate
+import com.example.fructus.util.toBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.example.fructus.ui.shared.BottomSheetInformation
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,19 +59,21 @@ fun CameraScreenContent(
     val showSuccessMessage = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
     val cameraRef = remember { mutableStateOf<Camera?>(null) }
-    val isScanning = remember { mutableStateOf(false) } // ✅ control scanning start
+    val isScanning = remember { mutableStateOf(false) }
+
+    val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
+    DisposableEffect(Unit) { onDispose { cameraExecutor.shutdown() } }
 
     val handleResumeScanning = {
         isSaved.value = false
         showSuccessMessage.value = false
         detectedState.value = false
-        isScanning.value = true // resume scanning
+        isScanning.value = true
         onResumeScanning()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+
         // CAMERA PREVIEW
         AndroidView(
             factory = {
@@ -92,9 +84,8 @@ fun CameraScreenContent(
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also { analysis ->
-                        analysis.setAnalyzer(ContextCompat.getMainExecutor(it)) { imageProxy ->
+                        analysis.setAnalyzer(cameraExecutor) { imageProxy ->
 
-                            // ✅ Only run analyzer when scanning is active
                             if (isScanning.value && !detectedState.value) {
                                 val bitmap = imageProxy.toBitmap() ?: run {
                                     imageProxy.close()
@@ -106,13 +97,18 @@ fun CameraScreenContent(
                                 try {
                                     val fruitResult = classifyFruit(rotatedBitmap, it)
                                     val ripenessResult =
-                                        classifyRipeness(fruitResult.label, rotatedBitmap, it)
+                                        if (fruitResult.label.contains("Spoiled", true)) {
+                                            ClassificationResult("Spoiled", 1.0f)
+                                        } else {
+                                            classifyRipeness(fruitResult.label, rotatedBitmap, it)
+                                        }
 
-                                    // ✅ assign label (String) instead of ClassificationResult
-                                    detectedFruitState.value = fruitResult.label
-                                    detectedRipenessState.value = ripenessResult.label
-                                    detectedState.value = true
-                                    isScanning.value = false // stop scanning after detect
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        detectedFruitState.value = fruitResult.label
+                                        detectedRipenessState.value = ripenessResult.label
+                                        detectedState.value = true
+                                        isScanning.value = false
+                                    }
 
                                     Log.d(
                                         "Prediction",
@@ -144,11 +140,10 @@ fun CameraScreenContent(
                             preview,
                             analyzer
                         )
-                        cameraRef.value = camera // ✅ keep reference for flashlight toggle
+                        cameraRef.value = camera
                     } catch (e: Exception) {
                         Log.e("CameraX", "Use case binding failed", e)
-                        Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 }, ContextCompat.getMainExecutor(it))
 
@@ -157,7 +152,7 @@ fun CameraScreenContent(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Top bar (Back + Flash)
+        // TOP BAR
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -197,7 +192,7 @@ fun CameraScreenContent(
             )
         }
 
-        // ✅ Start Scan button (only show if not detected & not scanning)
+        // START SCAN BUTTON
         if (!detected && !isScanning.value) {
             Button(
                 onClick = { isScanning.value = true },
@@ -209,7 +204,7 @@ fun CameraScreenContent(
             }
         }
 
-        // Overlay when detected
+        // DETECTED OVERLAY (Retry + Save + Message + BottomSheet)
         if (detected) {
             Row(
                 modifier = Modifier
@@ -220,6 +215,7 @@ fun CameraScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // RETRY
                 Icon(
                     painter = painterResource(R.drawable.retry_button),
                     contentDescription = "Retry",
@@ -233,6 +229,7 @@ fun CameraScreenContent(
                     tint = Color.Unspecified
                 )
 
+                // SUCCESS MESSAGE
                 if (showSuccessMessage.value) {
                     Text(
                         "Saved Successfully!",
@@ -247,6 +244,7 @@ fun CameraScreenContent(
                     Spacer(modifier = Modifier.width(1.dp))
                 }
 
+                // SAVE
                 Icon(
                     painter = painterResource(
                         if (isSaved.value) R.drawable.save_on_button
@@ -276,14 +274,14 @@ fun CameraScreenContent(
                 )
             }
 
+            // BOTTOM SHEET (with spoiled check logic)
             BottomSheetInformation(
                 fruitName = detectedFruit,
                 ripeningStage = detectedRipeness,
                 ripeningProcess = false,
-                shelfLife = 3
+                shelfLife = if (detectedRipeness.equals("Spoiled", true)) 0 else 3
             )
         } else if (isScanning.value) {
-            // ✅ Show scanning status while analyzer is active
             Text(
                 "Scanning...",
                 fontFamily = poppinsFontFamily,
@@ -296,8 +294,8 @@ fun CameraScreenContent(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview
 @Composable
+@androidx.compose.ui.tooling.preview.Preview
 private fun CameraScreenPrev() {
     FructusTheme {
         CameraScreenContent(
