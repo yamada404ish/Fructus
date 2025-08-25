@@ -126,6 +126,7 @@ fun OnboardingScreenContent(
 
                             Box(
                                 modifier = Modifier
+                                    .padding(bottom = 10.dp)
                                     .padding(horizontal = 4.dp)
                                     .width(dotWidth)
                                     .height(8.dp) // Fixed height
