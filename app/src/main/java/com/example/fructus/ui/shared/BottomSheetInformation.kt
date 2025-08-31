@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.loadRecipesFromJson
 import com.example.fructus.util.toRipenessStage
@@ -57,6 +58,7 @@ fun CustomBottomSheet(
 ) {
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
+    val displayName = getDisplayFruitName(fruitName)
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
@@ -85,14 +87,7 @@ fun CustomBottomSheet(
                     .padding(16.dp)
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
-                val displayName = if (fruitName.equals("lakatan", ignoreCase = true) ||
-                    fruitName.equals("saba", ignoreCase = true) ||
-                    fruitName.equals("cavendish", ignoreCase = true)
-                ) {
-                    "$fruitName Banana"
-                } else {
-                    fruitName
-                }
+
                 Text(
                     text = displayName,
                     fontFamily = poppinsFontFamily,

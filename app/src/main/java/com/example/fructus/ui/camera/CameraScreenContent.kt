@@ -222,20 +222,6 @@ fun CameraScreenContent(
         // ✅ Start Scan button (only show if not detected & not scanning)
         if (!detected && !isScanning.value) {
 
-            // comment this and uncomment the icon below
-//            Button(
-//                onClick = { isScanning.value = true },
-//                modifier = Modifier
-//                    .align(Alignment.BottomCenter)
-//                    .padding(bottom = 100.dp)
-//            ) {
-//                Text("Start Scan")
-//            }
-
-
-
-
-            // uncomment this to use an icon to scan
             Icon(
                 painter = painterResource(R.drawable.camera_scan_icon),
                 contentDescription = "camera icon",
@@ -259,7 +245,7 @@ fun CameraScreenContent(
                 contentDescription = "camera scan",
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(300.dp),
+                    .size(360.dp),
                 tint = Color.Unspecified
             )
         }
@@ -276,80 +262,8 @@ fun CameraScreenContent(
             }
         }
 
-//        LaunchedEffect(detected) {
-//            if (detected) {
-//                isBottomSheetVisible.value = true
-//            }
-//        }
-
         // Overlay when detected
         if (detected) {
-
-
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .align(Alignment.BottomCenter)
-//                    .padding(start = 16.dp, end = 16.dp)
-//                    .padding(bottom = 280.dp + 16.dp),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Icon(
-//                    painter = painterResource(R.drawable.retry_button),
-//                    contentDescription = "Retry",
-//                    modifier = Modifier
-//                        .size(50.dp)
-//                        .clickable(
-//                            onClick = handleResumeScanning,
-//                            indication = null,
-//                            interactionSource = remember { MutableInteractionSource() }
-//                        ),
-//                    tint = Color.Unspecified
-//                )
-//
-//                if (showSuccessMessage.value) {
-//                    Text(
-//                        "Saved Successfully!",
-//                        fontFamily = poppinsFontFamily,
-//                        fontWeight = FontWeight.Medium,
-//                        fontSize = 14.sp,
-//                        color = Color.White,
-//                        modifier = Modifier
-//                            .padding(horizontal = 12.dp, vertical = 6.dp)
-//                    )
-//                } else {
-//                    Spacer(modifier = Modifier.width(1.dp))
-//                }
-
-                /*Icon(
-                    painter = painterResource(
-                        if (isSaved.value) R.drawable.save_on_button
-                        else R.drawable.save_off_button
-                    ),
-                    contentDescription = if (isSaved.value) "Saved" else "Save",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clickable(
-                            enabled = !isSaved.value,
-                            onClick = {
-                                if (!isSaved.value) {
-                                    onSaveFruit(detectedFruit, detectedRipeness)
-                                    isSaved.value = true
-                                    showSuccessMessage.value = true
-
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        delay(3000)
-                                        showSuccessMessage.value = false
-                                    }
-                                }
-                            },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
-                    tint = Color.Unspecified
-                )*/
-//            }
             if (detectedFruit == "No fruit detected"){
                 AnimatedVisibility (
                     visible = detectedState.value,

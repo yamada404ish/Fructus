@@ -1,29 +1,22 @@
 package com.example.fructus.ui.shared
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import com.example.fructus.R
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AppBackgroundScaffold(
-    backgroundImage: Int = R.drawable.fructus_background, // replace with your image
+    backgroundColor: Color = Color(0xFFF0EFE9), // your solid background color
     content: @Composable () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor) // set the solid color background
     ) {
-        Image(
-            painter = painterResource(id = backgroundImage),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
         content()
     }
 }
