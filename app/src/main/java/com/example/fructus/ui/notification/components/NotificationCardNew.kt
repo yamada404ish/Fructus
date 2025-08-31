@@ -23,12 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
-import com.example.fructus.data.Fruit
-import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.model.Fruit
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
@@ -63,7 +61,7 @@ fun NotificationCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image (
-                painter = painterResource(fruit.image),
+                painter = painterResource(R.drawable.img_placeholder),
                 contentDescription = "Item Image",
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
@@ -103,31 +101,5 @@ fun NotificationCard(
     }
 }
 
-
-@Composable
-fun NotificationListNew() {
-
-    NotificationCard(
-        fruit = Fruit(
-            id = 0,
-            name = "Lakatan",
-            shelfLife = 2,
-            ripeningProcess = true,
-            image = R.drawable.img_placeholder,
-            ripeningStage = "unripe",
-        ),
-        isRead = false,
-        onClick = {}
-    )
-}
-
-
-@Preview
-@Composable
-private fun NotificationCardPrev() {
-    FructusTheme {
-        NotificationListNew()
-    }
-}
 
 

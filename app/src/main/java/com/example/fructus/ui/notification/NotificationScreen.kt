@@ -1,6 +1,9 @@
 package com.example.fructus.ui.notification
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.fructus.ui.notification.model.Filter
 
 @Composable
 fun NotificationScreen(
@@ -9,8 +12,13 @@ fun NotificationScreen(
     onSettingsClick: () -> Unit = {}       // Callback for the settings button (default: do nothing)
 ) {
 
+    val notifications by viewModel.notifications.collectAsState()
+
     NotificationScreenContent(
-        notifications = viewModel.filteredNotifications,  // Show filtered notifications based on selected filter
+        notifications = when (viewModel.filter) {       // ✅ apply filter at UI-level
+            Filter.All -> notifications
+            Filter.Unread -> notifications.filter { !it.isRead }
+        },  // Show filtered notifications based on selected filter
         filter = viewModel.filter,                        // Current filter value (All or Unread)
 
         // When a new filter is selected, update it in the ViewModel

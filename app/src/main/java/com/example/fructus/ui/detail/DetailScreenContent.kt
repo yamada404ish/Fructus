@@ -50,13 +50,6 @@ fun DetailScreenContent(
     fruit: FruitEntity,
     onNavigate: () -> Unit
 ) {
-//    val context = LocalContext.current
-//
-//    val allRecipes = context.loadRecipesFromJson()
-//    val matchedRecipes = allRecipes.filter {
-//        it.fruitType.equals(fruit.name.trim(), ignoreCase = true) &&
-//        it.stage.equals(fruit.ripeningStage.trim(), ignoreCase = true)
-//    }
 
     Scaffold(
         containerColor = Color.Transparent
@@ -103,80 +96,6 @@ fun DetailScreenContent(
 
         }
     }
-
-
-
-//        Column(
-//            modifier = Modifier
-//                .padding(innerPadding)
-//                .padding(horizontal = 24.dp)
-//                .fillMaxSize()
-//        ) {
-//            Spacer(modifier = Modifier.height(50.dp))
-//            Text(
-//                text = fruit.name,
-//                fontFamily = poppinsFontFamily,
-//                fontWeight = FontWeight.Bold,
-//                fontSize = 40.sp
-//            )
-//            Spacer(modifier = Modifier.height(4.dp))
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.Top
-//            ) {
-//                FruitStatus(
-//                    ripeningProcess = fruit.ripeningProcess,
-//                    shelfLife = fruit.shelfLife
-//                )
-//            }
-//            Spacer(modifier = Modifier.height(20.dp))
-//            Text(
-//                text = "Current stage of ripeness:",
-//                fontFamily = poppinsFontFamily,
-//                fontWeight = FontWeight.SemiBold,
-//                fontSize = 20.sp
-//            )
-//            Spacer(modifier = Modifier.height(10.dp))
-//            RipenessProgressBar(
-//                currentStage = fruit.ripeningStage.toRipenessStage(),
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//            Spacer(modifier = Modifier.height(3.dp))
-//            Text(
-//                text = "Shelf life might not be accurate due to unforeseen conditions",
-//                fontFamily = poppinsFontFamily,
-//                fontStyle = FontStyle.Italic,
-//                fontSize = 9.9f.sp,
-//                color = MaterialTheme.colorScheme.onTertiary
-//            )
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Text(
-//                text = "Try the following:",
-//                fontFamily = poppinsFontFamily,
-//                fontWeight = FontWeight.Medium,
-//                fontSize = 24.sp
-//            )
-//            Column {
-//                if (matchedRecipes.isEmpty()) {
-//                    Text(
-//                        text = "No recipes available for this stage.",
-//                        color = Color.Gray,
-//                        fontSize = 14.sp
-//                    )
-//                } else {
-//                    matchedRecipes.forEach { recipe ->
-//                        SuggestedRecipe(
-//                            title = recipe.name,
-//                            description = recipe.description,
-//                            imageRes = context.getDrawableIdByName(recipe.imageResName),
-//                            modifier = Modifier.padding(vertical = 8.dp)
-//                        )
-//                    }
-//                }
-//            }
-//        }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
