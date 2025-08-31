@@ -12,6 +12,7 @@ data class FruitEntity (
     val shelfLife: Int,
     val ripeningStage: String,
     val ripeningProcess: Boolean,
+    val scannedDate: String
 
 //    val image: Int
 )

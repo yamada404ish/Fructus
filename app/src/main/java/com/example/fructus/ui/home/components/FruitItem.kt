@@ -1,9 +1,12 @@
 package com.example.fructus.ui.home.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,13 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getFruitDrawableId
 
 @Composable
@@ -34,6 +40,13 @@ fun FruitItem(
     fruit: FruitEntity,
     onFruitClick: (FruitEntity) -> Unit
 ) {
+    val backgroundColor = when (fruit.shelfLife) {
+        1 -> Color(0xFFF3A5A5) // Red-ish for 1 day
+        2 -> Color(0xFFF3E5A5) // Orange-ish for 2 days
+        else -> Color(0xFFC2F3A5) // Green-ish for 3+ days
+    }
+
+
     Card (
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
@@ -42,7 +55,7 @@ fun FruitItem(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onSecondary
         ),
-        elevation = CardDefaults.cardElevation(8.dp)
+        elevation = CardDefaults.cardElevation(12.dp)
     ){
         Column(
             modifier = Modifier
@@ -66,21 +79,71 @@ fun FruitItem(
             }
 
             Spacer(Modifier.height(8.dp))
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = getDisplayFruitName(fruit.name),
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
 
-            Text(
-                text = fruit.name,
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            Text(
-                text = "${fruit.shelfLife} days",
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+                    Text (
+                        text = fruit.scannedDate,
+                        fontFamily = poppinsFontFamily,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 12.sp,
+                        color = Color(0xFF706F6F)
+
+                    )
+                }
+
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = backgroundColor,
+                            shape = RoundedCornerShape(50)
+                        )
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = "${fruit.shelfLife} days",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp,
+                        color = Color(0xFF000000),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+            }
+
             Spacer(Modifier.height(6.dp))
         }
     }
 }
+
+//@Preview
+//@Composable
+//private fun FruitItemPrev() {
+//    FructusTheme {
+//        FruitItem(
+//            modifier = Modifier,
+//            fruit = FruitEntity(
+//                id = 1,
+//                name = "Tomato",
+//                shelfLife = 3,
+//                ripeningStage = "ripe",
+//                ripeningProcess = true,
+//
+//            ),
+//            onFruitClick = {}
+//        )
+//    }
+//}

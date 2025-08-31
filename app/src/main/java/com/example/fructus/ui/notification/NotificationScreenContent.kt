@@ -152,7 +152,7 @@ fun NotificationScreenContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image (
-                        painter = painterResource(R.drawable.fructus_empty_icon),
+                        painter = painterResource(R.drawable.empty),
                         contentDescription = "No notification available",
                         modifier = Modifier
                             .size(200.dp)
