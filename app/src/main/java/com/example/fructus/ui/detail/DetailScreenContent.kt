@@ -41,6 +41,9 @@ import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.shared.FruitAnalysis
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.getDetailBackgroundRes
+import com.example.fructus.util.getDisplayFruitName
+import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.loadRecipesFromJson
 
@@ -50,6 +53,9 @@ fun DetailScreenContent(
     fruit: FruitEntity,
     onNavigate: () -> Unit
 ) {
+
+    val shelfLifeDisplay = getDisplayShelfLife(fruit)
+    val backgroundRes = getDetailBackgroundRes(fruit.name)
 
     Scaffold(
         containerColor = Color.Transparent
@@ -62,7 +68,7 @@ fun DetailScreenContent(
         ) {
             // 🍌 Background image
             Image(
-                painter = painterResource(R.drawable.detail_lakatan),
+                painter = painterResource(backgroundRes),
                 contentDescription = "Background",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -90,7 +96,7 @@ fun DetailScreenContent(
                 fruitName = fruit.name,
                 ripeningStage = fruit.ripeningStage,
                 ripeningProcess = fruit.ripeningProcess,
-                shelfLife = fruit.shelfLife,
+                shelfLifeDisplay = shelfLifeDisplay,
                 confidence = 90
             )
 
@@ -104,11 +110,12 @@ fun CustomBottomSheetDetail(
     fruitName: String,
     ripeningStage: String,
     ripeningProcess: Boolean,
-    shelfLife: Int,
+    shelfLifeDisplay: String,
     confidence: Int,
 ) {
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
+    val displayName = getDisplayFruitName(fruitName)
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
@@ -159,7 +166,7 @@ fun CustomBottomSheetDetail(
 
                         Column {
                             Text(
-                                text = "$fruitName Banana",
+                                text = displayName,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 24.sp
@@ -179,7 +186,7 @@ fun CustomBottomSheetDetail(
                     FruitAnalysis(
                         ripeningStage = ripeningStage,
                         ripeningProcess = ripeningProcess,
-                        shelfLife = shelfLife,
+                        shelfLifeDisplay = shelfLifeDisplay,
                         confidence = confidence,
                     )
 
@@ -214,19 +221,3 @@ fun CustomBottomSheetDetail(
     }
 }
 
-//@Preview
-//@Composable
-//private fun DetailScreenContentPrev() {
-//    FructusTheme {
-//        DetailScreenContent(
-//            fruit = FruitEntity(
-//                id = 1,
-//                name = "Lakatan",
-//                shelfLife = 300,
-//                ripeningStage = "ripe",
-//                ripeningProcess = true
-//            ),
-//            onNavigate = {}
-//        )
-//    }
-//}

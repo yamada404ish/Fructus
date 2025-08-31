@@ -31,11 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.ui.camera.model.ShelfLifeRange
 import com.example.fructus.ui.detail.components.SuggestedRecipe
-import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDrawableIdByName
@@ -49,9 +48,10 @@ fun CustomBottomSheet(
     fruitName: String,
     ripeningStage: String,
     ripeningProcess: Boolean,
-    shelfLife: Int,
+    shelfLifeRange: ShelfLifeRange,
     confidence: Int,
     isSaved: Boolean,
+    shelfLifeDisplay: String
 
 
 
@@ -59,6 +59,8 @@ fun CustomBottomSheet(
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
+    val isSpoiled = Regex("^spoiled", RegexOption.IGNORE_CASE).containsMatchIn(fruitName)
+    val disableSave = isSpoiled || isSaved
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
@@ -105,8 +107,9 @@ fun CustomBottomSheet(
 
                 FruitAnalysis(
                     ripeningStage = ripeningStage,
-                    ripeningProcess = ripeningProcess,
-                    shelfLife = shelfLife,
+                    ripeningProcess = if (isSpoiled) false else ripeningProcess,
+                    shelfLifeDisplay = shelfLifeDisplay, // Use -1 to represent
+                    // "---"
                     confidence = confidence,
                 )
 
@@ -157,29 +160,6 @@ fun CustomBottomSheet(
                         }
                     }
 
-
-//                    if (matchedRecipes.isEmpty()) {
-//                        Box(
-//                            modifier = Modifier
-//                                .fillMaxSize(), // take up available space of the scrollable
-//                            contentAlignment = Alignment.Center // center both vertically & horizontally
-//                        ) {
-//                            Text(
-//                                text = "No recipes available for this stage.",
-//                                color = Color.Gray,
-//                                fontSize = 14.sp
-//                            )
-//                        }
-//                    } else {
-//                        matchedRecipes.forEach { recipe ->
-//                            SuggestedRecipe(
-//                                title = recipe.name,
-//                                description = recipe.description,
-//                                imageRes = context.getDrawableIdByName(recipe.imageResName),
-//                                modifier = Modifier.padding(vertical = 8.dp)
-//                            )
-//                        }
-//                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -187,24 +167,27 @@ fun CustomBottomSheet(
                 // Fixed Save button at the bottom
                 Button(
                     onClick = onSave,
-                    enabled = !isSaved,
+                    enabled = !disableSave,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(45.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSaved) Color(0xFFD1D1CC) else Color(0xFFBADBA2) // Light
-
-                    ),
-
+                        containerColor = if (disableSave) Color(0xFFD1D1CC) else Color(0xFFBADBA2)
+                    )
                 ) {
                     Text(
-                        if (isSaved) "Saved" else "Save" ,
-                        color = Color.Black,
+                        text = when {
+                            isSpoiled -> "Fruit is already spoiled"
+                            isSaved -> "Saved"
+                            else -> "Save"
+                        },
+                        color = if (isSpoiled || isSaved) Color(0xFF726F6F) else Color.Black,
                         fontSize = 18.sp,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Normal
                     )
                 }
+
             }
         }
     }
@@ -214,7 +197,7 @@ fun CustomBottomSheet(
 fun FruitAnalysis(
     ripeningStage: String,
     ripeningProcess: Boolean,
-    shelfLife: Int,
+    shelfLifeDisplay: String,
     confidence: Int,
 ) {
 
@@ -253,10 +236,10 @@ fun FruitAnalysis(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                InfoCard(title = "Shelf Life", value = "$shelfLife days")
+                InfoCard(title = "Shelf Life", value = shelfLifeDisplay)
                 InfoCard(title = "Confidence", value = "$confidence%")
-                InfoCard(title = "Process", value = if (ripeningProcess) "Natural" else
-                    "Artificial")
+                InfoCard(title = "Process", value = if (shelfLifeDisplay == "---") "---" else if
+                        (ripeningProcess) "Natural" else "Artificial")
             }
             Spacer(modifier = Modifier.height(16.dp))
             RipenessProgressBar(
@@ -303,20 +286,20 @@ fun InfoCard(title: String, value: String, modifier: Modifier = Modifier) {
 }
 
 
-
-@Preview
-@Composable
-private fun CustomBottomSheetPrev() {
-    FructusTheme {
-        CustomBottomSheet(
-            fruitName = "Cavendish",
-            ripeningStage = "Ripe",
-            ripeningProcess = false,
-            shelfLife = 3,
-            confidence = 90,
-            isSaved = true,
-            onSave = {}
-
-        )
-    }
-}
+//
+//@Preview
+//@Composable
+//private fun CustomBottomSheetPrev() {
+//    FructusTheme {
+//        CustomBottomSheet(
+//            fruitName = "Cavendish",
+//            ripeningStage = "Ripe",
+//            ripeningProcess = false,
+//            shelfLife = 3,
+//            confidence = 90,
+//            isSaved = true,
+//            onSave = {}
+//
+//        )
+//    }
+//}

@@ -7,12 +7,12 @@ import androidx.room.PrimaryKey
 data class FruitEntity (
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-
     val name: String,
-    val shelfLife: Int,
     val ripeningStage: String,
     val ripeningProcess: Boolean,
-    val scannedDate: String
-
+    val confidence: Int,
+    val scannedDate: String,
+    val scannedTime: String,
+    val scannedTimestamp: Long
 )
 

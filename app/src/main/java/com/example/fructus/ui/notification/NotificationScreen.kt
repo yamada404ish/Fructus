@@ -32,7 +32,6 @@ fun NotificationScreen(
 
         // Navigation callbacks for back and settings buttons
         onNavigateUp = onNavigateUp,
-        onSettingsClick = onSettingsClick
     )
 }
 

@@ -1,12 +1,20 @@
 package com.example.fructus.util
 
+import com.example.fructus.ui.camera.model.ShelfLifeRange
+
 fun getDisplayFruitName(fruitName: String): String {
-    return if (fruitName.equals("lakatan", ignoreCase = true) ||
-        fruitName.equals("saba", ignoreCase = true) ||
-        fruitName.equals("cavendish", ignoreCase = true)
-    ) {
-        "$fruitName Banana"
-    } else {
-        fruitName
+    return when (fruitName.lowercase()) {
+        "lakatan", "saba", "cavendish" -> "$fruitName Banana"
+        "carabao" -> "$fruitName Mango"
+        else -> fruitName
     }
+}
+
+fun formatShelfLife(days: Int): String {
+    return "$days ${if (days == 1) "day" else "days"}"
+}
+
+
+fun formatShelfLifeRange(range: ShelfLifeRange): String {
+    return "${range.minDays}–${range.maxDays} days"
 }

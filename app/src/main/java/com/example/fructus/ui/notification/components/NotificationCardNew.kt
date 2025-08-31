@@ -2,6 +2,7 @@ package com.example.fructus.ui.notification.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,21 +27,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
-import com.example.fructus.ui.model.Fruit
+import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.formatTimeAgo
 
 @Composable
 fun NotificationCard(
-    fruit: Fruit,
-    isRead: Boolean = false,
+    notification: NotificationEntity,
     onClick: () -> Unit = {}
 ) {
-    val backgroundColor = if (isRead) Color.White else Color(0xFFFFF8E1)
+    val backgroundColor = if (notification.isRead) Color.Transparent else Color(0xFFD0EFB9)
 
     Card (
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
+            .border(
+                width = if (notification.isRead) 1.dp else 0.dp,
+                color = if (notification.isRead) Color(0xFF718860) else Color.Transparent,
+                shape = RoundedCornerShape(16.dp)
+            )
+
             .clickable { onClick()}
             .height(80.dp),
         elevation = CardDefaults.cardElevation(1.dp),
@@ -76,7 +83,7 @@ fun NotificationCard(
                     .weight(1f)
             ){
                 Text(
-                    text = "Your ${fruit.name} is starting to spoil—best to use it soon!",
+                    text = notification.message,
                     fontSize = 12.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
@@ -88,7 +95,7 @@ fun NotificationCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "1h ago",
+                    formatTimeAgo(notification.timestamp),
                     fontSize = 10.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,

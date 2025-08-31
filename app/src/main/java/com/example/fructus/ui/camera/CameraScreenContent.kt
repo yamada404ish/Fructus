@@ -43,13 +43,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fructus.R
 import com.example.fructus.ui.shared.CustomBottomSheet
-import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
 import com.example.fructus.util.classifyRipeness
+import com.example.fructus.util.formatShelfLifeRange
+import com.example.fructus.util.getShelfLifeRange
 import com.example.fructus.util.rotate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,12 +58,16 @@ fun CameraScreenContent(
     detected: Boolean,
     detectedFruit: String,
     detectedRipeness: String,
-    onResumeScanning: () -> Unit,
+
+    // ✅ Placeholder values for now
+    dtProcess: Boolean = true,
+    dtConfidence: Int = 90,
+
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
     detectedRipenessState: MutableState<String>,
-    onSaveFruit: (String, String) -> Unit,
+    onSaveFruit: (String, String, Boolean, Int) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
 
@@ -76,13 +80,9 @@ fun CameraScreenContent(
     val isScanning = remember { mutableStateOf(false) } // ✅ control scanning start
     val isBottomSheetVisible = remember {mutableStateOf(false)}
 
-    val handleResumeScanning = {
-        isSaved.value = false
-        showSuccessMessage.value = false
-        detectedState.value = false
-        isScanning.value = true // resume scanning
-        onResumeScanning()
-    }
+    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
+    val shelfLifeDisplay = formatShelfLifeRange(shelfLifeRange)
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -227,7 +227,7 @@ fun CameraScreenContent(
                 contentDescription = "camera icon",
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 100.dp)
+                    .padding(bottom = 50.dp)
                     .size(100.dp)
                     .clickable(
                         onClick = { isScanning.value = true },
@@ -245,7 +245,7 @@ fun CameraScreenContent(
                 contentDescription = "camera scan",
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(360.dp),
+                    .size(460.dp),
                 tint = Color.Unspecified
             )
         }
@@ -289,46 +289,6 @@ fun CameraScreenContent(
                     isScanning.value = false
                 }
             } else if (isBottomSheetVisible.value) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.Black.copy(alpha = 0.5f)) // 👈 semi-transparent
-//                        .clickable(
-//                            onClick = {}, // close when tapping outside
-//                            indication = null,
-//                            interactionSource = remember { MutableInteractionSource() }
-//                        )
-//                )
-
-//                BottomSheetInformation(
-//                    fruitName = detectedFruit,
-//                    ripeningStage = detectedRipeness,
-//                    ripeningProcess = false,
-//                    shelfLife = 3
-//                )
-
-
-                // uncomment to use the new bottom sheet
-//                CustomBottomSheet(
-//                   fruitName = detectedFruit,
-//                   ripeningStage = detectedRipeness,
-//                   ripeningProcess = false,
-//                   shelfLife = 3,
-//                   confidence = 90,
-//                   isSaved = isSaved.value,
-//                   onSave = {
-//                       if (!isSaved.value) {
-//                           onSaveFruit(detectedFruit, detectedRipeness) // ✅ call parent save function
-//                           isSaved.value = true
-//                           showSuccessMessage.value = true
-//
-//                           CoroutineScope(Dispatchers.Main).launch {
-//                               delay(3000)
-//                               showSuccessMessage.value = false
-//                           }
-//                       }
-//                   }
-//               )
 
                 AnimatedVisibility(
                     visible = isBottomSheetVisible.value,
@@ -344,20 +304,18 @@ fun CameraScreenContent(
                     CustomBottomSheet(
                         fruitName = detectedFruit,
                         ripeningStage = detectedRipeness,
-                        ripeningProcess = false,
-                        shelfLife = 3,
-                        confidence = 90,
+                        ripeningProcess = dtProcess,
+                        confidence = dtConfidence,
+                        shelfLifeRange = shelfLifeRange,
+                        shelfLifeDisplay = shelfLifeDisplay,
                         isSaved = isSaved.value,
                         onSave = {
                             if (!isSaved.value) {
-                                onSaveFruit(detectedFruit, detectedRipeness) // ✅ call parent save function
+                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence) // ✅
+                                // call
+                                // parent save function
                                 isSaved.value = true
                                 showSuccessMessage.value = true
-
-//                                CoroutineScope(Dispatchers.Main).launch {
-//                                    delay(3000)
-//                                    showSuccessMessage.value = false
-//                                }
 
                                 Toast.makeText(
                                     context,
@@ -383,21 +341,3 @@ fun CameraScreenContent(
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview
-@Composable
-private fun CameraScreenPrev() {
-    FructusTheme {
-        CameraScreenContent(
-            detected = false,
-            detectedFruit = "",
-            detectedRipeness = "",
-            onResumeScanning = {},
-            lifecycleOwner = LocalLifecycleOwner.current,
-            detectedState = remember { mutableStateOf(false) },
-            detectedFruitState = remember { mutableStateOf("") },
-            detectedRipenessState = remember { mutableStateOf("") },
-            onSaveFruit = { _, _ -> },
-            onNavigateUp = {}
-        )
-    }
-}

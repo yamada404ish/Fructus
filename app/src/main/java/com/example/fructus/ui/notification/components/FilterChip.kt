@@ -1,6 +1,7 @@
 package com.example.fructus.ui.notification.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.fructus.ui.notification.model.Filter
+import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -26,26 +27,27 @@ fun FilterChip(
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(40))
+            .clip(RoundedCornerShape(12))
             .background(
-                if (isSelected) Color(0xFFDDCFAE) else Color.Transparent
+                if (isSelected) Color(0xFFBADBA2) else Color.Transparent,
+                        shape = RoundedCornerShape(12.dp)
+            )
+            .border(     // ✅ Outline for unselected
+                width = if (isSelected) 0.dp else 1.dp,
+                color = Color(0xFF718860),
+                shape = RoundedCornerShape(12.dp)
             )
             .clickable { onClick() }
-            .padding(horizontal = 18.dp, vertical = 4.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
             text = text,
             fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp
         )
     }
 }
-
-fun Filter.displayName(): String = when (this) {
-    Filter.All -> "All"
-    Filter.Unread -> "Unread"
-}
-
 
 @Preview
 @Composable
