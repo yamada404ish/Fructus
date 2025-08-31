@@ -8,15 +8,18 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.fructus.data.local.FruitDatabase
 import com.example.fructus.ui.camera.RealTimePredictionScreen
 import com.example.fructus.ui.detail.DetailScreen
 import com.example.fructus.ui.home.HomeScreen
 import com.example.fructus.ui.notification.NotificationScreen
 import com.example.fructus.ui.notification.NotificationViewModel
+import com.example.fructus.ui.notification.NotificationViewModelFactory
 import com.example.fructus.ui.onboard.OnboardingScreen
 import com.example.fructus.ui.setting.SettingsScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
@@ -85,9 +88,14 @@ fun FructusNav() {
         }
 
         // Notification screen
+        // Notification screen
         composable<Notification> {
             AppBackgroundScaffold {
-                val viewModel = remember { NotificationViewModel() }
+                val context = LocalContext.current
+                val db = remember { FruitDatabase.getDatabase(context) }
+                val factory = remember { NotificationViewModelFactory(db.fruitDao()) }
+                val viewModel: NotificationViewModel = viewModel(factory = factory)
+
                 NotificationScreen(
                     viewModel = viewModel,
                     onNavigateUp = { navController.navigateUp() },
@@ -95,6 +103,7 @@ fun FructusNav() {
                 )
             }
         }
+
 
         // Settings screen
         composable<Settings> {

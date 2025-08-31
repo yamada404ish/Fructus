@@ -1,15 +1,10 @@
-package com.example.fructus.data
+package com.example.fructus.ui.model
 
-import androidx.annotation.DrawableRes
-
-data class Fruit (
+data class Fruit(
     val id: Int,
-
     val name: String,
     val shelfLife: Int,
     val ripeningStage: String,
     val ripeningProcess: Boolean,
-
-    @DrawableRes val image: Int
+    val scannedDate: String
 )
-

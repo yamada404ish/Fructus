@@ -19,7 +19,7 @@ class CameraViewModel(private val fruitDao: FruitDao) : ViewModel() {
             // ✅ Insert placeholder values for now
             val fruit = FruitEntity(
                 name = name,
-                shelfLife = 3, // placeholder
+                shelfLife = 1, // placeholder
                 ripeningStage = ripeness,
                 ripeningProcess = false, // placeholder
                 scannedDate = currentDate

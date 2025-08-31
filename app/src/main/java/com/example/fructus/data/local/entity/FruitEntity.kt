@@ -14,5 +14,5 @@ data class FruitEntity (
     val ripeningProcess: Boolean,
     val scannedDate: String
 
-//    val image: Int
 )
+
