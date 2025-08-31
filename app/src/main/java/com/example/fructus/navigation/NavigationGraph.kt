@@ -14,7 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.fructus.data.local.FruitDatabase
-import com.example.fructus.ui.camera.RealTimePredictionScreen
+import com.example.fructus.ui.camera.Camera
 import com.example.fructus.ui.detail.DetailScreen
 import com.example.fructus.ui.home.HomeScreen
 import com.example.fructus.ui.notification.NotificationScreen
@@ -93,13 +93,15 @@ fun FructusNav() {
             AppBackgroundScaffold {
                 val context = LocalContext.current
                 val db = remember { FruitDatabase.getDatabase(context) }
-                val factory = remember { NotificationViewModelFactory(db.fruitDao()) }
+                val factory = remember { NotificationViewModelFactory(
+                    db.fruitDao(),
+                    db.notificationDao()
+                    ) }
                 val viewModel: NotificationViewModel = viewModel(factory = factory)
 
                 NotificationScreen(
                     viewModel = viewModel,
                     onNavigateUp = { navController.navigateUp() },
-                    onSettingsClick = { navController.navigate(Settings) }
                 )
             }
         }
@@ -120,7 +122,7 @@ fun FructusNav() {
             exitTransition = { fadeOut(tween(0)) }   // Instant transition
         ) {
             val context = LocalContext.current
-            RealTimePredictionScreen(
+            Camera(
                 context = context,
                 onNavigateUp = {
                     navController.navigate(Home) {

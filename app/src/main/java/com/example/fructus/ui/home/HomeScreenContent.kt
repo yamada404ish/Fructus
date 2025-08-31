@@ -39,13 +39,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
 import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FruitFilterToggle
 import com.example.fructus.ui.home.components.FruitItem
+import com.example.fructus.ui.home.model.SortOrder
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.isFruitSpoiled
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +59,9 @@ fun HomeScreenContent(
     onScanClick: () -> Unit,
     onSettingsClick: () -> Unit,
     selectedFilter: String,
-    onFilterChange: (String) -> Unit
+    onFilterChange: (String) -> Unit,
+    viewModel: HomeViewModel = viewModel()
+
 
 ) {
 
@@ -130,17 +135,20 @@ fun HomeScreenContent(
                 )
 
                 Icon(
-                    painter = painterResource(R.drawable.sort_newest),
-                    contentDescription = "Notification",
+                    painter = painterResource(
+                        if (state.sortOrder == SortOrder.OLDEST) R.drawable.sort_newest else R.drawable.sort_oldest
+                    ),
+                    contentDescription = "Sort Fruits",
                     modifier = Modifier
                         .size(30.dp)
                         .clickable(
-                            onClick = {  },
+                            onClick = { viewModel.toggleSortOrder() },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ),
                     tint = Color.Unspecified
                 )
+
             }
             Spacer(Modifier.size(16.dp))
 
@@ -189,19 +197,48 @@ fun HomeScreenContent(
                     }
                 }
                 else -> {
-                    LazyVerticalGrid(
-                        GridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(bottom = 30.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(18.dp)
-                    ) {
-                        itemsIndexed(state.fruits) { _, fruit ->
-                            FruitItem(
-                                fruit = fruit,
-                                onFruitClick = { onFruitClick(fruit.id) }
+
+                    val filteredFruits = when (selectedFilter) {
+                        "Spoiled" -> state.fruits.filter { isFruitSpoiled(it) }
+                        else -> state.fruits
+                    }
+
+                    if (filteredFruits.isEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 100.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.empty),
+                                contentDescription = "No fruits available",
+                                modifier = Modifier.size(200.dp)
                             )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = if (selectedFilter == "Spoiled") "No spoiled fruits available" else "No fruits available",
+                                color = Color(0xFF9D9076),
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp
+                            )
+                        }
+                    } else {
+                        LazyVerticalGrid(
+                            GridCells.Fixed(2),
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(bottom = 30.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(18.dp)
+                        ) {
+                            itemsIndexed(filteredFruits) { _, fruit ->
+                                FruitItem(
+                                    fruit = fruit,
+                                    onFruitClick = { onFruitClick(fruit.id) }
+                                )
+                            }
                         }
                     }
                 }

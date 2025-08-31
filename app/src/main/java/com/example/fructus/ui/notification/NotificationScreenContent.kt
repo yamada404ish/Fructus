@@ -1,5 +1,3 @@
-
-
 package com.example.fructus.ui.notification
 
 import androidx.compose.foundation.Image
@@ -19,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,23 +30,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
-import com.example.fructus.data.FruitNotification
+import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
 import com.example.fructus.ui.notification.model.Filter
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.isToday
+import com.example.fructus.util.isYesterday
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreenContent(
-    notifications: List<FruitNotification>,
+    notifications: List<NotificationEntity>,
     onNotificationClick: (index: Int) -> Unit,
     onMarkAllAsRead: () -> Unit,
     filter: Filter,
     onSelectedFilter: (Filter) -> Unit,
     onNavigateUp: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
 ) {
+
+    val todayNotifications = notifications.filter { isToday(it.timestamp) }
+    val yesterdayNotifications = notifications.filter { isYesterday(it.timestamp) }
 
     Scaffold (
         containerColor = Color.Transparent,
@@ -59,7 +60,7 @@ fun NotificationScreenContent(
                     containerColor = Color.Transparent
                 ),
                 modifier = Modifier
-                    .padding(top = 6.dp, start = 16.dp, end = 16.dp),
+                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -82,18 +83,7 @@ fun NotificationScreenContent(
                         letterSpacing = 0.1.sp
                     )
                 },
-                actions = {
-                    IconButton(
-                        onClick = onSettingsClick,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.fructus_settings_icon),
-                            contentDescription = "Settings",
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
+                actions = {}
             )
         }
     ){ innerPadding ->
@@ -126,7 +116,7 @@ fun NotificationScreenContent(
                     fontSize = 16.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFFA7956B)
+                    color = Color(0xFF718860)
                 )
                 Text (
                     "Mark all as read",
@@ -167,28 +157,41 @@ fun NotificationScreenContent(
                     )
                 }
             } else {
-                notifications.forEach { notification ->
+                if (todayNotifications.isNotEmpty()) {
+                    todayNotifications.forEach { notification ->
+                        NotificationCard(
+                            notification = notification,
+                            onClick = { onNotificationClick(notification.id) }
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+            if (yesterdayNotifications.isNotEmpty()) {
+                Text(
+                    "Yesterday",
+                    fontSize = 16.sp,
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF718860)
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+
+                yesterdayNotifications.forEach { notification ->
                     NotificationCard(
-                        fruit = notification.fruit,
-                        isRead = notification.isRead,
-                        onClick = {
-                            onNotificationClick(notification.fruit.id)
-                        }
+                        notification = notification,
+                        onClick = { onNotificationClick(notification.id) }
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                "Yesterday",
-                fontSize = 16.sp,
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Medium,
-                color = Color(0xFFA7956B)
-
-            )
             Spacer(modifier = Modifier.height(14.dp))
         }
     }
 }
+
+

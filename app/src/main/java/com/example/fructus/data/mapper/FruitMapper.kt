@@ -7,9 +7,8 @@ fun FruitEntity.toModel(): Fruit {
     return Fruit(
         id = id,
         name = name,
-        shelfLife = shelfLife,
         ripeningStage = ripeningStage,
         ripeningProcess = ripeningProcess,
-        scannedDate = scannedDate
+        scannedDate = scannedDate,
     )
 }

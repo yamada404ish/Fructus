@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.fructus.data.local.dao.FruitDao
 import com.example.fructus.data.local.entity.FruitEntity
+import com.example.fructus.ui.home.model.SortOrder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 // Holds the list of fruits to be shown on the Home screen
 data class HomeState(
     val fruits: List<FruitEntity> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val sortOrder: SortOrder = SortOrder.NEWEST
 )
 
 // ViewModel handles business logic and provides data to the Home screen
@@ -25,19 +27,38 @@ class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
     // Public read-only version exposed to the UI
     val state: StateFlow<HomeState> get() = _state
 
+
+    private var allFruits: List<FruitEntity> = emptyList()
+
     // When ViewModel is created
     init {
-        // Launch coroutine to observe fruit list from the database
         viewModelScope.launch {
-            // Whenever the fruit list changes in Room, update UI state
             fruitDao.getAllFruits().collectLatest { fruits ->
-                _state.value = HomeState(
-                    fruits = fruits,
-                    isLoading = false
-                ) // Update state with new list
+                allFruits = fruits
+                sortFruits() // Apply initial sort
             }
         }
     }
+
+    fun toggleSortOrder() {
+        val newOrder = if (_state.value.sortOrder == SortOrder.NEWEST) SortOrder.OLDEST else SortOrder.NEWEST
+        val sorted = when (newOrder) {
+            SortOrder.NEWEST -> allFruits.sortedByDescending { it.scannedTimestamp }
+            SortOrder.OLDEST -> allFruits.sortedBy { it.scannedTimestamp }
+        }
+        _state.value = _state.value.copy(fruits = sorted, sortOrder = newOrder)
+    }
+
+    private fun sortFruits() {
+        val currentOrder = _state.value.sortOrder
+        val sorted = when (currentOrder) {
+            SortOrder.NEWEST -> allFruits.sortedByDescending { it.scannedTimestamp }
+            SortOrder.OLDEST -> allFruits.sortedBy { it.scannedTimestamp }
+        }
+        _state.value = _state.value.copy(fruits = sorted, isLoading = false)
+    }
+
+
 }
 
 // Factory used to create HomeViewModel and inject the FruitDao dependency
@@ -50,6 +71,8 @@ class HomeViewModelFactory(
         return HomeViewModel(fruitDao) as T // Safe cast to expected type
     }
 }
+
+
 
 
 

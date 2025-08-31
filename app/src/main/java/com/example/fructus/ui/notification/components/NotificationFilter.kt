@@ -1,5 +1,6 @@
 package com.example.fructus.ui.notification.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,6 +18,7 @@ fun NotificationFilters(
     onSelectedFilter: (Filter) -> Unit
 ) {
     LazyRow (
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
         items (items) { filter ->
@@ -24,7 +26,7 @@ fun NotificationFilters(
                 text = filter.name,
                 isSelected = selectedFilter == filter,
                 onClick = { onSelectedFilter(filter) },
-//                modifier = Modifier.padding(end = 8.dp)
+
             )
             Spacer(modifier = Modifier.width(2.dp))
         }

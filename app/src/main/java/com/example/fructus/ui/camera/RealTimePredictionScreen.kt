@@ -1,5 +1,6 @@
 package com.example.fructus.ui.camera
 
+import android.R.attr.process
 import android.content.Context
 import android.content.pm.PackageManager
 import android.widget.Toast
@@ -13,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 
 @Composable
-fun RealTimePredictionScreen(
+fun Camera(
     context: Context,
     onNavigateUp: () -> Unit = {},
 ) {
@@ -26,7 +27,9 @@ fun RealTimePredictionScreen(
 
     val db = remember { com.example.fructus.data.local.FruitDatabase.getDatabase(context) }
     val cameraViewModel: CameraViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-        factory = CameraViewModelFactory(db.fruitDao())
+        factory = CameraViewModelFactory(
+            db.fruitDao(),
+            db.notificationDao())
     )
 
     val launcher = rememberLauncherForActivityResult(
@@ -57,18 +60,13 @@ fun RealTimePredictionScreen(
         detected = detected.value,
         detectedFruit = detectedFruit.value,
         detectedRipeness = detectedRipeness.value,
-        onResumeScanning = {
-            detected.value = false
-            detectedFruit.value = ""
-            detectedRipeness.value = ""
-        },
         lifecycleOwner = lifecycleOwner,
         detectedState = detected,
         detectedFruitState = detectedFruit,
         detectedRipenessState = detectedRipeness,
         onNavigateUp = onNavigateUp,
-        onSaveFruit = { fruit, ripeness ->
-            cameraViewModel.saveFruit(fruit, ripeness)
+        onSaveFruit = { fruit, ripeness, process, confidence ->
+            cameraViewModel.saveFruit(fruit, ripeness, process, confidence )
         }
     )
 }

@@ -31,8 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.calculateDaysSince
 import com.example.fructus.util.getDisplayFruitName
+import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getFruitDrawableId
+import com.example.fructus.util.getShelfLifeRange
 
 @Composable
 fun FruitItem(
@@ -40,10 +43,20 @@ fun FruitItem(
     fruit: FruitEntity,
     onFruitClick: (FruitEntity) -> Unit
 ) {
-    val backgroundColor = when (fruit.shelfLife) {
-        1 -> Color(0xFFF3A5A5) // Red-ish for 1 day
-        2 -> Color(0xFFF3E5A5) // Orange-ish for 2 days
-        else -> Color(0xFFC2F3A5) // Green-ish for 3+ days
+
+    val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
+    val estimatedShelfLife = shelfLifeRange.minDays
+    val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
+    val remainingShelfLife = estimatedShelfLife - daysSinceScan
+
+    val displayShelfLife = getDisplayShelfLife(fruit)
+
+    val backgroundColor = when {
+        Regex("^spoiled", RegexOption.IGNORE_CASE).containsMatchIn(fruit.name) -> Color(0xFFBDBDBD)
+        remainingShelfLife <= 1 -> Color(0xFFF3A5A5)
+        remainingShelfLife == 2 -> Color(0xFFF3E5A5)
+        remainingShelfLife > 2 -> Color(0xFFC2F3A5)
+        else -> Color.LightGray
     }
 
 
@@ -113,7 +126,7 @@ fun FruitItem(
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "${fruit.shelfLife} days",
+                        text = displayShelfLife,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 14.sp,
