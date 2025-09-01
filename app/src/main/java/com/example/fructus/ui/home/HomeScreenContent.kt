@@ -217,7 +217,8 @@ fun HomeScreenContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = if (selectedFilter == "Spoiled") "No spoiled fruits available" else "No fruits available",
+                                text = if (selectedFilter == "Spoiled") "No spoiled fruits " +
+                                        "available" else "No fruits available",
                                 color = Color(0xFF9D9076),
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Medium,
