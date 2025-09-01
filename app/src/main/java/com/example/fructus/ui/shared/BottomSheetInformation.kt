@@ -56,11 +56,13 @@ fun CustomBottomSheet(
 
 
 ) {
+    val isSpoiled = shelfLifeRange.minDays == -1
+    val disableSave = isSpoiled || isSaved
+
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
-    val isSpoiled = Regex("^spoiled", RegexOption.IGNORE_CASE).containsMatchIn(fruitName)
-    val disableSave = isSpoiled || isSaved
+
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {

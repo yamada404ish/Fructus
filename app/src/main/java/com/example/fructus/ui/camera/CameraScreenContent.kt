@@ -80,8 +80,13 @@ fun CameraScreenContent(
     val isScanning = remember { mutableStateOf(false) } // ✅ control scanning start
     val isBottomSheetVisible = remember {mutableStateOf(false)}
 
+    // 🔎 Shelf life check (centralized in util)
     val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
-    val shelfLifeDisplay = formatShelfLifeRange(shelfLifeRange)
+    val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) {
+        "---"
+    } else {
+        formatShelfLifeRange(shelfLifeRange)
+    }
 
 
     Box(

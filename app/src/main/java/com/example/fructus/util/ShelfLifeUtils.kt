@@ -4,6 +4,12 @@ import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.camera.model.ShelfLifeRange
 
 fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
+    val isSpoiled = Regex("^spoiled", RegexOption.IGNORE_CASE).containsMatchIn(fruitName)
+    if (isSpoiled) {
+        // Use -1 as a marker that shelf life is invalid
+        return ShelfLifeRange(-1, -1)
+    }
+
     val name = fruitName.lowercase()
     val stage = ripeness.lowercase()
 
@@ -36,11 +42,13 @@ fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
     }
 }
 
-fun getDisplayShelfLife(fruit: FruitEntity): String {
-    val isSpoiled = Regex("^spoiled", RegexOption.IGNORE_CASE).containsMatchIn(fruit.name)
-    if (isSpoiled) return "---"
 
+fun getDisplayShelfLife(fruit: FruitEntity): String {
     val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
+
+    // Spoiled case → "---"
+    if (shelfLifeRange.minDays == -1) return "---"
+
     val estimatedShelfLife = shelfLifeRange.minDays
     val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
     val remainingShelfLife = estimatedShelfLife - daysSinceScan
