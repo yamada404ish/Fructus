@@ -22,10 +22,19 @@ data class ClassificationResult(
 
 // --------------------- FRUIT TYPE CLASSIFIER ---------------------
 
-fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.95f): ClassificationResult {
-    // ✅ Added Spoiled Tomato and Spoiled Banana
+fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): ClassificationResult {
+    // ✅ Added Spoiled Mango
     val modelName = "fruit_type_model.tflite"
-    val labels = listOf("Cavendish", "Lakatan","Spoiled Banana", "Spoiled Tomato", "Tomato")
+    val labels = listOf(
+        "Cavendish",
+        "Lakatan",
+        "Mango",
+        "Saba",
+        "Spoiled Banana",
+        "Spoiled Mango",
+        "Spoiled Tomato",
+        "Tomato"
+    )
 
     val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(bitmap)
@@ -48,18 +57,23 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.95f): C
 
 fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, threshold: Float = 0.7f): ClassificationResult {
     // ✅ Only classify ripeness if it's NOT spoiled
-    if (fruitType.equals("Spoiled Banana", true) || fruitType.equals("Spoiled Tomato", true)) {
+    if (fruitType.equals("Spoiled Banana", true)
+        || fruitType.equals("Spoiled Tomato", true)
+        || fruitType.equals("Spoiled Mango", true)
+    ) {
         return ClassificationResult("Spoiled", 1f)
     }
 
     val modelName = when (fruitType.lowercase()) {
-        "lakatan" -> "banana_lakatan_model.tflite"
         "cavendish" -> "banana_cavendish_model.tflite"
+        "lakatan" -> "banana_lakatan_model.tflite"
+        "saba" -> "banana_saba_model.tflite"
+        "mango" -> "mango_model.tflite"
         "tomato" -> "tomato_model.tflite"
         else -> return ClassificationResult("Unknown", 0f)
     }
 
-    // ✅ Removed Spoiled from ripeness stages
+
     val labels = listOf("Overripe", "Ripe", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(bitmap)
@@ -84,7 +98,6 @@ fun mapRipeningStage(fruitResult: ClassificationResult): String {
     return when {
         // ✅ Spoiled detected from fruit type
         fruitResult.label.contains("Spoiled", ignoreCase = true) -> "Spoiled"
-
         fruitResult.label.contains("Unripe", ignoreCase = true) -> "Unripe"
         fruitResult.label.contains("Ripe", ignoreCase = true) -> "Ripe"
         fruitResult.label.contains("Overripe", ignoreCase = true) -> "Overripe"
@@ -152,4 +165,33 @@ fun ImageProxy.toBitmap(): Bitmap? {
 fun Bitmap.rotate(degrees: Int): Bitmap {
     val matrix = Matrix().apply { postRotate(degrees.toFloat()) }
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}
+
+// --------------------- HISTOGRAM UTILS ---------------------
+
+fun calculateHistogram(bitmap: Bitmap): IntArray {
+    val histogram = IntArray(256)
+    val pixels = IntArray(bitmap.width * bitmap.height)
+    bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+    for (pixel in pixels) {
+        val r = (pixel shr 16) and 0xFF
+        val g = (pixel shr 8) and 0xFF
+        val b = pixel and 0xFF
+        val gray = (r + g + b) / 3
+        histogram[gray]++
+    }
+    return histogram
+}
+
+fun compareHistograms(h1: IntArray?, h2: IntArray?): Float {
+    if (h1 == null || h2 == null) return 0f
+    val minLen = minOf(h1.size, h2.size)
+    var diff = 0L
+    var total = 0L
+    for (i in 0 until minLen) {
+        diff += kotlin.math.abs(h1[i] - h2[i])
+        total += h1[i] + h2[i]
+    }
+    return if (total == 0L) 0f else 1f - (diff.toFloat() / total.toFloat())
 }
