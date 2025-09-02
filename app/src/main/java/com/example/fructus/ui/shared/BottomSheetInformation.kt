@@ -80,7 +80,7 @@ fun CustomBottomSheet(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.84f)
+                .fillMaxHeight(if (isSpoiled) 0.55f else 0.84f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(Color(0xFFF0EFE9))
@@ -117,51 +117,54 @@ fun CustomBottomSheet(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                Text(
-                    text = "Try the following:",
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp
-                )
-                // Scrollable content
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState())
-                ) {
+                // 👉 Only show recipes if NOT spoiled
+                if (!isSpoiled) {
+                    Text(
+                        text = "Try the following:",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp
+                    )
 
-                    if (matchedRecipes.isEmpty()) {
-                        // shrink content
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp), // just some breathing room
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "No recipes available for this stage.",
-                                color = Color.Gray,
-                                fontSize = 14.sp
-                            )
-                        }
-                    } else {
-                        // only scroll if there are items
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            matchedRecipes.forEach { recipe ->
-                                SuggestedRecipe(
-                                    title = recipe.name,
-                                    description = recipe.description,
-                                    imageRes = context.getDrawableIdByName(recipe.imageResName),
-                                    modifier = Modifier.padding(vertical = 8.dp)
+                    // Scrollable content
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        if (matchedRecipes.isEmpty()) {
+                            // shrink content
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "No recipes available for this stage.",
+                                    color = Color.Gray,
+                                    fontSize = 14.sp
                                 )
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                matchedRecipes.forEach { recipe ->
+                                    SuggestedRecipe(
+                                        title = recipe.name,
+                                        description = recipe.description,
+                                        imageRes = context.getDrawableIdByName(recipe.imageResName),
+                                        modifier = Modifier.padding(vertical = 8.dp)
+                                    )
+                                }
                             }
                         }
                     }
 
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
