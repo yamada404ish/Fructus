@@ -35,8 +35,6 @@ import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
 import com.example.fructus.ui.notification.model.Filter
 import com.example.fructus.ui.theme.poppinsFontFamily
-import com.example.fructus.util.isToday
-import com.example.fructus.util.isYesterday
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,9 +46,6 @@ fun NotificationScreenContent(
     onSelectedFilter: (Filter) -> Unit,
     onNavigateUp: () -> Unit = {},
 ) {
-
-    val todayNotifications = notifications.filter { isToday(it.timestamp) }
-    val yesterdayNotifications = notifications.filter { isYesterday(it.timestamp) }
 
     Scaffold (
         containerColor = Color.Transparent,
@@ -112,14 +107,14 @@ fun NotificationScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Today",
+                    "Recent",
                     fontSize = 16.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF718860)
                 )
                 Text (
-                    "Mark all as read",
+                    "✓ Mark all as read",
                     fontSize = 16.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -157,30 +152,7 @@ fun NotificationScreenContent(
                     )
                 }
             } else {
-                if (todayNotifications.isNotEmpty()) {
-                    todayNotifications.forEach { notification ->
-                        NotificationCard(
-                            notification = notification,
-                            onClick = { onNotificationClick(notification.id) }
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
-
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-            if (yesterdayNotifications.isNotEmpty()) {
-                Text(
-                    "Yesterday",
-                    fontSize = 16.sp,
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF718860)
-                )
-                Spacer(modifier = Modifier.height(14.dp))
-
-                yesterdayNotifications.forEach { notification ->
+                notifications.forEach { notification ->
                     NotificationCard(
                         notification = notification,
                         onClick = { onNotificationClick(notification.id) }
@@ -188,7 +160,6 @@ fun NotificationScreenContent(
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
-
             Spacer(modifier = Modifier.height(14.dp))
         }
     }

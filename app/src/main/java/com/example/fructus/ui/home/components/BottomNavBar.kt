@@ -178,3 +178,11 @@ fun BottomNavBar(
 
     }
 }
+
+
+
+/*
+
+put an dot indicator if there is a new notif for the user
+
+*/

@@ -62,9 +62,9 @@ fun FruitItem(
 
     Card (
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onFruitClick(fruit) }
-            .shadow(8.dp, RoundedCornerShape(2.dp)),
+            .shadow(8.dp, RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onSecondary
         ),
@@ -73,7 +73,7 @@ fun FruitItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(10.dp),
             horizontalAlignment = Alignment.Start
         ) {
             Box(
@@ -92,49 +92,51 @@ fun FruitItem(
             }
 
             Spacer(Modifier.height(8.dp))
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
+                    // 🍌 Fruit name (centered above)
                     Text(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontSize = 20.sp,
+                        color = Color.Black
                     )
 
-                    Text (
-                        text = fruit.scannedDate,
-                        fontFamily = poppinsFontFamily,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 12.sp,
-                        color = Color(0xFF706F6F)
-
-                    )
-                }
-
-
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = backgroundColor,
-                            shape = RoundedCornerShape(50)
+                    // 📅 Scanned date and 🕒 Shelf life side by side
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = fruit.scannedDate,
+                            fontFamily = poppinsFontFamily,
+                            fontStyle = FontStyle.Italic,
+                            fontSize = 12.sp,
+                            color = Color(0xFF706F6F)
                         )
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = displayShelfLife,
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp,
-                        color = Color(0xFF000000),
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
 
+                        Box(
+                            modifier = Modifier
+                                .background(color = backgroundColor, shape = RoundedCornerShape(40))
+                                .padding(horizontal = 10.dp, vertical = 2.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = displayShelfLife,
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color.Black
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(Modifier.height(6.dp))
