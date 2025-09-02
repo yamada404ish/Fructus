@@ -56,7 +56,7 @@ fun SettingsOptionCard(
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = Color(0xFFBADBA2),
                 modifier = Modifier.size(iconSize.dp)
             )
 

@@ -123,7 +123,13 @@ fun FruitItem(
 
                         Box(
                             modifier = Modifier
-                                .background(color = backgroundColor, shape = RoundedCornerShape(40))
+                                .background(
+                                    color = when (displayShelfLife) {
+                                        "Spoiled!" -> Color(0xFFEE4949) // 🔴 Red for spoiled
+                                        else -> backgroundColor
+                                    },
+                                    shape = RoundedCornerShape(40)
+                                )
                                 .padding(horizontal = 10.dp, vertical = 2.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -132,7 +138,10 @@ fun FruitItem(
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp,
-                                color = Color.Black
+                                color = when (displayShelfLife) {
+                                    "Spoiled!" -> Color(0xFFFFFFFF) // ⚪ White text for spoiled
+                                    else -> Color.Black
+                                }
                             )
                         }
                     }

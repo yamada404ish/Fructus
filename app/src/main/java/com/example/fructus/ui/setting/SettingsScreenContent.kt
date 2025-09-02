@@ -21,8 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.fructus.R
-import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
-import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,11 +29,11 @@ fun SettingsScreenContent(
     state: SettingsState,
     onNavigateUp: () -> Unit,
     onToggleNotifications: (Boolean) -> Unit,
-    onEnableNotifications: () -> Unit,
-    onDismissSheet: () -> Unit,
-    onShowClearDialog: () -> Unit,
-    onClearAll: () -> Unit,
-    onDismissClearDialog: () -> Unit
+//    onEnableNotifications: () -> Unit,
+//    onDismissSheet: () -> Unit,
+//    onShowClearDialog: () -> Unit,
+//    onClearAll: () -> Unit,
+//    onDismissClearDialog: () -> Unit
 ) {
     Scaffold(
         containerColor = Color.Transparent,
@@ -45,6 +43,8 @@ fun SettingsScreenContent(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent
                 ),
+                modifier = Modifier
+                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
                 navigationIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -82,30 +82,30 @@ fun SettingsScreenContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Clear notifications card
-            SettingsOptionCard(
-                iconRes = R.drawable.fructus_trash_settings_icon,
-                iconSize = 34,
-                title = "Clear All Notifications",
-                subtitle = "Remove all existing notifications",
-                onClick = onShowClearDialog
-            )
+//            SettingsOptionCard(
+//                iconRes = R.drawable.fructus_trash_settings_icon,
+//                iconSize = 34,
+//                title = "Clear All Notifications",
+//                subtitle = "Remove all existing notifications",
+//                onClick = onShowClearDialog
+//            )
         }
     }
 
     // Show bottom sheet if permission is needed
-    if (state.showSheet) {
-        EnableNotificationBottomSheet(
-            onEnableClick = onEnableNotifications,
-            onDismissClick = onDismissSheet,
-            onDismissRequest = onDismissSheet
-        )
-    }
-
-    // Show dialog to confirm clearing notifications
-    if (state.showClearDialog) {
-        ClearNotificationsDialog(
-            onDismiss = onDismissClearDialog,
-            onClearAll = onClearAll
-        )
-    }
+//    if (state.showSheet) {
+//        EnableNotificationBottomSheet(
+//            onEnableClick = onEnableNotifications,
+//            onDismissClick = onDismissSheet,
+//            onDismissRequest = onDismissSheet
+//        )
+//    }
+//
+//    // Show dialog to confirm clearing notifications
+//    if (state.showClearDialog) {
+//        ClearNotificationsDialog(
+//            onDismiss = onDismissClearDialog,
+//            onClearAll = onClearAll
+//        )
+//    }
 }

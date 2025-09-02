@@ -1,6 +1,7 @@
 package com.example.fructus.ui.notification
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.fructus.ui.notification.model.Filter
@@ -9,10 +10,13 @@ import com.example.fructus.ui.notification.model.Filter
 fun NotificationScreen(
     viewModel: NotificationViewModel,      // This is the ViewModel that holds notification data and logic
     onNavigateUp: () -> Unit = {},         // Callback for the back button (default: do nothing)
-    onSettingsClick: () -> Unit = {}       // Callback for the settings button (default: do nothing)
+    onArchiveClick: () -> Unit = {}
 ) {
 
     val notifications by viewModel.notifications.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.clearNewFlag()
+    }
 
     NotificationScreenContent(
         notifications = when (viewModel.filter) {       // ✅ apply filter at UI-level
@@ -32,6 +36,9 @@ fun NotificationScreen(
 
         // Navigation callbacks for back and settings buttons
         onNavigateUp = onNavigateUp,
+
+        // Callback for the archive button
+        onArchiveClick = onArchiveClick
     )
 }
 

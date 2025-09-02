@@ -65,7 +65,7 @@ fun CustomSwitchButton(
             .width(buttonWidth)
             .height(buttonHeight)
             .clip(CircleShape)
-            .background(if (isChecked) MaterialTheme.colorScheme.primary else MaterialTheme
+            .background(if (isChecked) Color(0xFFBADBA2) else MaterialTheme
                 .colorScheme.secondary)
             .clickable(
                 interactionSource = interactionSource,

@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.fructus.data.local.FruitDatabase
+import com.example.fructus.ui.archive.ArchiveScreen
 import com.example.fructus.ui.camera.Camera
 import com.example.fructus.ui.detail.DetailScreen
 import com.example.fructus.ui.home.HomeScreen
@@ -88,7 +89,6 @@ fun FructusNav() {
         }
 
         // Notification screen
-        // Notification screen
         composable<Notification> {
             AppBackgroundScaffold {
                 val context = LocalContext.current
@@ -101,7 +101,16 @@ fun FructusNav() {
 
                 NotificationScreen(
                     viewModel = viewModel,
-                    onNavigateUp = { navController.navigateUp() },
+                    onArchiveClick = {navController.navigate(Archive)},
+                    onNavigateUp = { navController.navigateUp() }
+                )
+            }
+        }
+
+        composable <Archive> {
+            AppBackgroundScaffold {
+                ArchiveScreen(
+                    onNavigateUp = { navController.navigateUp() }
                 )
             }
         }
