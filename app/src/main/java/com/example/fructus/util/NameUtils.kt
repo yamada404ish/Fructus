@@ -10,11 +10,6 @@ fun getDisplayFruitName(fruitName: String): String {
     }
 }
 
-fun formatShelfLife(days: Int): String {
-    return "$days ${if (days == 1) "day" else "days"}"
-}
-
-
 fun formatShelfLifeRange(range: ShelfLifeRange): String {
     return "${range.minDays}–${range.maxDays} days"
 }

@@ -40,8 +40,6 @@ class CameraViewModel(
 }
 
 class CameraViewModelFactory(
-
-
     private val fruitDao: FruitDao,
     private val notificationDao: NotificationDao
 ) : ViewModelProvider.Factory {

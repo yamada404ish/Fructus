@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -150,7 +151,7 @@ fun HomeScreenContent(
                 )
 
             }
-            Spacer(Modifier.size(16.dp))
+            Spacer(Modifier.height(16.dp))
 
             when {
                 state.isLoading -> {
@@ -174,6 +175,7 @@ fun HomeScreenContent(
                         }
                     }
                 }
+
                 state.fruits.isEmpty() -> {
                     Column(
                         modifier = Modifier
@@ -196,6 +198,7 @@ fun HomeScreenContent(
                         )
                     }
                 }
+
                 else -> {
 
                     val filteredFruits = when (selectedFilter) {
@@ -229,8 +232,8 @@ fun HomeScreenContent(
                         LazyVerticalGrid(
                             GridCells.Fixed(2),
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(bottom = 30.dp),
+                                .fillMaxSize()
+                                .padding(bottom = 26.dp),
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                             horizontalArrangement = Arrangement.spacedBy(18.dp)
                         ) {
@@ -239,6 +242,9 @@ fun HomeScreenContent(
                                     fruit = fruit,
                                     onFruitClick = { onFruitClick(fruit.id) }
                                 )
+                            }
+                            item(span = { GridItemSpan(2) }) { // make spacer span full row
+                                Spacer(modifier = Modifier.height(0.2f.dp))
                             }
                         }
                     }
