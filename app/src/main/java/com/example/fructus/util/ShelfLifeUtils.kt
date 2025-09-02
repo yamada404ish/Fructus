@@ -54,9 +54,8 @@ fun getDisplayShelfLife(fruit: FruitEntity): String {
     val remainingShelfLife = estimatedShelfLife - daysSinceScan
 
     return when {
-        remainingShelfLife < 0 -> "Spoiled!"
-        remainingShelfLife == 0 -> "Expiring!"
-        remainingShelfLife == 1 -> "1 day"
+        remainingShelfLife <= 0 -> "Spoiled!"
+        remainingShelfLife == 1 -> "Spoiling!"
         else -> "$remainingShelfLife days"
     }
 }

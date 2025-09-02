@@ -54,6 +54,7 @@ import com.example.fructus.util.isFruitSpoiled
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
+    hasNewNotification: Boolean,
     state: HomeState,
     onFruitClick: (Int) -> Unit,
     onNotificationClick: () -> Unit,
@@ -106,6 +107,7 @@ fun HomeScreenContent(
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
             BottomNavBar(
+                hasNewNotification = hasNewNotification,
                 onNotificationClick = onNotificationClick,
                 onSettingsClick = onSettingsClick
             )
@@ -246,6 +248,7 @@ fun HomeScreenContent(
                             item(span = { GridItemSpan(2) }) { // make spacer span full row
                                 Spacer(modifier = Modifier.height(0.2f.dp))
                             }
+
                         }
                     }
                 }
@@ -265,7 +268,8 @@ private fun HomeScreenPrev() {
             onScanClick = {},
             onSettingsClick = {},
             selectedFilter = "All",
-            onFilterChange = {}
+            onFilterChange = {},
+            hasNewNotification =true
         )
 
     }

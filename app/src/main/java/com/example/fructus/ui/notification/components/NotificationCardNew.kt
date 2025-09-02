@@ -26,15 +26,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fructus.R
 import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.formatTimeAgo
+import com.example.fructus.util.getFruitDrawableId
 
 @Composable
 fun NotificationCard(
     notification: NotificationEntity,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+
 ) {
     val backgroundColor = if (notification.isRead) Color.Transparent else Color(0xFFD0EFB9)
 
@@ -68,7 +69,7 @@ fun NotificationCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image (
-                painter = painterResource(R.drawable.img_placeholder),
+                painter = painterResource(getFruitDrawableId(notification.fruitName)),
                 contentDescription = "Item Image",
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))

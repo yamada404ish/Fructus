@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.fructus.util.DataStoreManager
-import com.example.fructus.util.navigateToNotificationSettings
 
 @Composable
 fun SettingsScreen(
@@ -30,14 +29,14 @@ fun SettingsScreen(
         state = state,
         onNavigateUp = onNavigateUp,
         onToggleNotifications = viewModel::onToggleNotifications,
-        onEnableNotifications = {
-            // Open system notification settings
-            navigateToNotificationSettings(context)
-            viewModel.markReturnedFromSettings()
-        },
-        onDismissSheet = viewModel::hideBottomSheet,
-        onShowClearDialog = viewModel::showClearDialog,
-        onClearAll = viewModel::hideClearDialog, // Replace with your real logic if needed
-        onDismissClearDialog = viewModel::hideClearDialog
+//        onEnableNotifications = {
+//            // Open system notification settings
+//            navigateToNotificationSettings(context)
+//            viewModel.markReturnedFromSettings()
+//        },
+//        onDismissSheet = viewModel::hideBottomSheet,
+//        onShowClearDialog = viewModel::showClearDialog,
+//        onClearAll = viewModel::hideClearDialog, // Replace with your real logic if needed
+//        onDismissClearDialog = viewModel::hideClearDialog
     )
 }

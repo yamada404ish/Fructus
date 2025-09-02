@@ -11,7 +11,10 @@ import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.model.Filter
 import com.example.fructus.util.getShelfLifeRange
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NotificationViewModel(
@@ -25,6 +28,8 @@ class NotificationViewModel(
     private val _notifications = MutableStateFlow<List<NotificationEntity>>(emptyList())
     val notifications: StateFlow<List<NotificationEntity>> = _notifications
 
+
+
     init {
         // 1. Watch fruits and trigger notifications
         viewModelScope.launch {
@@ -36,16 +41,19 @@ class NotificationViewModel(
                     val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
                     val remainingShelfLife = estimatedShelfLife - daysSinceScan
 
-                    if (remainingShelfLife == 1) {
-                        val existing = notificationDao.getNotificationByFruitAndTimestamp(
-                            fruit.name,
-                            fruit.scannedDate,
-                            fruit.scannedTime
-                        )
-                        if (existing == null) {
+                    val message: String? = when {
+                        remainingShelfLife > 1 -> null
+                        remainingShelfLife == 1 -> "${fruit.name} has only 1 day left!"
+                        remainingShelfLife == 0 -> "${fruit.name} is spoiled!"
+                        else -> null
+                    }
+
+                    if (message != null) {
+                        val latestNotification = notificationDao.getLatestNotificationForFruit(fruit.name)
+                        if (latestNotification == null || latestNotification.message != message) {
                             val notification = NotificationEntity(
                                 fruitName = fruit.name,
-                                message = "${fruit.name} has only 1 day left!",
+                                message = message,
                                 isRead = false,
                                 scannedDate = fruit.scannedDate,
                                 scannedTime = fruit.scannedTime,
@@ -58,15 +66,29 @@ class NotificationViewModel(
             }
         }
 
-        // 2. Watch notifications
+        // 2. Watch notifications and enhance messages dynamically
         viewModelScope.launch {
             notificationDao.getAllNotifications().collect { list ->
-                _notifications.value = list
+                _notifications.value = list.map { enhanceMessage(it) }
             }
         }
     }
 
-
+    // --- Enhancer for spoiled notifications ---
+    private fun enhanceMessage(notification: NotificationEntity): NotificationEntity {
+        val daysAgo = calculateDaysSince(notification.timestamp)
+        return if (notification.message.contains("spoiled", ignoreCase = true) && daysAgo > 1) {
+            val newMessage = when {
+                daysAgo in 2..6 -> "${notification.fruitName} has been spoiled for days"
+                daysAgo in 7..13 -> "${notification.fruitName} has been spoiled for a week"
+                daysAgo >= 14 -> "${notification.fruitName} has been spoiled for weeks"
+                else -> notification.message
+            }
+            notification.copy(message = newMessage)
+        } else {
+            notification
+        }
+    }
 
     fun onSelectFilter(newFilter: Filter) {
         filter = newFilter
@@ -88,13 +110,24 @@ class NotificationViewModel(
             }
         }
     }
+
     private fun calculateDaysSince(timestamp: Long): Int {
         val now = System.currentTimeMillis()
         val diff = now - timestamp
         return (diff / (1000 * 60 * 60 * 24)).toInt()
     }
 
+    val hasNewNotification: StateFlow<Boolean> = notificationDao.getAllNotifications()
+        .map { list -> list.any { it.isNew } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    fun clearNewFlag() {
+        viewModelScope.launch {
+            notificationDao.clearNewFlag()
+        }
+    }
 }
+
 
 
 

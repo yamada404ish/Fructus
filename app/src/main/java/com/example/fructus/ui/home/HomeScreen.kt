@@ -14,6 +14,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fructus.data.local.FruitDatabase
 import com.example.fructus.navigation.Notification
+import com.example.fructus.ui.notification.NotificationViewModel
+import com.example.fructus.ui.notification.NotificationViewModelFactory
 import com.example.fructus.ui.shared.CameraPermissionModal
 import com.example.fructus.util.DataStoreManager
 import com.example.fructus.util.SequentialPermissionRequest
@@ -27,6 +29,7 @@ fun HomeScreen(
     onNavigateToScan: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
+
     var selectedFilter by remember { mutableStateOf("All") }
 
     val context = LocalContext.current
@@ -36,6 +39,14 @@ fun HomeScreen(
     val viewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(db.fruitDao())
     )
+
+    val notificationViewModel: NotificationViewModel = viewModel(
+        factory = NotificationViewModelFactory(
+            db.fruitDao(),
+            db.notificationDao())
+    )
+
+    val hasNewNotification by notificationViewModel.hasNewNotification.collectAsState()
 
     val state by viewModel.state.collectAsState()
     val shouldRequestPermission by dataStore.shouldRequestNotificationFlow.collectAsState(initial = false)
@@ -74,6 +85,7 @@ fun HomeScreen(
     }
 
     HomeScreenContent(
+        hasNewNotification = hasNewNotification,
         state = state,
         onFruitClick = onFruitClick,
         onNotificationClick = { navController.navigate(Notification) },

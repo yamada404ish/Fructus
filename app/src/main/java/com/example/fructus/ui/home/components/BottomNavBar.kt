@@ -1,6 +1,7 @@
 package com.example.fructus.ui.home.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +33,8 @@ import com.example.fructus.ui.theme.poppinsFontFamily
 @Composable
 fun BottomNavBar(
     onNotificationClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    hasNewNotification: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -126,18 +130,29 @@ fun BottomNavBar(
                     .clickable { }
 //                    .padding(8.dp)
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.bell),
-                    contentDescription = "Notifications",
-                    modifier = Modifier
-                        .size(34.dp)
-                        .clickable(
-                            onClick = { onNotificationClick() },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
-                    tint = Color.Unspecified
-                )
+                Box(
+                    modifier = Modifier.size(34.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.bell),
+                        contentDescription = "Notifications",
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clickable { onNotificationClick() },
+                        tint = Color.Unspecified
+                    )
+
+                    if (hasNewNotification) {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .background(Color.Red, CircleShape)
+                                .align(Alignment.TopEnd)
+                                .offset(x = 2.dp, y = (-2).dp)
+                        )
+                    }
+                }
                 Text(
                     text = "Notifications",
                     fontSize = 11.sp,

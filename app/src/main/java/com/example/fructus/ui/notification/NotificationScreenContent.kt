@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -35,6 +37,7 @@ import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
 import com.example.fructus.ui.notification.model.Filter
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.calculateDaysSince
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,9 +48,12 @@ fun NotificationScreenContent(
     filter: Filter,
     onSelectedFilter: (Filter) -> Unit,
     onNavigateUp: () -> Unit = {},
+    onArchiveClick: () -> Unit = {}
 ) {
+    val recent = notifications.filter { calculateDaysSince(it.timestamp) <= 1 }
+    val earlier = notifications.filter { calculateDaysSince(it.timestamp) > 1 }
 
-    Scaffold (
+    Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
@@ -60,7 +66,7 @@ fun NotificationScreenContent(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        Modifier
+                        modifier = Modifier
                             .size(30.dp)
                             .clickable(
                                 onClick = onNavigateUp,
@@ -69,78 +75,75 @@ fun NotificationScreenContent(
                             )
                     )
                 },
-                 title = {
+                title = {
                     Text(
                         text = "Notifications",
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize =  22.sp,
+                        fontSize = 22.sp,
                         letterSpacing = 0.1.sp
                     )
                 },
-                actions = {}
+                actions = {
+                    Icon(
+                        painter = painterResource(R.drawable.archive),
+                        contentDescription = "Archive",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable(
+                                onClick = onArchiveClick,
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
+                    )
+                }
             )
         }
-    ){ innerPadding ->
-        Column (
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(start = 24.dp, end = 24.dp)
+                .padding(horizontal = 24.dp)
                 .fillMaxSize()
         ) {
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
+            // Filters row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 NotificationFilters(
-                    items = Filter.entries.toList(), selectedFilter = filter,
+                    items = Filter.entries.toList(),
+                    selectedFilter = filter,
                     onSelectedFilter = onSelectedFilter
                 )
+
+                if (notifications.isNotEmpty()) {
+                    Text(
+                        "✓ Mark all as read",
+                        fontSize = 14.sp,
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF718860),
+                        modifier = Modifier.clickable { onMarkAllAsRead() }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "Recent",
-                    fontSize = 16.sp,
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF718860)
-                )
-                Text (
-                    "✓ Mark all as read",
-                    fontSize = 16.sp,
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clickable{
-                            onMarkAllAsRead()
-                        }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-
 
             if (notifications.isEmpty()) {
+                // Empty state
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(top = 100.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image (
+                    Image(
                         painter = painterResource(R.drawable.empty),
                         contentDescription = "No notification available",
-                        modifier = Modifier
-                            .size(200.dp)
+                        modifier = Modifier.size(200.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -152,15 +155,52 @@ fun NotificationScreenContent(
                     )
                 }
             } else {
-                notifications.forEach { notification ->
-                    NotificationCard(
-                        notification = notification,
-                        onClick = { onNotificationClick(notification.id) }
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
+                // Notifications list
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    if (recent.isNotEmpty()) {
+                        item {
+                            Text(
+                                "Recent",
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF718860),
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                        items(recent) { notification ->
+                            NotificationCard(
+                                notification = notification,
+                                onClick = { onNotificationClick(notification.id) }
+                            )
+                        }
+                    }
+
+                    if (earlier.isNotEmpty()) {
+                        item {
+                            Text(
+                                "Earlier",
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF718860),
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+                        items(earlier) { notification ->
+                            NotificationCard(
+                                notification = notification,
+                                onClick = { onNotificationClick(notification.id) }
+                            )
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(14.dp)) }
                 }
             }
-            Spacer(modifier = Modifier.height(14.dp))
         }
     }
 }
