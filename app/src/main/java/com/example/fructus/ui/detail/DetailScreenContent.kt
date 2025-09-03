@@ -36,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fructus.R
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.shared.FruitAnalysis
@@ -45,6 +44,7 @@ import com.example.fructus.util.getDetailBackgroundRes
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
+import com.example.fructus.util.getFruitDrawableId
 import com.example.fructus.util.loadRecipesFromJson
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,10 +155,11 @@ fun CustomBottomSheetDetail(
                             .fillMaxWidth()
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.rectnagle),
+                            painter = painterResource(getFruitDrawableId(fruitName)),
                             contentDescription = "Fruit Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
                                 .size(100.dp)
 
                         )
