@@ -49,12 +49,18 @@ class NotificationViewModel(
                     }
 
                     if (message != null) {
-                        val latestNotification = notificationDao.getLatestNotificationForFruit(fruit.name)
-                        if (latestNotification == null || latestNotification.message != message) {
+                        val existing = notificationDao.getNotificationByFruitAndTimestamp(
+                            fruit.name,
+                            fruit.scannedDate,
+                            fruit.scannedTime
+                        )
+
+                        if (existing == null) {
                             val notification = NotificationEntity(
                                 fruitName = fruit.name,
                                 message = message,
                                 isRead = false,
+                                isNew = true,
                                 scannedDate = fruit.scannedDate,
                                 scannedTime = fruit.scannedTime,
                                 timestamp = System.currentTimeMillis()
