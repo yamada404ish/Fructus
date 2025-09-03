@@ -1,7 +1,14 @@
 [
   {
-    "name": "Banana Flour",
-    "description": "A flexible alternative to wheat flour, perfect for gluten-free diets.",
+    "name": "Green Banana Stew",
+    "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
+    "imageResName": "recipe_banana_flour",
+    "fruitType": "cavendish",
+    "stage": "unripe"
+  },
+  {
+    "name": "Green Banana Fries",
+    "description": "Fried unripe banana slices, a savory alternative to fries.",
     "imageResName": "recipe_banana_flour",
     "fruitType": "cavendish",
     "stage": "unripe"
@@ -16,16 +23,16 @@
   },
 
   {
-    "name": "Banana Bread",
-    "description": "Sweet bread or cake made from mashed bananas.",
-    "imageResName": "recipe_banana_bread",
+    "name": "Banana Oatmeal Pancake",
+    "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
+    "imageResName": "recipe_pancake",
     "fruitType": "cavendish",
     "stage": "ripe"
   },
 
   {
-    "name": "Banana Smoothie",
-    "description": "Tasty banana smoothies that double as nutritious meal replacements.",
+    "name": " Maruya",
+    "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_smoothie",
     "fruitType": "cavendish",
     "stage": "overripe"
@@ -42,9 +49,16 @@
 
 
   {
-    "name": "Banana Chips",
-    "description": "Crisp slices of bananas that are usually consumed as a snack.",
-    "imageResName": "recipe_banana_chips",
+    "name": "Green Banana Stew",
+    "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
+    "imageResName": "recipe_stew",
+    "fruitType": "lakatan",
+    "stage": "unripe"
+  },
+  {
+    "name": "Green Banana Fries",
+    "description": "Fried unripe banana slices, a savory alternative to fries.",
+    "imageResName": "recipe_fries",
     "fruitType": "lakatan",
     "stage": "unripe"
   },
@@ -58,16 +72,24 @@
   },
 
   {
-    "name": "Banana Pudding",
-    "description": "A layered dessert of bananas, pudding, wafers, and airy topping.",
+    "name": "Banana Oatmeal Pancakes",
+    "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
     "imageResName": "recipe_banana_pudding",
     "fruitType": "lakatan",
     "stage": "ripe"
   },
 
   {
-    "name": "Banana Buchi",
-    "description": "A cherished Filipino snack with a crisp shell and gooey, sweet center.",
+    "name": "Chocolate covered bananas",
+    "description": "Frozen bananas dipped in chocolate, topped with nuts or sprinkles.",
+    "imageResName": "recipe_choco",
+    "fruitType": "lakatan",
+    "stage": "ripe"
+  },
+
+  {
+    "name": "Banana Fritters",
+    "description": " Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_buchi",
     "fruitType": "lakatan",
     "stage": "overripe"
@@ -75,7 +97,7 @@
 
   {
     "name": "Banana Bread",
-    "description": "Sweet bread or cake made from mashed bananas.",
+    "description": "Mashed bananas mixed into batter, baked into a loaf.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "lakatan",
     "stage": "overripe"
@@ -84,9 +106,9 @@
 
 
   {
-    "name": "Banana Chips",
-    "description": "Crisp slices of bananas that are usually consumed as a snack.",
-    "imageResName": "recipe_banana_chips",
+    "name": "Nilupak",
+    "description": "Mashed bananas with butter, sugar, and coconut, a sweet delicacy.",
+    "imageResName": "recipe_nilupak",
     "fruitType": "saba",
     "stage": "unripe"
   },
@@ -109,6 +131,14 @@
   {
     "name": "Banana Bread",
     "description": "Sweet bread or cake made from mashed bananas.",
+    "imageResName": "recipe_banana_bread",
+    "fruitType": "saba",
+    "stage": "overripe"
+  },
+
+  {
+    "name": "Banana Fritters",
+    "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "saba",
     "stage": "overripe"
