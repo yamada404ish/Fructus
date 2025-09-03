@@ -132,7 +132,7 @@ fun FructusNav() {
         ) {
             val context = LocalContext.current
             Camera(
-                context = context,
+
                 onNavigateUp = {
                     navController.navigate(Home) {
                         popUpTo<Home> { inclusive = true }
