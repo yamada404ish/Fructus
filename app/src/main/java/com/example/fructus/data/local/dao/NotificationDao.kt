@@ -13,6 +13,12 @@ interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNotification(notification: NotificationEntity)
 
+    @Query("SELECT * FROM notifications WHERE isArchived = 0 ORDER BY timestamp DESC")
+    fun getActiveNotifications(): Flow<List<NotificationEntity>>
+
+    @Query("SELECT * FROM notifications WHERE isArchived = 1 ORDER BY timestamp DESC")
+    fun getArchivedNotifications(): Flow<List<NotificationEntity>>
+
     @Query("SELECT * FROM notifications ORDER BY timestamp DESC")
     fun getAllNotifications(): Flow<List<NotificationEntity>>
 
@@ -34,19 +40,17 @@ interface NotificationDao {
     @Query("SELECT * FROM notifications WHERE fruitName = :fruitName ORDER BY timestamp DESC LIMIT 1")
     suspend fun getLatestNotificationForFruit(fruitName: String): NotificationEntity?
 
+    // Archive old notifications (older than specified days)
+    @Query("UPDATE notifications SET isArchived = 1 WHERE isArchived = 0 AND timestamp < :cutoffTimestamp")
+    suspend fun archiveOldNotifications(cutoffTimestamp: Long)
 
+    // Get notifications that need to be archived
+    @Query("SELECT * FROM notifications WHERE isArchived = 0 AND timestamp < :cutoffTimestamp")
+    suspend fun getNotificationsToArchive(cutoffTimestamp: Long): List<NotificationEntity>
 
-//    @Query("UPDATE notifications SET isArchived = 1 WHERE id = :id")
-//    suspend fun archiveNotification(id: Int)
-//
-//    @Query("UPDATE notifications SET isArchived = 0 WHERE id = :id")
-//    suspend fun restoreNotification(id: Int)
-//
-//    @Query("SELECT * FROM notifications WHERE isArchived = 0 ORDER BY timestamp DESC")
-//    fun getActiveNotifications(): Flow<List<NotificationEntity>>
-//
-//    @Query("SELECT * FROM notifications WHERE isArchived = 1 ORDER BY timestamp DESC")
-//    fun getArchivedNotifications(): Flow<List<NotificationEntity>>
+    // Manual archive specific notification
+    @Query("UPDATE notifications SET isArchived = 1 WHERE id = :notificationId")
+    suspend fun archiveNotification(notificationId: Int)
 
 }
 

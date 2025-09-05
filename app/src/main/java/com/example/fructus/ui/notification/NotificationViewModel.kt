@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class NotificationViewModel(
     private val fruitDao: FruitDao,
@@ -25,13 +26,22 @@ class NotificationViewModel(
     var filter by mutableStateOf(Filter.All)
         private set
 
+    companion object {
+        private const val ARCHIVE_AFTER_DAYS = 7L // Notifications stay for 7 days
+    }
+
     private val _notifications = MutableStateFlow<List<NotificationEntity>>(emptyList())
     val notifications: StateFlow<List<NotificationEntity>> = _notifications
 
 
 
     init {
-        // 1. Watch fruits and trigger notifications
+        // 1. Auto-archive old notifications periodically
+        viewModelScope.launch {
+            autoArchiveOldNotifications()
+        }
+
+        // 2. Watch fruits and trigger notifications
         viewModelScope.launch {
             fruitDao.getAllFruits().collect { fruits ->
                 fruits.forEach { fruit ->
@@ -67,7 +77,8 @@ class NotificationViewModel(
                                 isNew = true,
                                 scannedDate = fruit.scannedDate,
                                 scannedTime = fruit.scannedTime,
-                                timestamp = System.currentTimeMillis()
+                                timestamp = System.currentTimeMillis(),
+                                isArchived = false
                             )
                             notificationDao.insertNotification(notification)
                         }
@@ -77,13 +88,26 @@ class NotificationViewModel(
             }
         }
 
-        // 2. Watch notifications and enhance messages dynamically
+        // 3. Watch active notifications and enhance messages dynamically
         viewModelScope.launch {
-            notificationDao.getAllNotifications().collect { list ->
+            notificationDao.getActiveNotifications().collect { list ->
                 _notifications.value = list.map { enhanceMessage(it) }
             }
         }
     }
+    // Auto-archive notifications older than ARCHIVE_AFTER_DAYS
+    private suspend fun autoArchiveOldNotifications() {
+        val cutoffTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(ARCHIVE_AFTER_DAYS)
+        notificationDao.archiveOldNotifications(cutoffTime)
+    }
+
+    // Manual archive function
+    fun archiveNotification(notificationId: Int) {
+        viewModelScope.launch {
+            notificationDao.archiveNotification(notificationId)
+        }
+    }
+
 
     // --- Enhancer for spoiled notifications ---
     private fun enhanceMessage(notification: NotificationEntity): NotificationEntity {
@@ -129,7 +153,7 @@ class NotificationViewModel(
         return (diff / (1000 * 60 * 60 * 24)).toInt()
     }
 
-    val hasNewNotification: StateFlow<Boolean> = notificationDao.getAllNotifications()
+    val hasNewNotification: StateFlow<Boolean> = notificationDao.getActiveNotifications()
         .map { list -> list.any { it.isNew } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
@@ -138,6 +162,14 @@ class NotificationViewModel(
             notificationDao.clearNewFlag()
         }
     }
+    // Call this periodically (e.g., when app starts or notification screen opens)
+    fun refreshAndArchive() {
+        viewModelScope.launch {
+            autoArchiveOldNotifications()
+        }
+    }
+
+
 }
 
 

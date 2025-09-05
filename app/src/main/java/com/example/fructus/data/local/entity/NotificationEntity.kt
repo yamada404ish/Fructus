@@ -15,6 +15,7 @@ data class NotificationEntity(
     val scannedDate: String,
     val scannedTime: String,
     val isNew: Boolean = true,
+    val isArchived: Boolean = false,
 
     // store as epoch millis
     val timestamp: Long
