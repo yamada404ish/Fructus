@@ -291,7 +291,7 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): C
     val labels = listOf(
         "Cavendish",
         "Lakatan",
-        "Mango",
+        "Carabao",
         "Saba",
         "Spoiled Banana",
         "Spoiled Mango",
@@ -331,7 +331,7 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, thresh
         "cavendish" -> "banana_cavendish_model.tflite"
         "lakatan" -> "banana_lakatan_model.tflite"
         "saba" -> "banana_saba_model.tflite"
-        "mango" -> "mango_model.tflite"
+        "carabao" -> "mango_model.tflite"
         "tomato" -> "tomato_model.tflite"
         else -> return ClassificationResult("Unknown", 0f)
     }
@@ -422,6 +422,8 @@ fun ImageProxy.toBitmap(): Bitmap? {
     val out = ByteArrayOutputStream()
     yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
     val jpegBytes = out.toByteArray()
+
+    this.close()
     return BitmapFactory.decodeByteArray(jpegBytes, 0, jpegBytes.size)
 }
 

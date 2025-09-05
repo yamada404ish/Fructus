@@ -719,7 +719,7 @@ fun CameraScreenContent(
 
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
-                if (detectedFruit == "No fruit detected") {
+                if (detectedFruit == "No fruit detected" || detectedRipeness == "Unknown") {
                     // ❌ Don't open bottom sheet, just show message
                     isBottomSheetVisible.value = false
                 } else {
@@ -755,17 +755,48 @@ fun CameraScreenContent(
                     detectedState.value = false
                     isScanning.value = false
                 }
-            } else if (isBottomSheetVisible.value) {
+            }
+
+            // temporary for unknown ripeness stage
+            else if (detectedRipeness == "Unknown") {
+                AnimatedVisibility (
+                    visible = detectedState.value,
+                    enter = fadeIn(animationSpec = tween(300)),
+                    exit = fadeOut(animationSpec = tween(300))
+                ){
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center // 👈 centers inside full screen
+                    ) {
+                        Text(
+                            "Try again",
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 20.sp,
+                            color = Color.Green
+                        )
+                    }
+                }
+                LaunchedEffect(detectedFruit) {
+                    kotlinx.coroutines.delay(2000)
+                    detectedState.value = false
+                    isScanning.value = false
+                }
+            }
+
+            // temporary for unknown ripeness stage
+
+            else if (isBottomSheetVisible.value) {
 
                 AnimatedVisibility(
                     visible = isBottomSheetVisible.value,
                     enter = slideInVertically(
                         initialOffsetY = { fullHeight -> fullHeight }, // 👈 start offscreen
-                        animationSpec = tween(durationMillis = 9000)
+                        animationSpec = tween(durationMillis = 900)
                     ),
                     exit = slideOutVertically(
                         targetOffsetY = { fullHeight -> fullHeight }, // 👈 slide down when hidden
-                        animationSpec = tween(durationMillis = 9000)
+                        animationSpec = tween(durationMillis = 900)
                     )
                 ) {
                     CustomBottomSheet(
