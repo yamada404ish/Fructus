@@ -44,7 +44,7 @@ class NotificationViewModel(
                     val message: String? = when {
                         remainingShelfLife > 1 -> null
                         remainingShelfLife == 1 -> "${fruit.name} has only 1 day left!"
-                        remainingShelfLife == 0 -> "${fruit.name} is spoiled!"
+                        remainingShelfLife <= 0 -> "${fruit.name} is spoiled!"
                         else -> null
                     }
 
@@ -83,9 +83,9 @@ class NotificationViewModel(
     // --- Enhancer for spoiled notifications ---
     private fun enhanceMessage(notification: NotificationEntity): NotificationEntity {
         val daysAgo = calculateDaysSince(notification.timestamp)
-        return if (notification.message.contains("spoiled", ignoreCase = true) && daysAgo > 1) {
+        return if (notification.message.contains("spoiled", ignoreCase = true)) {
             val newMessage = when {
-                daysAgo in 2..6 -> "${notification.fruitName} has been spoiled for days"
+                daysAgo in 1..6 -> "${notification.fruitName} has been spoiled for days"
                 daysAgo in 7..13 -> "${notification.fruitName} has been spoiled for a week"
                 daysAgo >= 14 -> "${notification.fruitName} has been spoiled for weeks"
                 else -> notification.message
@@ -95,6 +95,7 @@ class NotificationViewModel(
             notification
         }
     }
+
 
     fun onSelectFilter(newFilter: Filter) {
         filter = newFilter
