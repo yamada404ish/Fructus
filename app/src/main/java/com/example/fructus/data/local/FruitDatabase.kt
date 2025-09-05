@@ -9,9 +9,13 @@ import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.data.local.entity.NotificationEntity
 
-@Database(entities = [ FruitEntity::class, NotificationEntity::class ], version = 2, exportSchema = false) // ⬅️ bumped
-// version
+@Database(
+    entities = [FruitEntity::class, NotificationEntity::class],
+    version = 3, // ✅ bumped version (2 → 3 to reset schema mismatch)
+    exportSchema = false
+)
 abstract class FruitDatabase : RoomDatabase() {
+
     abstract fun fruitDao(): FruitDao
     abstract fun notificationDao(): NotificationDao
 
@@ -28,11 +32,8 @@ abstract class FruitDatabase : RoomDatabase() {
                     FruitDatabase::class.java,
                     DATABASE_NAME
                 )
-                    // Development only: wipes DB when schema changes
+                    // ✅ For development: clears DB when schema changes
                     .fallbackToDestructiveMigration()
-
-                    // For production later:
-                    // .addMigrations(MIGRATION_1_2, MIGRATION_2_3, ...)
                     .build()
                 INSTANCE = instance
                 instance

@@ -19,7 +19,7 @@ fun Camera(
     onNavigateUp: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val lifecycleOwner =context as LifecycleOwner
+    val lifecycleOwner = context as LifecycleOwner
 
     val permissionState = remember { mutableStateOf(false) }
 
@@ -31,7 +31,8 @@ fun Camera(
     val cameraViewModel: CameraViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
         factory = CameraViewModelFactory(
             db.fruitDao(),
-            db.notificationDao())
+            db.notificationDao()
+        )
     )
 
     val launcher = rememberLauncherForActivityResult(
@@ -68,7 +69,7 @@ fun Camera(
         detectedRipenessState = detectedRipeness,
         onNavigateUp = onNavigateUp,
         onSaveFruit = { fruit, ripeness, process, confidence ->
-            cameraViewModel.saveFruit(fruit, ripeness, process, confidence )
+            cameraViewModel.saveFruit(fruit, ripeness, process, confidence)
         }
     )
 }
