@@ -15,6 +15,8 @@ fun NotificationScreen(
 ) {
 
     val notifications by viewModel.notifications.collectAsState()
+    val archivedCount by viewModel.archivedCount.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.clearNewFlag()
     }
@@ -30,6 +32,8 @@ fun NotificationScreen(
             Filter.Unread -> notifications.filter { !it.isRead }
         },  // Show filtered notifications based on selected filter
         filter = viewModel.filter,                        // Current filter value (All or Unread)
+
+        onArchiveCount = archivedCount,
 
         // When a new filter is selected, update it in the ViewModel
         onSelectedFilter = viewModel::onSelectFilter,
