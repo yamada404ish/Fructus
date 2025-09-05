@@ -79,7 +79,7 @@ class CameraViewModel(
             val currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
             val timestamp = now.time
 
-            // ✅ Insert placeholder values for now
+            // ✅ Insert placeholder value s for now
             val fruit = FruitEntity(
                 name = name,
                 ripeningStage = ripeness,

@@ -45,7 +45,7 @@ fun Camera(
         }
     )
 
-    // Request camera permission
+    // Request c amera permission
     LaunchedEffect(Unit) {
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) -> {

@@ -119,7 +119,7 @@ fun CameraScreenContent(
                                     try {
                                         val (fruitRes, ripenessRes) = detectAndClassifyFruit(rotatedBitmap, it)
 
-                                        // update UI state on main thread
+                                        // update UI    state on main thread
                                         kotlinx.coroutines.withContext(Dispatchers.Main) {
                                             isSaved.value = false
                                             detectedFruitState.value = fruitRes.label

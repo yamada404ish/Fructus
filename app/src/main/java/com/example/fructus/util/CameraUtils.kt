@@ -77,7 +77,7 @@ fun runYoloDetection(bitmap: Bitmap, context: Context, threshold: Float = 0.5f):
         input.putFloat((px and 0xFF) / 255f)
     }
 
-    // YOLO output shape [1,8400,9]
+    // YOLO output shape [1,840 0,9]
     val output = Array(1) { Array(8400) { FloatArray(9) } }
     interpreter.run(input, output)
     interpreter.close()
