@@ -734,8 +734,8 @@ fun CameraScreenContent(
             if (detectedFruit == "No fruit detected"){
                 AnimatedVisibility (
                     visible = detectedState.value,
-                    enter = fadeIn(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(300))
+                    enter = fadeIn(animationSpec = tween(100)),
+                    exit = fadeOut(animationSpec = tween(100))
                 ){
                     Box(
                         modifier = Modifier.fillMaxSize(),
