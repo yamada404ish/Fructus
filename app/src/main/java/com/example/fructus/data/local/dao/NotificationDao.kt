@@ -52,5 +52,10 @@ interface NotificationDao {
     @Query("UPDATE notifications SET isArchived = 1 WHERE id = :notificationId")
     suspend fun archiveNotification(notificationId: Int)
 
+    // Delete archived notifications older than specified days
+    @Query("DELETE FROM notifications WHERE isArchived = 1 AND timestamp < :cutoffTimestamp")
+    suspend fun deleteOldArchivedNotifications(cutoffTimestamp: Long)
+
+
 }
 
