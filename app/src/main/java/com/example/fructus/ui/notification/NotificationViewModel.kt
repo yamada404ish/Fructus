@@ -60,6 +60,7 @@ class NotificationViewModel(
 
                         if (existing == null) {
                             val notification = NotificationEntity(
+                                fruitId = fruit.id,
                                 fruitName = fruit.name,
                                 message = message,
                                 isRead = false,

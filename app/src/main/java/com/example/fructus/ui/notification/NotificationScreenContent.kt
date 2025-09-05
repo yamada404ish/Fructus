@@ -43,7 +43,7 @@ import com.example.fructus.util.calculateDaysSince
 @Composable
 fun NotificationScreenContent(
     notifications: List<NotificationEntity>,
-    onNotificationClick: (index: Int) -> Unit,
+    onNotificationClick: (notificationId: Int, fruitId: Int) -> Unit,
     onMarkAllAsRead: () -> Unit,
     filter: Filter,
     onSelectedFilter: (Filter) -> Unit,
@@ -174,7 +174,7 @@ fun NotificationScreenContent(
                         items(recent) { notification ->
                             NotificationCard(
                                 notification = notification,
-                                onClick = { onNotificationClick(notification.id) }
+                                onClick = { onNotificationClick(notification.id, notification.fruitId) }
                             )
                         }
                     }
@@ -193,7 +193,8 @@ fun NotificationScreenContent(
                         items(earlier) { notification ->
                             NotificationCard(
                                 notification = notification,
-                                onClick = { onNotificationClick(notification.id) }
+                                onClick = { onNotificationClick(notification.id, notification
+                                    .fruitId) }
                             )
                         }
                     }

@@ -8,6 +8,7 @@ data class NotificationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    val fruitId: Int,
     val fruitName: String,
     val message: String,
     val isRead: Boolean = false,

@@ -10,7 +10,8 @@ import com.example.fructus.ui.notification.model.Filter
 fun NotificationScreen(
     viewModel: NotificationViewModel,      // This is the ViewModel that holds notification data and logic
     onNavigateUp: () -> Unit = {},         // Callback for the back button (default: do nothing)
-    onArchiveClick: () -> Unit = {}
+    onArchiveClick: () -> Unit = {},
+    onNotificationNavigate: (fruitId: Int) -> Unit = {}
 ) {
 
     val notifications by viewModel.notifications.collectAsState()
@@ -29,7 +30,12 @@ fun NotificationScreen(
         onSelectedFilter = viewModel::onSelectFilter,
 
         // When a user taps a notification, mark it as read
-        onNotificationClick = viewModel::markNotificationAsRead,
+        onNotificationClick = { notificationId, fruitId ->
+            // ✅ Mark as read
+            viewModel.markNotificationAsRead(notificationId)
+            // ✅ Navigate to detail
+            onNotificationNavigate(fruitId)
+        },
 
         // When user taps "Mark All as Read", update all
         onMarkAllAsRead = viewModel::markAllAsRead,

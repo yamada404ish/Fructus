@@ -102,7 +102,11 @@ fun FructusNav() {
                 NotificationScreen(
                     viewModel = viewModel,
                     onArchiveClick = {navController.navigate(Archive)},
-                    onNavigateUp = { navController.navigateUp() }
+                    onNavigateUp = { navController.navigateUp() },
+                    onNotificationNavigate = { fruitId ->
+                        navController.navigate(Detail(fruitId))
+                    }
+
                 )
             }
         }

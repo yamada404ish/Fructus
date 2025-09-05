@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +40,7 @@ fun NotificationCard(
     onClick: () -> Unit = {},
 
 ) {
+    val clicked = remember { mutableStateOf(false) }
     val backgroundColor = if (notification.isRead) Color.Transparent else Color(0xFFD0EFB9)
 
     Card (
@@ -49,7 +53,16 @@ fun NotificationCard(
                 shape = RoundedCornerShape(16.dp)
             )
 
-            .clickable { onClick()}
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                // ✅ Only allow single click
+                if (!clicked.value) {
+                    clicked.value = true
+                    onClick()
+                }
+            }
             .height(80.dp),
         elevation = CardDefaults.cardElevation(1.dp),
 
