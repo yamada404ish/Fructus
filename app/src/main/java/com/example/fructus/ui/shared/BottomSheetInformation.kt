@@ -176,7 +176,7 @@ fun CustomBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
-                        .height(45.dp),
+                        .height(55.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (disableSave) Color(0xFFD1D1CC) else Color(0xFFBADBA2)
                     )
@@ -248,6 +248,15 @@ fun FruitAnalysis(
                         (ripeningProcess) "Natural" else "Artificial")
             }
             Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                "Ripeness Stage upon scanning",
+                fontFamily = poppinsFontFamily,
+                fontStyle = FontStyle.Italic,
+                fontSize = 12.sp,
+                letterSpacing = 0.1f.sp,
+                color = Color(0xFF6B6767)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
             RipenessProgressBar(
                 currentStage = ripeningStage.toRipenessStage(),
                 modifier = Modifier.fillMaxWidth()
