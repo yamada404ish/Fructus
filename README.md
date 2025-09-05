@@ -4,9 +4,6 @@ FRUCTUS - an Android Application for Determining the Ripeness and Predicting the
 
 📌 Always create a new branch from the latest main so you don’t bring old code or conflicts into your branch.
 
-<img width="823" height="592" alt="image" src="https://github.com/user-attachments/assets/33b5d210-bdf7-4c54-b5a9-c38ce902a08f" />
-
-
 
 # How to merge your branch into main using terminal:
 ```
