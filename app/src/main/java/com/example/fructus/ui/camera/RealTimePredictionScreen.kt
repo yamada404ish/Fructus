@@ -1,6 +1,7 @@
 package com.example.fructus.ui.camera
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,16 +10,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 
 @Composable
 fun Camera(
+    context: Context,
     onNavigateUp: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner =context as LifecycleOwner
 
     val permissionState = remember { mutableStateOf(false) }
 
@@ -45,7 +46,7 @@ fun Camera(
 
     // Request camera permission
     LaunchedEffect(Unit) {
-        when (android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA) -> {
                 permissionState.value = true
             }
