@@ -123,12 +123,14 @@ fun BottomNavBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Notifications
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .clickable { }
-//                    .padding(8.dp)
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onNotificationClick() }
             ) {
                 Box(
                     modifier = Modifier.size(34.dp),
@@ -138,8 +140,7 @@ fun BottomNavBar(
                         painter = painterResource(R.drawable.bell),
                         contentDescription = "Notifications",
                         modifier = Modifier
-                            .size(34.dp)
-                            .clickable { onNotificationClick() },
+                            .size(34.dp),
                         tint = Color.Unspecified
                     )
 
@@ -166,19 +167,16 @@ fun BottomNavBar(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .clickable {  }
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onSettingsClick() }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.settings),
                     contentDescription = "Settings",
                     modifier = Modifier
-                        .size(34.dp)
-                        .clickable(
-                            onClick = { onSettingsClick() },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
+                        .size(34.dp),
                     tint = Color.Unspecified
                 )
                 Text(

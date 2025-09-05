@@ -175,6 +175,7 @@ fun CustomBottomSheet(
                     enabled = !disableSave,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(bottom = 16.dp)
                         .height(45.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (disableSave) Color(0xFFD1D1CC) else Color(0xFFBADBA2)

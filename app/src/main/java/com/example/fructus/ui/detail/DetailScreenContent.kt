@@ -65,6 +65,10 @@ fun DetailScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .clickable( // 👈 this absorbs touches so they don’t leak back to Home
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { }
         ) {
             // 🍌 Background image
             Image(

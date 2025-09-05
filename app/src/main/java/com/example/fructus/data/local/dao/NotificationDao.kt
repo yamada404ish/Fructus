@@ -25,14 +25,16 @@ interface NotificationDao {
     @Query("SELECT * FROM notifications WHERE fruitName = :fruitName LIMIT 1")
     suspend fun getNotificationByFruit(fruitName: String): NotificationEntity?
 
-    @Query("SELECT * FROM notifications WHERE fruitName = :name AND scannedDate = :date AND scannedTime = :time LIMIT 1")
-    suspend fun getNotificationByFruitAndTimestamp(name: String, date: String, time: String): NotificationEntity?
+    @Query("SELECT * FROM notifications WHERE fruitName = :name AND scannedDate = :date AND message = :message AND scannedTime = :time LIMIT 1")
+    suspend fun getNotificationByFruitAndTimestamp(name: String, date: String, message:String, time: String): NotificationEntity?
 
     @Query("UPDATE notifications SET isNew = 0")
     suspend fun clearNewFlag()
 
     @Query("SELECT * FROM notifications WHERE fruitName = :fruitName ORDER BY timestamp DESC LIMIT 1")
     suspend fun getLatestNotificationForFruit(fruitName: String): NotificationEntity?
+
+
 
 //    @Query("UPDATE notifications SET isArchived = 1 WHERE id = :id")
 //    suspend fun archiveNotification(id: Int)

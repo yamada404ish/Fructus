@@ -73,5 +73,5 @@ fun isFruitSpoiled(fruit: FruitEntity): Boolean {
     val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
     val remainingShelfLife = estimatedShelfLife - daysSinceScan
 
-    return remainingShelfLife < 0
+    return remainingShelfLife <= 0
 }

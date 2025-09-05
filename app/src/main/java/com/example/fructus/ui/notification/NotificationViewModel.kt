@@ -49,10 +49,13 @@ class NotificationViewModel(
                     }
 
                     if (message != null) {
+                        // Check if we already notified this exact status
                         val existing = notificationDao.getNotificationByFruitAndTimestamp(
                             fruit.name,
                             fruit.scannedDate,
-                            fruit.scannedTime
+                            message,
+                            fruit.scannedTime,
+
                         )
 
                         if (existing == null) {
@@ -68,6 +71,7 @@ class NotificationViewModel(
                             notificationDao.insertNotification(notification)
                         }
                     }
+
                 }
             }
         }

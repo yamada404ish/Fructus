@@ -3,6 +3,7 @@ package com.example.fructus.ui.home.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,7 +65,11 @@ fun FruitItem(
     Card (
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .clickable { onFruitClick(fruit) }
+            .clickable(
+                onClick = { onFruitClick(fruit) },
+                indication = null, // 🚫 remove ripple, prevents ghost click
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .shadow(8.dp, RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onSecondary
