@@ -2,13 +2,9 @@ FRUCTUS - an Android Application for Determining the Ripeness and Predicting the
 
 📌 PLEASE! DO BRANCH 👉👈
 
-# DO THIS BEFORE CREATING YOUR BRANCH 
-## Always start a new branch from the latest main
-```
-git checkout main
-git pull origin main
-git checkout -b your-branch-name
-```
+### Always create a new branch from the latest main so you don’t bring old code or conflicts into your branch.
+
+
 
 
 # How to merge your branch into main using terminal:
