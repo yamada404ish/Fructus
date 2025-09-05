@@ -26,10 +26,9 @@ class NotificationViewModel(
     var filter by mutableStateOf(Filter.All)
         private set
 
-
-
     companion object {
         private const val ARCHIVE_AFTER_DAYS = 7L // Notifications stay for 7 days
+        private const val DELETE_ARCHIVED_AFTER_DAYS = 30L // Delete after 30 days
     }
 
     private val _notifications = MutableStateFlow<List<NotificationEntity>>(emptyList())
@@ -101,6 +100,11 @@ class NotificationViewModel(
     private suspend fun autoArchiveOldNotifications() {
         val cutoffTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(ARCHIVE_AFTER_DAYS)
         notificationDao.archiveOldNotifications(cutoffTime)
+
+        // Delete archived notifications older than DELETE_ARCHIVED_AFTER_DAYS
+        val deleteCutoffTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(DELETE_ARCHIVED_AFTER_DAYS)
+        notificationDao.deleteOldArchivedNotifications(deleteCutoffTime)
+
     }
 
     // Manual archive function
