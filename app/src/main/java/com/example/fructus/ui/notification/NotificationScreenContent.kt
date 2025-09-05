@@ -1,19 +1,23 @@
 package com.example.fructus.ui.notification
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -46,6 +50,7 @@ fun NotificationScreenContent(
     onNotificationClick: (notificationId: Int, fruitId: Int) -> Unit,
     onMarkAllAsRead: () -> Unit,
     filter: Filter,
+    onArchiveCount: Int = 0,
     onSelectedFilter: (Filter) -> Unit,
     onNavigateUp: () -> Unit = {},
     onArchiveClick: () -> Unit = {}
@@ -85,17 +90,43 @@ fun NotificationScreenContent(
                     )
                 },
                 actions = {
-                    Icon(
-                        painter = painterResource(R.drawable.archive),
-                        contentDescription = "Archive",
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable(
-                                onClick = onArchiveClick,
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            )
-                    )
+                    Box {
+                        Icon(
+                            painter = painterResource(R.drawable.archive),
+                            contentDescription = "Archive",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable(
+                                    onClick = onArchiveClick,
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                )
+                        )
+
+                        // Badge showing archived count (only show if count > 0)
+                        if (onArchiveCount > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .background(
+                                        color = Color(0xFFE74C3C), // Red badge color
+                                        shape = CircleShape
+                                    )
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = 4.dp, y = (-4).dp), // Position at top-right corner
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (onArchiveCount > 99) "99+" else onArchiveCount
+                                        .toString(),
+                                    color = Color.White,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = poppinsFontFamily
+                                )
+                            }
+                        }
+                    }
                 }
             )
         }

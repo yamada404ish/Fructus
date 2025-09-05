@@ -26,6 +26,8 @@ class NotificationViewModel(
     var filter by mutableStateOf(Filter.All)
         private set
 
+
+
     companion object {
         private const val ARCHIVE_AFTER_DAYS = 7L // Notifications stay for 7 days
     }
@@ -168,6 +170,12 @@ class NotificationViewModel(
             autoArchiveOldNotifications()
         }
     }
+
+    val archivedCount: StateFlow<Int> = notificationDao.getArchivedNotifications()
+        .map { it.size }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+
+
 
 
 }
