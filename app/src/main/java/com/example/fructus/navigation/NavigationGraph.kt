@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.fructus.data.local.FruitDatabase
 import com.example.fructus.ui.archive.ArchiveScreen
+import com.example.fructus.ui.archive.ArchiveViewModel
 import com.example.fructus.ui.camera.Camera
 import com.example.fructus.ui.detail.DetailScreen
 import com.example.fructus.ui.home.HomeScreen
@@ -113,8 +116,20 @@ fun FructusNav() {
 
         composable <Archive> {
             AppBackgroundScaffold {
+                val context = LocalContext.current
+                val db = remember { FruitDatabase.getDatabase(context) }
+                val factory = remember {
+                    ArchiveViewModel.ArchiveViewModelFactory(db.notificationDao())
+                }
+                val archiveViewModel: ArchiveViewModel = viewModel(factory = factory)
+
+                // Collect archived notifications state
+                val archivedNotifications by archiveViewModel.archivedNotifications.collectAsState()
                 ArchiveScreen(
+                    archivedNotifications = archivedNotifications,
+                    onRestoreNotification = archiveViewModel::restoreNotification,
                     onNavigateUp = { navController.navigateUp() }
+
                 )
             }
         }

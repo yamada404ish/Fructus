@@ -19,6 +19,11 @@ fun NotificationScreen(
         viewModel.clearNewFlag()
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshAndArchive() // This will clean up old notifications
+    }
+
+
     NotificationScreenContent(
         notifications = when (viewModel.filter) {       // ✅ apply filter at UI-level
             Filter.All -> notifications
