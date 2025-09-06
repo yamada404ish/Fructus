@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,8 +32,29 @@ import com.example.fructus.ui.splash.SplashScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun FructusNav() {
+fun FructusNav(
+    shouldOpenNotifications: Boolean = false,
+    targetFruitId: Int? = null
+) {
     val navController = rememberNavController()
+
+    LaunchedEffect(shouldOpenNotifications, targetFruitId) {
+        if (shouldOpenNotifications) {
+            // Wait a moment to ensure navigation is ready
+            kotlinx.coroutines.delay(100)
+            if (targetFruitId != null) {
+                // Navigate to specific fruit detail
+                navController.navigate(Detail(targetFruitId)) {
+                    popUpTo(Home) { inclusive = false }
+                }
+            } else {
+                // Navigate to notifications screen
+                navController.navigate(Notification) {
+                    popUpTo(Home) { inclusive = false }
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -58,7 +80,6 @@ fun FructusNav() {
                     navController.navigate(Home) {
                         popUpTo(OnBoard) { inclusive = true }
                     }
-
                 }
             }
         }
@@ -96,25 +117,27 @@ fun FructusNav() {
             AppBackgroundScaffold {
                 val context = LocalContext.current
                 val db = remember { FruitDatabase.getDatabase(context) }
-                val factory = remember { NotificationViewModelFactory(
-                    db.fruitDao(),
-                    db.notificationDao()
-                    ) }
+                val factory = remember {
+                    NotificationViewModelFactory(
+                        db.fruitDao(),
+                        db.notificationDao(),
+                        context // Add context here
+                    )
+                }
                 val viewModel: NotificationViewModel = viewModel(factory = factory)
 
                 NotificationScreen(
                     viewModel = viewModel,
-                    onArchiveClick = {navController.navigate(Archive)},
+                    onArchiveClick = { navController.navigate(Archive) },
                     onNavigateUp = { navController.navigateUp() },
                     onNotificationNavigate = { fruitId ->
                         navController.navigate(Detail(fruitId))
                     }
-
                 )
             }
         }
 
-        composable <Archive> {
+        composable<Archive> {
             AppBackgroundScaffold {
                 val context = LocalContext.current
                 val db = remember { FruitDatabase.getDatabase(context) }
@@ -123,17 +146,14 @@ fun FructusNav() {
                 }
                 val archiveViewModel: ArchiveViewModel = viewModel(factory = factory)
 
-                // Collect archived notifications state
                 val archivedNotifications by archiveViewModel.archivedNotifications.collectAsState()
                 ArchiveScreen(
                     archivedNotifications = archivedNotifications,
                     onRestoreNotification = archiveViewModel::restoreNotification,
                     onNavigateUp = { navController.navigateUp() }
-
                 )
             }
         }
-
 
         // Settings screen
         composable<Settings> {
@@ -144,10 +164,10 @@ fun FructusNav() {
             }
         }
 
-        // Scan (Real-time prediction) - NO AppBackgroundScaffold here!
-        composable<Scan> (
-            enterTransition = { fadeIn(tween(0)) }, // Instant transition
-            exitTransition = { fadeOut(tween(0)) }   // Instant transition
+        // Scan screen
+        composable<Scan>(
+            enterTransition = { fadeIn(tween(0)) },
+            exitTransition = { fadeOut(tween(0)) }
         ) {
             val context = LocalContext.current
             Camera(

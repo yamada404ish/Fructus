@@ -9,6 +9,14 @@ class FructusApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        android.util.Log.d("FructusApplication", "App starting up...")
+
         database = FruitDatabase.getDatabase(this)
+
+        // Initialize WorkManager and schedule notifications
+        val scheduler = com.example.fructus.util.NotificationScheduler(this)
+        scheduler.schedulePeriodicNotifications()
+
+        android.util.Log.d("FructusApplication", "Background notifications scheduled")
     }
 }

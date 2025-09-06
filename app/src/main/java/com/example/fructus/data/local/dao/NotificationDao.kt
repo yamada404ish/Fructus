@@ -56,6 +56,8 @@ interface NotificationDao {
     @Query("DELETE FROM notifications WHERE isArchived = 1 AND timestamp < :cutoffTimestamp")
     suspend fun deleteOldArchivedNotifications(cutoffTimestamp: Long)
 
-
+    // Add this method to your NotificationDao interface
+    @Query("SELECT * FROM notifications WHERE fruitId = :fruitId AND isArchived = 0")
+    suspend fun getNotificationsByFruitId(fruitId: Int): List<NotificationEntity>
 }
 

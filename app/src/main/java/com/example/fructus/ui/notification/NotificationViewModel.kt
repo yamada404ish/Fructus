@@ -1,5 +1,6 @@
 package com.example.fructus.ui.notification
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,8 @@ import com.example.fructus.data.local.dao.FruitDao
 import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.util.NotificationScheduler
+import com.example.fructus.util.PushNotificationManager
 import com.example.fructus.util.getShelfLifeRange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,29 +23,35 @@ import java.util.concurrent.TimeUnit
 
 class NotificationViewModel(
     private val fruitDao: FruitDao,
-    private val notificationDao: NotificationDao
+    private val notificationDao: NotificationDao,
+    private val context: Context
 ) : ViewModel() {
 
     var filter by mutableStateOf(Filter.All)
         private set
 
     companion object {
-        private const val ARCHIVE_AFTER_DAYS = 7L // Notifications stay for 7 days
-        private const val DELETE_ARCHIVED_AFTER_DAYS = 30L // Delete after 30 days
+        private const val ARCHIVE_AFTER_DAYS = 7L
+        private const val DELETE_ARCHIVED_AFTER_DAYS = 30L
     }
 
     private val _notifications = MutableStateFlow<List<NotificationEntity>>(emptyList())
     val notifications: StateFlow<List<NotificationEntity>> = _notifications
 
-
+    // Initialize push notification manager and scheduler
+    private val pushNotificationManager = PushNotificationManager(context)
+    private val notificationScheduler = NotificationScheduler(context)
 
     init {
+        // Schedule background notifications
+        notificationScheduler.schedulePeriodicNotifications()
+
         // 1. Auto-archive old notifications periodically
         viewModelScope.launch {
             autoArchiveOldNotifications()
         }
 
-        // 2. Watch fruits and trigger notifications
+        // 2. Watch fruits and trigger notifications (both in-app and push)
         viewModelScope.launch {
             fruitDao.getAllFruits().collect { fruits ->
                 fruits.forEach { fruit ->
@@ -65,11 +74,18 @@ class NotificationViewModel(
                             fruit.name,
                             fruit.scannedDate,
                             message,
-                            fruit.scannedTime,
-
+                            fruit.scannedTime
                         )
 
                         if (existing == null) {
+                            // Send push notification FIRST
+                            pushNotificationManager.sendFruitSpoilageNotification(
+                                fruitName = fruit.name,
+                                message = message,
+                                fruitId = fruit.id
+                            )
+
+                            // Then save to database for in-app display
                             val notification = NotificationEntity(
                                 fruitId = fruit.id,
                                 fruitName = fruit.name,
@@ -84,7 +100,6 @@ class NotificationViewModel(
                             notificationDao.insertNotification(notification)
                         }
                     }
-
                 }
             }
         }
@@ -96,26 +111,22 @@ class NotificationViewModel(
             }
         }
     }
+
     // Auto-archive notifications older than ARCHIVE_AFTER_DAYS
     private suspend fun autoArchiveOldNotifications() {
         val cutoffTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(ARCHIVE_AFTER_DAYS)
         notificationDao.archiveOldNotifications(cutoffTime)
 
-        // Delete archived notifications older than DELETE_ARCHIVED_AFTER_DAYS
         val deleteCutoffTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(DELETE_ARCHIVED_AFTER_DAYS)
         notificationDao.deleteOldArchivedNotifications(deleteCutoffTime)
-
     }
 
-    // Manual archive function
     fun archiveNotification(notificationId: Int) {
         viewModelScope.launch {
             notificationDao.archiveNotification(notificationId)
         }
     }
 
-
-    // --- Enhancer for spoiled notifications ---
     private fun enhanceMessage(notification: NotificationEntity): NotificationEntity {
         val daysAgo = calculateDaysSince(notification.timestamp)
         return if (notification.message.contains("spoiled", ignoreCase = true)) {
@@ -130,7 +141,6 @@ class NotificationViewModel(
             notification
         }
     }
-
 
     fun onSelectFilter(newFilter: Filter) {
         filter = newFilter
@@ -168,7 +178,7 @@ class NotificationViewModel(
             notificationDao.clearNewFlag()
         }
     }
-    // Call this periodically (e.g., when app starts or notification screen opens)
+
     fun refreshAndArchive() {
         viewModelScope.launch {
             autoArchiveOldNotifications()
@@ -179,12 +189,16 @@ class NotificationViewModel(
         .map { it.size }
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
+    // New functions for push notifications
+    fun triggerImmediateCheck() {
+        notificationScheduler.scheduleOneTimeCheck()
+    }
 
+    fun cancelPushNotification(notificationId: Int) {
+        pushNotificationManager.cancelNotification(notificationId)
+    }
 
-
+    fun cancelAllPushNotifications() {
+        pushNotificationManager.cancelAllNotifications()
+    }
 }
-
-
-
-
-
