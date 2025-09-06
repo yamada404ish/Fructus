@@ -29,7 +29,6 @@ fun HomeScreen(
     onNavigateToScan: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
-
     var selectedFilter by remember { mutableStateOf("All") }
 
     val context = LocalContext.current
@@ -40,14 +39,16 @@ fun HomeScreen(
         factory = HomeViewModelFactory(db.fruitDao())
     )
 
+    // Update factory to include context
     val notificationViewModel: NotificationViewModel = viewModel(
         factory = NotificationViewModelFactory(
             db.fruitDao(),
-            db.notificationDao())
+            db.notificationDao(),
+            context // Add context here
+        )
     )
 
     val hasNewNotification by notificationViewModel.hasNewNotification.collectAsState()
-
     val state by viewModel.state.collectAsState()
     val shouldRequestPermission by dataStore.shouldRequestNotificationFlow.collectAsState(initial = false)
 
@@ -68,6 +69,8 @@ fun HomeScreen(
             context = context,
             onAllPermissionsGranted = {
                 showInitialPermissions = false
+                // Trigger immediate notification check after permissions granted
+                notificationViewModel.triggerImmediateCheck()
             },
             onPermissionsDenied = {
                 showInitialPermissions = false
@@ -94,10 +97,8 @@ fun HomeScreen(
         onSettingsClick = onSettingsClick,
         onScanClick = {
             if (isCameraPermissionGranted(context)) {
-                // Camera permission granted, navigate to scan
                 onNavigateToScan()
             } else {
-                // Camera permission not granted, show modal
                 showCameraPermissionModal = true
             }
         }

@@ -143,4 +143,12 @@ dependencies {
 
     // Desugaring
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // For notification permissions (Android 13+)
+    implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Core notification support
+    implementation("androidx.core:core-ktx:1.12.0")
 }

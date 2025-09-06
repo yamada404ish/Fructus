@@ -91,6 +91,7 @@ fun HomeScreenContent(
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 containerColor = Color.Transparent
             ) {
+
                 Image(
                     painter = painterResource(R.drawable.scan),
                     contentDescription = "Scan Fruits",
