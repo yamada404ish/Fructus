@@ -26,71 +26,51 @@ import com.example.fructus.R
 import com.example.fructus.ui.onboard.OnboardingViewModel
 import com.example.fructus.ui.onboard.OnboardingViewModelFactory
 import com.example.fructus.util.DataStoreManager
-import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    // Callback triggered after splash animation finishes
     onAnimationFinished: (onboardingCompleted: Boolean) -> Unit
 ) {
-    // Load the Lottie splash animation from raw resources
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.fructus_splash))
 
-    // Controls how the Lottie animation is played
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = 1, // Play only once
-        speed = 1.2f,   // Slightly faster playback
-        clipSpec = LottieClipSpec.Progress(0f, 1f), // Play from start to end
+        iterations = 1,
+        speed = 1.2f, // Always normal speedZ
+        clipSpec = LottieClipSpec.Progress(0f, 1f),
         isPlaying = true,
         restartOnPlay = false
     )
 
-    // Get application context and initialize DataStore
     val context = LocalContext.current
     val dataStore = remember { DataStoreManager(context) }
 
-    // ViewModel that reads onboarding completion state
     val viewModel: OnboardingViewModel = viewModel(
         factory = OnboardingViewModelFactory(dataStore)
     )
+    val onboardingCompleted by viewModel.isOnboardingCompleted.collectAsState(initial = null)
 
-    // Listen to onboarding completion status from DataStore
-    val onboardingCompleted by viewModel.isOnboardingCompleted.collectAsState(initial = false)
-
-    // Used to ensure navigation only happens once
     var hasNavigated by remember { mutableStateOf(false) }
 
-    // Wait until animation completes, then call the navigation callback
-    LaunchedEffect(progress) {
-        if (progress == 1f && !hasNavigated) {
+    LaunchedEffect(progress, onboardingCompleted) {
+        if (progress == 1f && !hasNavigated && onboardingCompleted != null) {
             hasNavigated = true
-            delay(300) // Small delay after animation
-            onAnimationFinished(onboardingCompleted)
+            onAnimationFinished(onboardingCompleted == true)
         }
     }
 
-    // UI: Fullscreen centered animation with app background color
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center
     ) {
-        // Play the splash animation
-        LottieAnimation(
-            composition = composition,
-            progress = { progress },
-            modifier = Modifier.size(450.dp) // Adjust animation size
-        )
+        composition?.let {
+            LottieAnimation(
+                composition = it,
+                progress = { progress },
+                modifier = Modifier.size(450.dp)
+            )
+        }
     }
 }
-
-
-/*
-Plays a Lottie animation on launch.
-
-Checks if the onboarding is completed using DataStore.
-
-After animation finishes, navigates based on onboarding status.
-*/

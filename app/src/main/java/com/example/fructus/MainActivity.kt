@@ -7,25 +7,38 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import com.example.fructus.ui.FructusApp
 import com.example.fructus.util.NotificationSoundUtils
-import com.example.fructus.util.testNotifications
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        // 🔥 Flow that emits navigation requests from notifications
+        val notificationNavFlow = MutableSharedFlow<Triple<Boolean, Int?, Int?>>()
+    }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        testNotifications()
-
         NotificationSoundUtils.checkNotificationSettings(this)
         NotificationSoundUtils.logDeviceAudioSettings(this)
 
+        // initial extras
+        val shouldOpenNotifications = intent?.getBooleanExtra("open_notifications", false) ?: false
+        val targetFruitId = intent?.getIntExtra("fruit_id", -1)?.takeIf { it != -1 }
+        val targetNotificationId = intent?.getIntExtra("notification_id", -1)?.takeIf { it != -1 }
+
         setContent {
             FructusApp(
-                shouldOpenNotifications = intent?.getBooleanExtra("open_notifications", false) ?: false,
-                targetFruitId = intent?.getIntExtra("fruit_id", -1)?.takeIf { it != -1 }
+                shouldOpenNotifications = shouldOpenNotifications,
+                targetFruitId = targetFruitId,
+                targetNotificationId = targetNotificationId,
+                notificationFlow = notificationNavFlow // ✅ pass flow
             )
         }
     }
@@ -34,13 +47,12 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
 
-        // Handle new notification clicks when app is already running
         val shouldOpenNotifications = intent.getBooleanExtra("open_notifications", false)
         val targetFruitId = intent.getIntExtra("fruit_id", -1).takeIf { it != -1 }
+        val targetNotificationId = intent.getIntExtra("notification_id", -1).takeIf { it != -1 }
 
-        if (shouldOpenNotifications) {
-            // You can use a callback or state management to navigate
-            // This is handled in the FructusApp composable
+        lifecycleScope.launch {
+            notificationNavFlow.emit(Triple(shouldOpenNotifications, targetFruitId, targetNotificationId))
         }
     }
 }

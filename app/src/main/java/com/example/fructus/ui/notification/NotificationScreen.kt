@@ -11,7 +11,8 @@ fun NotificationScreen(
     viewModel: NotificationViewModel,      // This is the ViewModel that holds notification data and logic
     onNavigateUp: () -> Unit = {},         // Callback for the back button (default: do nothing)
     onArchiveClick: () -> Unit = {},
-    onNotificationNavigate: (fruitId: Int) -> Unit = {}
+    onNotificationNavigate: (Int, Int?) -> Unit
+
 ) {
 
     val notifications by viewModel.notifications.collectAsState()
@@ -43,7 +44,7 @@ fun NotificationScreen(
             // ✅ Mark as read
             viewModel.markNotificationAsRead(notificationId)
             // ✅ Navigate to detail
-            onNotificationNavigate(fruitId)
+            onNotificationNavigate(fruitId, notificationId)
         },
 
         // When user taps "Mark All as Read", update all

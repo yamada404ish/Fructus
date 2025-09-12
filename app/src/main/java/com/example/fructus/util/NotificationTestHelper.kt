@@ -8,7 +8,6 @@ class NotificationTestHelper(context: Context) {
 
     fun testSpoilageNotification() {
         pushNotificationManager.sendFruitSpoilageNotification(
-            fruitName = "Apple",
             message = "Apple is spoiled!",
             fruitId = 999
         )
@@ -16,7 +15,6 @@ class NotificationTestHelper(context: Context) {
 
     fun testExpiringNotification() {
         pushNotificationManager.sendFruitSpoilageNotification(
-            fruitName = "Banana",
             message = "Banana has only 1 day left!",
             fruitId = 998
         )
