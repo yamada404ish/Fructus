@@ -84,7 +84,6 @@ class FruitCheckWorker(
 
                     // Send push notification
                     pushNotificationManager.sendFruitSpoilageNotification(
-                        fruitName = fruit.name,
                         message = message,
                         fruitId = fruit.id
                     )

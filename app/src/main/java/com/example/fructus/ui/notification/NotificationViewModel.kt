@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 class NotificationViewModel(
     private val fruitDao: FruitDao,
     private val notificationDao: NotificationDao,
-    private val context: Context
+    context: Context
 ) : ViewModel() {
 
     var filter by mutableStateOf(Filter.All)
@@ -78,14 +78,7 @@ class NotificationViewModel(
                         )
 
                         if (existing == null) {
-                            // Send push notification FIRST
-                            pushNotificationManager.sendFruitSpoilageNotification(
-                                fruitName = fruit.name,
-                                message = message,
-                                fruitId = fruit.id
-                            )
-
-                            // Then save to database for in-app display
+                            // First save to database to get the notification ID
                             val notification = NotificationEntity(
                                 fruitId = fruit.id,
                                 fruitName = fruit.name,
@@ -97,7 +90,26 @@ class NotificationViewModel(
                                 timestamp = System.currentTimeMillis(),
                                 isArchived = false
                             )
+
+                            // Insert and get the ID
                             notificationDao.insertNotification(notification)
+
+                            // Get the inserted notification to get its actual ID
+                            val insertedNotification = notificationDao.getNotificationByFruitAndTimestamp(
+                                fruit.name,
+                                fruit.scannedDate,
+                                message,
+                                fruit.scannedTime
+                            )
+
+                            // Send push notification with the actual notification ID
+                            insertedNotification?.let {
+                                pushNotificationManager.sendFruitSpoilageNotification(
+                                    message = message,
+                                    fruitId = fruit.id,
+                                    actualNotificationId = it.id // Pass the actual database notification ID
+                                )
+                            }
                         }
                     }
                 }
@@ -154,6 +166,7 @@ class NotificationViewModel(
             }
         }
     }
+
 
     fun markAllAsRead() {
         viewModelScope.launch {

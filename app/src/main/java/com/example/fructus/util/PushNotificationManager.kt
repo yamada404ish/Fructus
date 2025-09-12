@@ -61,10 +61,10 @@ class PushNotificationManager(private val context: Context) {
 
     /** Send a fruit spoilage notification */
     fun sendFruitSpoilageNotification(
-        fruitName: String,
         message: String,
         fruitId: Int,
-        notificationId: Int = NOTIFICATION_ID_BASE + fruitId
+        actualNotificationId: Int? = null,
+        pushNotificationId: Int = NOTIFICATION_ID_BASE + fruitId
     ) {
         if (!areNotificationsEnabled()) {
             android.util.Log.w("PushNotification", "Notifications are disabled by user")
@@ -77,11 +77,15 @@ class PushNotificationManager(private val context: Context) {
             putExtra("fruit_id", fruitId)
             putExtra("open_notifications", true)
             putExtra("from_notification", true)
+
+            if (actualNotificationId != null) {
+                putExtra("notification_id", actualNotificationId)
+            }
         }
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            notificationId,
+            pushNotificationId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -113,7 +117,7 @@ class PushNotificationManager(private val context: Context) {
 
 
         try {
-            notificationManager.notify(notificationId, notification)
+            notificationManager.notify(pushNotificationId, notification)
             android.util.Log.d("PushNotification", "Notification sent: $message")
         } catch (e: SecurityException) {
             android.util.Log.e("PushNotification", "Permission not granted: ${e.message}")
@@ -148,7 +152,6 @@ class PushNotificationManager(private val context: Context) {
     fun sendTestNotification() {
 
         sendFruitSpoilageNotification(
-            fruitName = "Test Fruit",
             message = "This is a test notification with sound + vibration",
             fruitId = 99999
         )

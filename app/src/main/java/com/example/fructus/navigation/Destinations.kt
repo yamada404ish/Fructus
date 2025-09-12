@@ -12,20 +12,21 @@ object OnBoard
 object Home
 
 @Serializable
-data object Notification
+object Notification
 
 @Serializable
-data object Archive
+object Archive
 
 @Serializable
-data object Scan
+object Scan
 
 @Serializable
-data object Settings
+object Settings
 
 @Serializable
 data class Detail (
-    val id: Int
+    val id: Int,
+    val notificationId: Int? = null
 )
 
 //@Serializable
