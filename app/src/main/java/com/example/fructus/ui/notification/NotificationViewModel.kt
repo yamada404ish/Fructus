@@ -160,21 +160,25 @@ class NotificationViewModel(
 
     fun markNotificationAsRead(notificationId: Int) {
         viewModelScope.launch {
-            val notification = _notifications.value.find { it.id == notificationId }
+            val notification = notificationDao.getNotificationById(notificationId)
             notification?.let {
-                notificationDao.updateNotification(it.copy(isRead = true))
+                if (!it.isRead) {
+                    notificationDao.updateNotification(it.copy(isRead = true))
+                }
             }
+            // ✅ hasNewNotification updates automatically from Flow
         }
     }
+
 
 
     fun markAllAsRead() {
         viewModelScope.launch {
-            _notifications.value.forEach { n ->
-                notificationDao.updateNotification(n.copy(isRead = true))
-            }
+            notificationDao.markAllAsRead()
+            // ✅ hasNewNotification becomes false automatically
         }
     }
+
 
     private fun calculateDaysSince(timestamp: Long): Int {
         val now = System.currentTimeMillis()
@@ -183,7 +187,7 @@ class NotificationViewModel(
     }
 
     val hasNewNotification: StateFlow<Boolean> = notificationDao.getActiveNotifications()
-        .map { list -> list.any { it.isRead } }
+        .map { list -> list.any { !it.isRead } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     fun clearNewFlag() {
