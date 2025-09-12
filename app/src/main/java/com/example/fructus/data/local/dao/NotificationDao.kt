@@ -64,5 +64,8 @@ interface NotificationDao {
     @Query("SELECT * FROM notifications WHERE id = :notificationId LIMIT 1")
     suspend fun getNotificationById(notificationId: Int): NotificationEntity?
 
+    @Query("UPDATE notifications SET isRead = 1 WHERE isRead = 0")
+    suspend fun markAllAsRead()
+
 }
 
