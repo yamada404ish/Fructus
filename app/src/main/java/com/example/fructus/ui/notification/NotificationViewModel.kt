@@ -183,7 +183,7 @@ class NotificationViewModel(
     }
 
     val hasNewNotification: StateFlow<Boolean> = notificationDao.getActiveNotifications()
-        .map { list -> list.any { it.isNew } }
+        .map { list -> list.any { it.isRead } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     fun clearNewFlag() {
