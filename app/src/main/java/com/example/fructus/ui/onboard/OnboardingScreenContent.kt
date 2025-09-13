@@ -75,78 +75,71 @@ fun OnboardingScreenContent(
 
             // Dot Indicators
 
-                Column(modifier = Modifier
-                    .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column(modifier = Modifier
+                .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    repeat(3) { index ->
+                        val isSelected = pagerState.currentPage == index
+                        val dotWidth by animateDpAsState(
+                            targetValue = if (isSelected) 24.dp else 8.dp, // Long vs small
+                            animationSpec = spring(
+                                Spring.DampingRatioMediumBouncy,
+                                Spring.StiffnessLow
+                            ),
+                            label = "dot_width"
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .padding(horizontal = 4.dp)
+                                .width(dotWidth)
+                                .height(8.dp) // Fixed height
+                                .background(
+                                    color = if (isSelected) Color(0xFFBADBA2) else Color(0xFFD1CEBA),
+                                    shape = RoundedCornerShape(3.dp) // Half of height for pill shape
+                                )
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        scope.launch {
+                            viewModel.completeOnboarding()
+                            viewModel.setRequestNotificationOnceBlocking()
+                            onGetStarted()
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFBADBA2), // background
+                        contentColor = Color.Black
+                    )// text/icon
                 )
                 {
-
-
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        repeat(3) { index ->
-                            val isSelected = pagerState.currentPage == index
-                            val dotWidth by animateDpAsState(
-                                targetValue = if (isSelected) 24.dp else 8.dp, // Long vs small
-                                animationSpec = spring(
-                                    Spring.DampingRatioMediumBouncy,
-                                    Spring.StiffnessLow
-                                ),
-                                label = "dot_width"
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(bottom = 10.dp)
-                                    .padding(horizontal = 4.dp)
-                                    .width(dotWidth)
-                                    .height(8.dp) // Fixed height
-                                    .background(
-                                        color = if (isSelected) Color(0xFFBADBA2) else Color(0xFFD1CEBA),
-                                        shape = RoundedCornerShape(3.dp) // Half of height for pill shape
-                                    )
-                            )
-                        }
-
-                    }
-
-
-
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    viewModel.completeOnboarding()
-                                    viewModel.setRequestNotificationOnce()
-                                    onGetStarted()
-                                }
-                            },
-                            modifier = Modifier
-                                .padding(bottom = 20.dp)
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 30.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFBADBA2), // background
-                                contentColor = Color.Black
-                            )// text/icon
-                        )
-                        {
-                            Text("Get Started")
-                        }
-
-
+                    Text("Get Started")
                 }
+
             }
         }
-
-
-
     }
+}
 
 
 

@@ -1,5 +1,6 @@
 package com.example.fructus.navigation
 
+import android.app.Activity
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
@@ -39,10 +40,9 @@ fun FructusNav(
     targetFruitId: Int? = null,
     targetNotificationId: Int? = null
 ) {
-    // COMPLETELY bypass splash for notifications
+    // If notification tapped, bypass splash
     val startDestination = when {
-        shouldOpenNotifications && targetFruitId != null ->
-            Detail(targetFruitId, targetNotificationId) // ⭐ include notificationId
+        shouldOpenNotifications && targetFruitId != null -> Detail(targetFruitId, targetNotificationId)
         shouldOpenNotifications -> Notification
         else -> Splash
     }
@@ -51,19 +51,44 @@ fun FructusNav(
         navController = navController,
         startDestination = startDestination
     ) {
-        // Only add Splash route if NOT coming from notification
+        // ✅ Always handle onboarding via Splash, never directly
         if (!shouldOpenNotifications) {
             composable<Splash> {
                 AppBackgroundScaffold {
                     SplashScreen { onboardingCompleted ->
-                        val destination = if (onboardingCompleted) Home else OnBoard
-                        navController.navigate(destination) {
-                            popUpTo(Splash) { inclusive = true }
+                        if (onboardingCompleted) {
+                            navController.navigate(Home) {
+                                popUpTo<Splash> { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.navigate(OnBoard) {
+                                popUpTo<Splash> { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            composable<OnBoard> {
+                val context = LocalContext.current
+
+                // ⬅️ Handle back button → exit app instead of going back to Splash
+                BackHandler {
+                    (context as? Activity)?.finish()
+                }
+
+                AppBackgroundScaffold {
+                    OnboardingScreen {
+                        navController.navigate(Home) {
+                            popUpTo<OnBoard> { inclusive = true }
                             launchSingleTop = true
                         }
                     }
                 }
             }
+
         }
 
         addCoreDestinations(
@@ -73,25 +98,12 @@ fun FructusNav(
     }
 }
 
+
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun NavGraphBuilder.addCoreDestinations(
     navController: NavHostController,
     shouldOpenNotifications: Boolean
 ) {
-    // Onboarding - only if not from notification
-    if (!shouldOpenNotifications) {
-        composable<OnBoard> {
-            AppBackgroundScaffold {
-                OnboardingScreen {
-                    navController.navigate(Home) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
-    }
-
     // Home
     composable<Home> {
         AppBackgroundScaffold {
@@ -210,13 +222,21 @@ private fun NavGraphBuilder.addCoreDestinations(
     }
 
     // Settings
+    // Settings
     composable<Settings> {
         AppBackgroundScaffold {
             SettingsScreen(
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = { navController.navigateUp() },
+                onNavigateToOnboarding = {
+                    navController.navigate(Splash) {
+                        popUpTo(0) { inclusive = true } // 🔑 clears back stack up to Home
+                        launchSingleTop = true
+                    }
+                }
             )
         }
     }
+
 
     // Scan
     composable<Scan>(

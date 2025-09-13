@@ -55,12 +55,16 @@ class DataStoreManager(private val context: Context) {
     // Flow that tracks whether we should ask the user for notification permission
     // Used to avoid showing the prompt repeatedly
     val shouldRequestNotificationFlow: Flow<Boolean> = context.dataStore.data
-        .map { prefs -> prefs[SHOULD_REQUEST_NOTIFICATION_KEY] ?: false }
+        .map { prefs -> prefs[SHOULD_REQUEST_NOTIFICATION_KEY] ?: true }
 
     // Updates the state of whether to request notification permission again
     suspend fun setRequestNotificationPermission(value: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[SHOULD_REQUEST_NOTIFICATION_KEY] = value
         }
+    }
+
+    suspend fun clearAll() {
+        context.dataStore.edit { it.clear() }
     }
 }
