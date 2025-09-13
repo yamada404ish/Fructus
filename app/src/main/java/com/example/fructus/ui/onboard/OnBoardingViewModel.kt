@@ -32,6 +32,13 @@ class OnboardingViewModel(
             dataStore.setRequestNotificationPermission(true)
         }
     }
+
+    fun setRequestNotificationOnceBlocking() {
+        viewModelScope.launch {
+            dataStore.setRequestNotificationPermission(true)
+        }
+    }
+
 }
 
 // Factory to inject DataStore into OnboardingViewModel

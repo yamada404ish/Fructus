@@ -3,6 +3,8 @@ package com.example.fructus.ui.setting
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fructus.data.local.dao.FruitDao
+import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.util.DataStoreManager
 import com.example.fructus.util.isNotificationPermissionGranted
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,12 +17,16 @@ import kotlinx.coroutines.launch
 data class SettingsState(
     val receiveNotifications: Boolean = false, // Whether notifications are allowed
     val showSheet: Boolean = false,            // Show bottom sheet to enable notifications
-    val showClearDialog: Boolean = false       // Show confirmation dialog for clearing notifications
+    val showClearDialog: Boolean = false,       // Show confirmation dialog for clearing
+    // notifications
+    val navigateToOnboarding: Boolean = false
 )
 
 class SettingsViewModel(
     private val context: Context,
-    private val dataStore: DataStoreManager
+    private val dataStore: DataStoreManager,
+    private val notificationDao: NotificationDao,
+    private val fruitDao: FruitDao
 ) : ViewModel() {
 
     // Backing state for the Settings screen
@@ -91,4 +97,32 @@ class SettingsViewModel(
         }
         _state.update { it.copy(receiveNotifications = granted) }
     }
+    fun clearAllData() {
+        viewModelScope.launch {
+            // Clear Room tables
+            notificationDao.clearAll()
+            fruitDao.clearAll()
+
+            // Clear DataStore
+            dataStore.clearAll()
+
+            dataStore.setOnboardingCompleted(false)
+
+            // Reset state (so switches reset to default)
+            _state.update {
+                it.copy(
+                    receiveNotifications = false,
+                    showClearDialog = false,
+                    navigateToOnboarding = true
+                )
+            }
+        }
+    }
+
+    fun resetNavigateFlag() {
+        _state.update { it.copy(navigateToOnboarding = false) }
+    }
+
+
+
 }

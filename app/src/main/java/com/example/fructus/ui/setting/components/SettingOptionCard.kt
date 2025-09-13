@@ -117,16 +117,3 @@ fun SettingsOptionCard(
 
 
 
-//@Preview
-//@Composable
-//private fun SettingOptionPrev() {
-//    FructusTheme {
-//        SettingsOptionCard(
-//            iconRes = R.drawable.bell_icon,
-//            title = "Allow Notifications",
-//            subtitle = "Receive push notifications and alerts",
-//            showSwitch = true,
-//        )
-//    }
-//
-//}
