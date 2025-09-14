@@ -53,7 +53,6 @@ fun SettingsOptionCard(
             ) {
                 onClick?.invoke()
             },
-        elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
         shape = RoundedCornerShape(30.dp)
     ) {
