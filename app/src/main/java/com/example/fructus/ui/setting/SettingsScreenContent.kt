@@ -1,8 +1,10 @@
 package com.example.fructus.ui.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +22,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
+import com.example.fructus.ui.setting.components.About
 import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
 import com.example.fructus.ui.theme.poppinsFontFamily
@@ -45,6 +52,8 @@ fun SettingsScreenContent(
     onDismissClearDialog: () -> Unit,
     onShowOnboarding: () -> Unit
 ) {
+    var showAbout by remember { mutableStateOf(false) }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -127,7 +136,7 @@ fun SettingsScreenContent(
                     iconRes = R.drawable.about,
                     iconSize = 34,
                     title = "About",
-                    onClick = {}                                                    ,
+                    onClick = {showAbout = true},
                     modifier = Modifier.weight(1f)
                 )
 
@@ -161,5 +170,32 @@ fun SettingsScreenContent(
             onDismiss = onDismissClearDialog,
             onClearAll = onClearAll
         )
+    }
+
+    if (showAbout) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x80000000)) // semi-transparent
+                .clickable(
+                    // When user taps outside About, hide it
+                    onClick = { showAbout = false },
+                    indication = null, // remove ripple
+                    interactionSource = remember { MutableInteractionSource() }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            // Prevent clicks inside About from closing it
+            Box(
+                modifier = Modifier
+                    .clickable(
+                        onClick = { /* consume click */ },
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+            ) {
+                About()
+            }
+        }
     }
 }
