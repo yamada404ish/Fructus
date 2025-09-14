@@ -34,10 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.NotificationEntity
+import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,8 +53,10 @@ fun ArchiveScreen(
     onNavigateUp: () -> Unit = {},
 ) {
 
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -79,7 +83,8 @@ fun ArchiveScreen(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        letterSpacing = 0.1.sp
+                        letterSpacing = 0.1.sp,
+                        color = colors.textPrimary
                     )
                 }
             )
@@ -104,14 +109,14 @@ fun ArchiveScreen(
                             text = "No archived notifications",
                             fontFamily = poppinsFontFamily,
                             fontSize = 16.sp,
-                            color = Color.Gray
+                            color = colors.textSecondary
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Notifications will appear here after 7 days",
                             fontFamily = poppinsFontFamily,
                             fontSize = 12.sp,
-                            color = Color.Gray
+                            color = colors.textSecondary
                         )
                     }
                 }
@@ -136,12 +141,15 @@ fun ArchivedNotificationCard(
     notification: NotificationEntity,
     onRestore: () -> Unit = {}
 ) {
+
+    val colors = MaterialTheme.appColors
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.7f)
+            containerColor = colors.card
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -160,8 +168,7 @@ fun ArchivedNotificationCard(
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    color = colors.textPrimary
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -170,9 +177,7 @@ fun ArchivedNotificationCard(
                     text = notification.message,
                     fontFamily = poppinsFontFamily,
                     fontSize = 14.sp,
-                    color = Color.Gray,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    color = colors.textSecondary
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -181,7 +186,7 @@ fun ArchivedNotificationCard(
                     text = formatTimestamp(notification.timestamp),
                     fontFamily = poppinsFontFamily,
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = colors.textSecondary
                 )
             }
 
@@ -202,4 +207,27 @@ fun ArchivedNotificationCard(
 private fun formatTimestamp(timestamp: Long): String {
     val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     return formatter.format(Date(timestamp))
+}
+
+
+@Preview
+@Composable
+private fun ArchiveScreenPrev() {
+    FructusTheme {
+        ArchivedNotificationCard(
+            notification = NotificationEntity(
+                id = 1,
+                fruitId = 1,
+                fruitName = "Apple",
+                message = "This is a test message",
+                timestamp = System.currentTimeMillis(),
+                isRead = false,
+                scannedDate ="1",
+                scannedTime = "1",
+                isNew = false,
+                isArchived =true
+            ),
+            onRestore = {}
+        )
+    }
 }

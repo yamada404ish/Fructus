@@ -27,6 +27,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,7 +47,7 @@ import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FruitFilterToggle
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
-import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.isFruitSpoiled
 
@@ -62,13 +62,16 @@ fun HomeScreenContent(
     onSettingsClick: () -> Unit,
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
-    viewModel: HomeViewModel = viewModel()
-
+    viewModel: HomeViewModel = viewModel(),
+    isDarkMode: Boolean
 
 ) {
 
+
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg,
 
         topBar = {
             Column(
@@ -110,7 +113,8 @@ fun HomeScreenContent(
             BottomNavBar(
                 hasNewNotification = hasNewNotification,
                 onNotificationClick = onNotificationClick,
-                onSettingsClick = onSettingsClick
+                onSettingsClick = onSettingsClick,
+                isDarkMode = isDarkMode
             )
         }
     ) { innerPadding ->
@@ -125,6 +129,7 @@ fun HomeScreenContent(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
+                color = colors.textPrimary,
                 letterSpacing = 0.1.sp
             )
             Row(
@@ -255,23 +260,5 @@ fun HomeScreenContent(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun HomeScreenPrev() {
-    FructusTheme {
-        HomeScreenContent(
-            state = HomeState(),
-            onFruitClick = {},
-            onNotificationClick = {},
-            onScanClick = {},
-            onSettingsClick = {},
-            selectedFilter = "All",
-            onFilterChange = {},
-            hasNewNotification =true
-        )
-
     }
 }

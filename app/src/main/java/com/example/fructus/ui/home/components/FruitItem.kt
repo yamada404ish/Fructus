@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.FruitEntity
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince
 import com.example.fructus.util.getDisplayFruitName
@@ -53,6 +54,8 @@ fun FruitItem(
 
     val displayShelfLife = getDisplayShelfLife(fruit)
 
+    val colors = MaterialTheme.appColors
+
     val backgroundColor = when {
         Regex("^spoiled", RegexOption.IGNORE_CASE).containsMatchIn(fruit.name) -> Color(0xFFBDBDBD)
         remainingShelfLife <= 1 -> Color(0xFFF3A5A5)
@@ -71,9 +74,7 @@ fun FruitItem(
                 interactionSource = remember { MutableInteractionSource() }
             )
             .shadow(8.dp, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondary
-        ),
+        colors = CardDefaults.cardColors(containerColor = colors.card),
         elevation = CardDefaults.cardElevation(12.dp)
     ){
         Column(
@@ -110,7 +111,7 @@ fun FruitItem(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        color = Color.Black
+                        color = colors.textPrimary
                     )
 
                     // 📅 Scanned date and 🕒 Shelf life side by side
@@ -124,7 +125,7 @@ fun FruitItem(
                             fontFamily = poppinsFontFamily,
                             fontStyle = FontStyle.Italic,
                             fontSize = 12.sp,
-                            color = Color(0xFF706F6F)
+                            color = colors.textSecondary
                         )
 
                         Box(

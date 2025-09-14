@@ -30,8 +30,8 @@ fun Camera(
     val db = remember { com.example.fructus.data.local.FruitDatabase.getDatabase(context) }
     val cameraViewModel: CameraViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
         factory = CameraViewModelFactory(
-            db.fruitDao(),
-            db.notificationDao())
+            db.fruitDao()
+        )
     )
 
     val launcher = rememberLauncherForActivityResult(

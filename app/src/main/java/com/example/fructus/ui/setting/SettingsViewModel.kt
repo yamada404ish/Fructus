@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// Represents UI state for the Settings screen
+// Updated SettingsState with dark mode
 data class SettingsState(
-    val receiveNotifications: Boolean = false, // Whether notifications are allowed
-    val showSheet: Boolean = false,            // Show bottom sheet to enable notifications
-    val showClearDialog: Boolean = false,       // Show confirmation dialog for clearing
-    // notifications
-    val navigateToOnboardingPreview: Boolean = false, // For preview mode
-    val navigateToFreshStart: Boolean = false // For fresh install mode
+    val receiveNotifications: Boolean = false,
+    val isDarkMode: Boolean = false, // New dark mode state
+    val showSheet: Boolean = false,
+    val showClearDialog: Boolean = false,
+    val navigateToOnboardingPreview: Boolean = false,
+    val navigateToFreshStart: Boolean = false
 )
 
 class SettingsViewModel(
@@ -30,16 +30,14 @@ class SettingsViewModel(
     private val fruitDao: FruitDao
 ) : ViewModel() {
 
-    // Backing state for the Settings screen
     private val _state = MutableStateFlow(SettingsState())
     val state: StateFlow<SettingsState> = _state.asStateFlow()
 
     init {
-        // Start observing user's notification preference when ViewModel is created
         observeNotificationPref()
+        observeDarkModePref() // New observer for dark mode
     }
 
-    // Listen to changes from DataStore and check if permission is granted
     private fun observeNotificationPref() {
         viewModelScope.launch {
             dataStore.receiveNotificationsFlow.collect { enabled ->
@@ -51,44 +49,54 @@ class SettingsViewModel(
         }
     }
 
-    // Called when user toggles the notification switch
+    // New function to observe dark mode preference
+    private fun observeDarkModePref() {
+        viewModelScope.launch {
+            dataStore.darkModeFlow.collect { isDark ->
+                _state.update {
+                    it.copy(isDarkMode = isDark)
+                }
+            }
+        }
+    }
+
+    // New function to toggle dark mode
+    fun onToggleDarkMode(enabled: Boolean) {
+        viewModelScope.launch {
+            dataStore.setDarkMode(enabled)
+        }
+    }
+
     fun onToggleNotifications(checked: Boolean) {
         viewModelScope.launch {
             val granted = isNotificationPermissionGranted(context)
 
             if (checked) {
                 if (granted) {
-                    // Allow notifications in DataStore and update state
                     dataStore.setReceiveNotifications(true)
                     _state.update { it.copy(receiveNotifications = true, showSheet = false) }
                 } else {
-                    // Show bottom sheet if permission not granted
                     _state.update { it.copy(receiveNotifications = false, showSheet = true) }
                 }
             } else {
-                // User turned off notifications manually
                 dataStore.setReceiveNotifications(false)
                 _state.update { it.copy(receiveNotifications = false) }
             }
         }
     }
 
-    // Hide the bottom sheet
     fun hideBottomSheet() {
         _state.update { it.copy(showSheet = false) }
     }
 
-    // Show confirmation dialog to clear notifications
     fun showClearDialog() {
         _state.update { it.copy(showClearDialog = true) }
     }
 
-    // Hide the clear notification dialog
     fun hideClearDialog() {
         _state.update { it.copy(showClearDialog = false) }
     }
 
-    // Called after user enables notifications via system settings
     fun markReturnedFromSettings() {
         val granted = isNotificationPermissionGranted(context)
         if (granted) {
@@ -98,37 +106,31 @@ class SettingsViewModel(
         }
         _state.update { it.copy(receiveNotifications = granted) }
     }
+
     fun clearAllData() {
         viewModelScope.launch {
-            // Clear Room tables
             notificationDao.clearAll()
             fruitDao.clearAll()
-
-            // Clear DataStore
             dataStore.clearAll()
-
             dataStore.setOnboardingCompleted(false)
 
-            // Reset state (so switches reset to default)
             _state.update {
                 it.copy(
                     receiveNotifications = false,
+                    isDarkMode = false, // Reset dark mode to default
                     showClearDialog = false,
                     navigateToFreshStart = true
                 )
             }
-
         }
     }
 
-    // For "Onboarding" button - preview behavior
     fun showOnboarding() {
         _state.update {
             it.copy(navigateToOnboardingPreview = true)
         }
     }
 
-    // Reset flags
     fun resetPreviewNavigateFlag() {
         _state.update { it.copy(navigateToOnboardingPreview = false) }
     }

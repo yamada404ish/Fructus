@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
@@ -26,6 +28,9 @@ fun ClearNotificationsDialog(
     onDismiss: () -> Unit,
     onClearAll: () -> Unit
 ) {
+
+    val colors = MaterialTheme.appColors
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -38,13 +43,14 @@ fun ClearNotificationsDialog(
                     text = "Erase All Data?",
                     fontWeight = FontWeight.Medium,
                     fontFamily = poppinsFontFamily,
-                    fontSize = 22.sp
+                    fontSize = 22.sp,
+                    color = colors.textPrimary
                 )
                 Text(
                     text = "This action cannot be undone.",
                     fontFamily = poppinsFontFamily,
                     fontSize = 18.sp,
-                    color = Color(0xFF7D7D7D)
+                    color = colors.textSecondary
                 )
             }
         },
@@ -94,7 +100,7 @@ fun ClearNotificationsDialog(
         },
         dismissButton = {},
 
-        containerColor = Color.White,
+        containerColor = colors.card,
         shape = RoundedCornerShape(16.dp)
     )
 }
