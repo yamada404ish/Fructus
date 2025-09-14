@@ -13,24 +13,21 @@ import com.example.fructus.util.navigateToNotificationSettings
 @Composable
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
-    onNavigateToOnboardingPreview: () -> Unit, // Preview mode
-    onNavigateToFreshStart: () -> Unit, // Fresh install mode
+    onNavigateToOnboardingPreview: () -> Unit,
+    onNavigateToFreshStart: () -> Unit,
 ) {
     val context = LocalContext.current
     val db = FruitDatabase.getDatabase(context)
 
-    // Create ViewModel with context and datastore
     val viewModel = remember {
         SettingsViewModel(
             context = context,
             dataStore = DataStoreManager(context),
             notificationDao = db.notificationDao(),
             fruitDao = db.fruitDao()
-
         )
     }
 
-    // Observe the UI state
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state.navigateToOnboardingPreview) {
@@ -47,19 +44,19 @@ fun SettingsScreen(
         }
     }
 
-    // Pass the state and handlers to UI content
     SettingsScreenContent(
         state = state,
         onNavigateUp = onNavigateUp,
         onToggleNotifications = viewModel::onToggleNotifications,
+        onToggleDarkMode = viewModel::onToggleDarkMode, // Pass dark mode handler
         onEnableNotifications = {
             navigateToNotificationSettings(context)
             viewModel.markReturnedFromSettings()
         },
         onDismissSheet = viewModel::hideBottomSheet,
         onShowClearDialog = viewModel::showClearDialog,
-        onClearAll = viewModel::clearAllData, // This triggers fresh start
+        onClearAll = viewModel::clearAllData,
         onDismissClearDialog = viewModel::hideClearDialog,
-        onShowOnboarding = viewModel::showOnboarding // This triggers preview
+        onShowOnboarding = viewModel::showOnboarding
     )
 }

@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -37,6 +38,7 @@ import com.example.fructus.ui.notification.components.EnableNotificationBottomSh
 import com.example.fructus.ui.setting.components.About
 import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +47,7 @@ fun SettingsScreenContent(
     state: SettingsState,
     onNavigateUp: () -> Unit,
     onToggleNotifications: (Boolean) -> Unit,
+    onToggleDarkMode: (Boolean) -> Unit, // New parameter for dark mode
     onEnableNotifications: () -> Unit,
     onDismissSheet: () -> Unit,
     onShowClearDialog: () -> Unit,
@@ -54,8 +57,11 @@ fun SettingsScreenContent(
 ) {
     var showAbout by remember { mutableStateOf(false) }
 
+    // Use custom colors from theme
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg, // Use custom background color
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -67,6 +73,7 @@ fun SettingsScreenContent(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
+                        tint = colors.textPrimary, // Use custom text color
                         modifier = Modifier
                             .size(30.dp)
                             .clickable(
@@ -82,14 +89,14 @@ fun SettingsScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        letterSpacing = 0.1.sp
+                        letterSpacing = 0.1.sp,
+                        color = colors.textPrimary // Use custom text color
                     )
                 },
                 actions = {}
             )
         }
     ) { innerPadding ->
-        // Main content: two setting cards
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -107,13 +114,13 @@ fun SettingsScreenContent(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Enable Dark Mode
+            // Enable Dark Mode - now functional!
             SettingsOptionCard(
                 iconRes = R.drawable.dark_mode,
                 title = "Enable Dark Mode",
                 showSwitch = true,
-                isChecked = false,
-                onCheckedChange = {}
+                isChecked = state.isDarkMode, // Use state from ViewModel
+                onCheckedChange = onToggleDarkMode // Call the new handler
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -125,22 +132,22 @@ fun SettingsScreenContent(
                 onClick = onShowOnboarding
             )
 
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ){
-                //Clear notifications card
+            ) {
+                // About card
                 SettingsOptionCard(
                     iconRes = R.drawable.about,
                     iconSize = 34,
                     title = "About",
-                    onClick = {showAbout = true},
+                    onClick = { showAbout = true },
                     modifier = Modifier.weight(1f)
                 )
 
-                //Clear notifications card
+                // Clear notifications card
                 SettingsOptionCard(
                     title = "Erase All Data",
                     onClick = onShowClearDialog,
@@ -150,12 +157,10 @@ fun SettingsScreenContent(
                     centerText = true
                 )
             }
-
-
         }
     }
 
-//     Show bottom sheet if permission is needed
+    // Show bottom sheet if permission is needed
     if (state.showSheet) {
         EnableNotificationBottomSheet(
             onEnableClick = onEnableNotifications,
@@ -176,16 +181,14 @@ fun SettingsScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0x80000000)) // semi-transparent
+                .background(Color(0x80000000))
                 .clickable(
-                    // When user taps outside About, hide it
                     onClick = { showAbout = false },
-                    indication = null, // remove ripple
+                    indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             contentAlignment = Alignment.Center
         ) {
-            // Prevent clicks inside About from closing it
             Box(
                 modifier = Modifier
                     .clickable(

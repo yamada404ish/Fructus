@@ -21,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.camera.model.ShelfLifeRange
 import com.example.fructus.ui.detail.components.SuggestedRecipe
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDrawableIdByName
@@ -52,10 +54,10 @@ fun CustomBottomSheet(
     confidence: Int,
     isSaved: Boolean,
     shelfLifeDisplay: String
-
-
-
 ) {
+
+    val colors = MaterialTheme.appColors
+
     val isSpoiled = shelfLifeRange.minDays == -1
     val disableSave = isSpoiled || isSaved
 
@@ -70,8 +72,6 @@ fun CustomBottomSheet(
                 it.stage.equals(ripeningStage, ignoreCase = true)
     }
 
-//    var isSaved by remember {mutableStateOf(false)}
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +83,7 @@ fun CustomBottomSheet(
                 .fillMaxHeight(if (isSpoiled) 0.55f else 0.84f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
-                .background(Color(0xFFF0EFE9))
+                .background(colors.bg)
         ) {
             Column(
                 modifier = Modifier
@@ -96,13 +96,15 @@ fun CustomBottomSheet(
                     text = displayName,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp
+                    fontSize = 30.sp,
+                    color = colors.textPrimary
                 )
                 Text(
                     text = "It is one of the most common banana cultivars in the Philippines.",
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = colors.textPrimary
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -123,7 +125,8 @@ fun CustomBottomSheet(
                         text = "Try the following:",
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        color = colors.textPrimary
                     )
 
                     // Scrollable content
@@ -167,16 +170,13 @@ fun CustomBottomSheet(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // Fixed Save button at the bottom
                 Button(
                     onClick = onSave,
                     enabled = !disableSave,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .height(55.dp),
+                        .height(45.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (disableSave) Color(0xFFD1D1CC) else Color(0xFFBADBA2)
                     )
@@ -193,26 +193,27 @@ fun CustomBottomSheet(
                         fontWeight = FontWeight.Normal
                     )
                 }
-
             }
         }
     }
 }
 
 @Composable
-fun FruitAnalysis(
+fun  FruitAnalysis(
     ripeningStage: String,
     ripeningProcess: Boolean,
     shelfLifeDisplay: String,
     confidence: Int,
 ) {
 
+    val colors = MaterialTheme.appColors
+
     Card (
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
             .shadow(8.dp, RoundedCornerShape(2.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFE8E6D5)
+            containerColor = colors.outerBox
         )
     ){
         Column(
@@ -225,7 +226,9 @@ fun FruitAnalysis(
                 text = "Fruit Analysis",
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = colors.textPrimary
+
             )
             Text(
                 text = "Accuracy may be compromised due to unforeseen conditions",
@@ -233,7 +236,7 @@ fun FruitAnalysis(
                 fontStyle = FontStyle.Italic,
                 fontSize = 10.sp,
                 letterSpacing = 0.1f.sp,
-                color = Color(0xFF6B6767)
+                color = colors.textSecondary
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -254,7 +257,7 @@ fun FruitAnalysis(
                 fontStyle = FontStyle.Italic,
                 fontSize = 12.sp,
                 letterSpacing = 0.1f.sp,
-                color = Color(0xFF6B6767)
+                color = colors.textSecondary
             )
             Spacer(modifier = Modifier.height(4.dp))
             RipenessProgressBar(
@@ -266,14 +269,21 @@ fun FruitAnalysis(
 }
 
 @Composable
-fun InfoCard(title: String, value: String, modifier: Modifier = Modifier) {
+fun InfoCard(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+
+    val colors = MaterialTheme.appColors
+
     Card(
         modifier = modifier
             .height(90.dp)
             .width(90.dp)
             .clip(RoundedCornerShape(20.dp))
             .shadow(8.dp, RoundedCornerShape(2.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFD1CEBA)),
+        colors = CardDefaults.cardColors(containerColor = colors.innerBox),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(
@@ -287,34 +297,17 @@ fun InfoCard(title: String, value: String, modifier: Modifier = Modifier) {
                 text = title,
                 fontSize = 12.sp,
                 fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = colors.textPrimary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
                 fontSize = 14.sp,
                 fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary
             )
         }
     }
 }
-
-
-//
-//@Preview
-//@Composable
-//private fun CustomBottomSheetPrev() {
-//    FructusTheme {
-//        CustomBottomSheet(
-//            fruitName = "Cavendish",
-//            ripeningStage = "Ripe",
-//            ripeningProcess = false,
-//            shelfLife = 3,
-//            confidence = 90,
-//            isSaved = true,
-//            onSave = {}
-//
-//        )
-//    }
-//}

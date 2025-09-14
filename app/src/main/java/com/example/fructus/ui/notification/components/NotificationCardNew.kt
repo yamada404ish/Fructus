@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.NotificationEntity
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.formatTimeAgo
 import com.example.fructus.util.getFruitDrawableId
@@ -40,8 +42,11 @@ fun NotificationCard(
     onClick: () -> Unit = {},
 
 ) {
+
+    val colors = MaterialTheme.appColors
+
     val clicked = remember { mutableStateOf(false) }
-    val backgroundColor = if (notification.isRead) Color.Transparent else Color(0xFFD0EFB9)
+    val backgroundColor = if (notification.isRead) Color.Transparent else colors.accent
 
     Card (
         modifier = Modifier
@@ -49,7 +54,7 @@ fun NotificationCard(
             .clip(RoundedCornerShape(16.dp))
             .border(
                 width = if (notification.isRead) 1.dp else 0.dp,
-                color = if (notification.isRead) Color(0xFF718860) else Color.Transparent,
+                color = colors.stroke,
                 shape = RoundedCornerShape(16.dp)
             )
 
@@ -103,7 +108,7 @@ fun NotificationCard(
                     fontWeight = FontWeight.Medium,
                     letterSpacing = 0.1.sp,
                     lineHeight = 13.sp,
-                    color = Color.Black,
+                    color = colors.textPrimary,
                     modifier = Modifier
                         .padding (top = 6.dp)
                 )
@@ -114,7 +119,7 @@ fun NotificationCard(
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     lineHeight = 13.sp,
-                    color = Color(0xFF4E4E4E)
+                    color = colors.textSecondary,
                 )
             }
 

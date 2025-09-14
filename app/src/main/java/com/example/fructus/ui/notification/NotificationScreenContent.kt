@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,6 +41,7 @@ import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
 import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince
 
@@ -58,8 +60,10 @@ fun NotificationScreenContent(
     val recent = notifications.filter { calculateDaysSince(it.timestamp) <= 1 }
     val earlier = notifications.filter { calculateDaysSince(it.timestamp) > 1 }
 
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -86,7 +90,8 @@ fun NotificationScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        letterSpacing = 0.1.sp
+                        letterSpacing = 0.1.sp,
+                        color = colors.textPrimary
                     )
                 },
                 actions = {
@@ -155,7 +160,7 @@ fun NotificationScreenContent(
                         fontSize = 14.sp,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF718860),
+                        color = colors.textTertiary,
                         modifier = Modifier.clickable { onMarkAllAsRead() }
                     )
                 }
@@ -189,7 +194,8 @@ fun NotificationScreenContent(
                 // Notifications list
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+
                 ) {
                     if (recent.isNotEmpty()) {
                         item {
@@ -198,8 +204,8 @@ fun NotificationScreenContent(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF718860),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = colors.textTertiary
                             )
                         }
                         items(recent) { notification ->
@@ -217,8 +223,8 @@ fun NotificationScreenContent(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Medium,
-                                color = Color(0xFF718860),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = colors.textTertiary
                             )
                         }
                         items(earlier) { notification ->
