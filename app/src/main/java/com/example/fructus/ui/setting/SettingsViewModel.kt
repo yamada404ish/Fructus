@@ -19,7 +19,8 @@ data class SettingsState(
     val showSheet: Boolean = false,            // Show bottom sheet to enable notifications
     val showClearDialog: Boolean = false,       // Show confirmation dialog for clearing
     // notifications
-    val navigateToOnboarding: Boolean = false
+    val navigateToOnboardingPreview: Boolean = false, // For preview mode
+    val navigateToFreshStart: Boolean = false // For fresh install mode
 )
 
 class SettingsViewModel(
@@ -113,16 +114,26 @@ class SettingsViewModel(
                 it.copy(
                     receiveNotifications = false,
                     showClearDialog = false,
-                    navigateToOnboarding = true
+                    navigateToFreshStart = true
                 )
             }
+
         }
     }
 
-    fun resetNavigateFlag() {
-        _state.update { it.copy(navigateToOnboarding = false) }
+    // For "Onboarding" button - preview behavior
+    fun showOnboarding() {
+        _state.update {
+            it.copy(navigateToOnboardingPreview = true)
+        }
     }
 
+    // Reset flags
+    fun resetPreviewNavigateFlag() {
+        _state.update { it.copy(navigateToOnboardingPreview = false) }
+    }
 
-
+    fun resetFreshStartNavigateFlag() {
+        _state.update { it.copy(navigateToFreshStart = false) }
+    }
 }

@@ -13,7 +13,8 @@ import com.example.fructus.util.navigateToNotificationSettings
 @Composable
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
-    onNavigateToOnboarding: () -> Unit,
+    onNavigateToOnboardingPreview: () -> Unit, // Preview mode
+    onNavigateToFreshStart: () -> Unit, // Fresh install mode
 ) {
     val context = LocalContext.current
     val db = FruitDatabase.getDatabase(context)
@@ -32,10 +33,17 @@ fun SettingsScreen(
     // Observe the UI state
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(state.navigateToOnboarding) {
-        if (state.navigateToOnboarding) {
-            onNavigateToOnboarding()
-            viewModel.resetNavigateFlag() // 🔥 prevents multiple triggers
+    LaunchedEffect(state.navigateToOnboardingPreview) {
+        if (state.navigateToOnboardingPreview) {
+            onNavigateToOnboardingPreview()
+            viewModel.resetPreviewNavigateFlag()
+        }
+    }
+
+    LaunchedEffect(state.navigateToFreshStart) {
+        if (state.navigateToFreshStart) {
+            onNavigateToFreshStart()
+            viewModel.resetFreshStartNavigateFlag()
         }
     }
 
@@ -45,13 +53,13 @@ fun SettingsScreen(
         onNavigateUp = onNavigateUp,
         onToggleNotifications = viewModel::onToggleNotifications,
         onEnableNotifications = {
-            // Open system notification settings
             navigateToNotificationSettings(context)
             viewModel.markReturnedFromSettings()
         },
         onDismissSheet = viewModel::hideBottomSheet,
         onShowClearDialog = viewModel::showClearDialog,
-        onClearAll = viewModel::clearAllData, // Replace with your real logic if needed
-        onDismissClearDialog = viewModel::hideClearDialog
+        onClearAll = viewModel::clearAllData, // This triggers fresh start
+        onDismissClearDialog = viewModel::hideClearDialog,
+        onShowOnboarding = viewModel::showOnboarding // This triggers preview
     )
 }

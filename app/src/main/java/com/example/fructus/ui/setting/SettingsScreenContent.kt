@@ -42,7 +42,8 @@ fun SettingsScreenContent(
     onDismissSheet: () -> Unit,
     onShowClearDialog: () -> Unit,
     onClearAll: () -> Unit,
-    onDismissClearDialog: () -> Unit
+    onDismissClearDialog: () -> Unit,
+    onShowOnboarding: () -> Unit
 ) {
     Scaffold(
         containerColor = Color.Transparent,
@@ -112,6 +113,7 @@ fun SettingsScreenContent(
             SettingsOptionCard(
                 iconRes = R.drawable.onboard,
                 title = "Onboarding",
+                onClick = onShowOnboarding
             )
 
             Row (
