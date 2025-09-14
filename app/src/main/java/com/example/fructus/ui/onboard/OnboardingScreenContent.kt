@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreenContent(
-    viewModel: OnboardingViewModel,
+    viewModel: OnboardingViewModel?,
     onGetStarted: () -> Unit,
 //    onStarted: () -> Unit
 ) {
@@ -116,12 +116,15 @@ fun OnboardingScreenContent(
 
                 Button(
                     onClick = {
-                        scope.launch {
-                            viewModel.completeOnboarding()
-                            viewModel.setRequestNotificationOnceBlocking()
-                            onGetStarted()
+                    scope.launch {
+                        // Only modify DataStore if viewModel exists (not preview mode)
+                        viewModel?.let {
+                            it.completeOnboarding()
+                            it.setRequestNotificationOnceBlocking()
                         }
-                    },
+                        onGetStarted()
+                    }
+                },
                     modifier = Modifier
                         .padding(bottom = 20.dp)
                         .height(50.dp)
