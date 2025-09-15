@@ -1,10 +1,8 @@
 package com.example.fructus.ui.setting
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
-import com.example.fructus.ui.setting.components.About
+import com.example.fructus.ui.setting.components.AboutOverlay
 import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
 import com.example.fructus.ui.theme.appColors
@@ -178,27 +175,8 @@ fun SettingsScreenContent(
     }
 
     if (showAbout) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0x80000000))
-                .clickable(
-                    onClick = { showAbout = false },
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .clickable(
-                        onClick = { /* consume click */ },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
-            ) {
-                About()
-            }
-        }
+        AboutOverlay(onDismiss = { showAbout = false })
     }
+
+
 }
