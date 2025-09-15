@@ -641,8 +641,8 @@ fun CameraScreenContent(
         ) {
             Icon(
                 painter = painterResource(
-                    if (isBottomSheetVisible.value) R.drawable.camera_exit else R.drawable
-                        .back_button
+                    if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable
+                        .ic_back
                 ),
                 contentDescription = if (isBottomSheetVisible.value) "Exit BottomSheet" else "Back",
                 modifier = Modifier

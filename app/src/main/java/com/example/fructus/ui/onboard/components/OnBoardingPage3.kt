@@ -1,18 +1,14 @@
 package com.example.fructus.ui.onboard.components
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,27 +20,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
-import com.example.fructus.ui.onboard.OnboardingScreenContent
-import com.example.fructus.ui.onboard.OnboardingViewModel
-import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
-import com.example.fructus.util.DataStoreManager
 
 
 @Composable
-fun OnboardingPage3() {
+fun OnboardingPage3(
+    isDarkMode: Boolean
+) {
+    val colors = MaterialTheme.appColors
     var isVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         isVisible = true
+    }
+
+    val backgroundImage = if (isDarkMode) {
+        R.drawable.dm_onboard3 // Dark mode image
+    } else {
+        R.drawable.lm_onboard3 // Light mode image
     }
 
     Box(
@@ -52,7 +52,7 @@ fun OnboardingPage3() {
     ) {
         // Background Image
         Image(
-            painter = painterResource(id = R.drawable.onbg3),
+            painter = painterResource(id = backgroundImage),
             contentDescription = "",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -74,7 +74,7 @@ fun OnboardingPage3() {
                 Text(
                     "Stay informed with",
                     fontFamily = poppinsFontFamily,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.textPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Normal
                 )
@@ -97,7 +97,7 @@ fun OnboardingPage3() {
                 Text(
                     "Reminders",
                     fontFamily = poppinsFontFamily,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.textPrimary,
                     fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -124,7 +124,7 @@ fun OnboardingPage3() {
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.tertiary,
+                color = colors.textPrimary,
             )
         }
 

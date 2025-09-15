@@ -17,14 +17,24 @@ class FruitCheckWorker(
     private val notificationDao = database.notificationDao()
     private val pushNotificationManager = PushNotificationManager(context)
 
+    private val dataStore = DataStoreManager(applicationContext)
+
+
     override suspend fun doWork(): Result {
         return try {
             android.util.Log.d("FruitCheckWorker", "=== Background worker started ===")
             android.util.Log.d("FruitCheckWorker", "Time: ${System.currentTimeMillis()}")
 
+            val allowNotifications = dataStore.receiveNotificationsFlow.first()
+            if (!allowNotifications) {
+                android.util.Log.w("FruitCheckWorker", "User disabled notifications in settings - skipping push notifications")
+                return Result.success()
+            }
+
             // Check if notifications are enabled
             if (!isNotificationPermissionGranted(applicationContext)) {
                 android.util.Log.w("FruitCheckWorker", "Notification permission not granted - skipping push notifications")
+                return Result.success()
             }
 
             checkFruitsAndNotify()
@@ -38,6 +48,7 @@ class FruitCheckWorker(
     }
 
     private suspend fun checkFruitsAndNotify() {
+
         val fruits = fruitDao.getAllFruits().first()
         android.util.Log.d("FruitCheckWorker", "Checking ${fruits.size} fruits")
 

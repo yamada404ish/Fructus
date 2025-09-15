@@ -46,6 +46,7 @@ import com.example.fructus.util.getDetailBackgroundRes
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
+import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.getFruitDrawableId
 import com.example.fructus.util.loadRecipesFromJson
 
@@ -127,6 +128,7 @@ fun CustomBottomSheetDetail(
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
+    val displayDescription = getFruitDescription(fruitName)
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
@@ -185,7 +187,7 @@ fun CustomBottomSheetDetail(
                                 color = colors.textPrimary
                             )
                             Text(
-                                text = "It is one of the most common banana cultivars in the Philippines.",
+                                text = displayDescription,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,
