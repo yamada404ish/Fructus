@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
@@ -27,6 +28,9 @@ fun ClearNotificationsDialog(
     onDismiss: () -> Unit,
     onClearAll: () -> Unit
 ) {
+
+    val colors = MaterialTheme.appColors
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -36,23 +40,17 @@ fun ClearNotificationsDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Clear All Notifications?",
-                    fontWeight = FontWeight.Bold,
+                    text = "Erase All Data?",
+                    fontWeight = FontWeight.Medium,
                     fontFamily = poppinsFontFamily,
-                    fontSize = 20.sp
+                    fontSize = 22.sp,
+                    color = colors.textPrimary
                 )
-            }
-        },
-        text = {
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
                 Text(
                     text = "This action cannot be undone.",
                     fontFamily = poppinsFontFamily,
-                    color = MaterialTheme.colorScheme.tertiaryContainer
+                    fontSize = 18.sp,
+                    color = colors.textSecondary
                 )
             }
         },
@@ -61,7 +59,7 @@ fun ClearNotificationsDialog(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(start = 4.dp, end = 4.dp, top = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Cancel button (outlined)
@@ -70,14 +68,15 @@ fun ClearNotificationsDialog(
                     border = BorderStroke(1.dp, Color.Red),
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFFFF4055)
+                        contentColor = Color(0xFFF55D5D)
                     )
                 ) {
                     Text(
                         text = "Cancel",
                         fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFFFF4055)
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 18.sp,
+                        color = Color(0xFFF55D5D)
                     )
                 }
 
@@ -86,21 +85,22 @@ fun ClearNotificationsDialog(
                     onClick = onClearAll,
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF4055),
+                        containerColor = Color(0xFFF55D5D),
                         contentColor = Color(0xFFFFFFFF)
                     )
                 ) {
                     Text(
-                        text = "Clear All",
+                        text = "Erase All",
+                        fontSize = 18.sp,
                         fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Normal,
                     )
                 }
             }
         },
         dismissButton = {},
 
-        containerColor = Color.White,
+        containerColor = colors.card,
         shape = RoundedCornerShape(16.dp)
     )
 }

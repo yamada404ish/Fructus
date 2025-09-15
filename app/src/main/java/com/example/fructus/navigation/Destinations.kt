@@ -24,6 +24,9 @@ object Scan
 object Settings
 
 @Serializable
+object OnBoardPreview
+
+@Serializable
 data class Detail (
     val id: Int,
     val notificationId: Int? = null

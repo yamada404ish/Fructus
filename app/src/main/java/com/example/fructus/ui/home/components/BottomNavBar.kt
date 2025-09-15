@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,25 +24,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
 fun BottomNavBar(
     onNotificationClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    hasNewNotification: Boolean
+    hasNewNotification: Boolean,
+    isDarkMode: Boolean
 ) {
+    val colors = MaterialTheme.appColors
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
     ) {
-        // Custom curved background with rounded corners
+        // Custom curved background with conditional shadow
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
             val h = size.height
@@ -108,10 +116,28 @@ fun BottomNavBar(
                 close()
             }
 
-            drawPath(path, color = Color.White)
-//            drawPath(path, color = Color.Blue, style = Stroke(width = 2.dp.toPx()))
-        }
+            // Draw shadow for both modes with appropriate colors
+            drawIntoCanvas { canvas ->
+                val paint = android.graphics.Paint().apply {
+                    color = android.graphics.Color.WHITE
+                    isAntiAlias = true
+                    setShadowLayer(
+                        10f,
+                        0f,
+                        -1f,
+                        if (isDarkMode) android.graphics.Color.DKGRAY else android.graphics.Color.LTGRAY
+                    )
+                }
 
+                // Required for shadow to show
+                canvas.nativeCanvas.setDrawFilter(android.graphics.PaintFlagsDrawFilter(0, android.graphics.Paint.ANTI_ALIAS_FLAG))
+
+                canvas.nativeCanvas.drawPath(path.asAndroidPath(), paint)
+            }
+
+            // Draw the actual path with theme-appropriate color
+            drawPath(path, color = colors.surface)
+        }
 
         // Navigation items
         Row(
@@ -123,7 +149,6 @@ fun BottomNavBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Notifications
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -137,11 +162,10 @@ fun BottomNavBar(
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.bell),
+                        painter = painterResource(R.drawable.ic_notification_bell),
                         contentDescription = "Notifications",
-                        modifier = Modifier
-                            .size(34.dp),
-                        tint = Color.Unspecified
+                        modifier = Modifier.size(34.dp),
+                        tint = colors.textTertiary
                     )
 
                     if (hasNewNotification) {
@@ -157,7 +181,7 @@ fun BottomNavBar(
                 Text(
                     text = "Notifications",
                     fontSize = 11.sp,
-                    color = Color(0xFF697F59),
+                    color = colors.textTertiary, // Use theme color instead of hardcoded
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                 )
@@ -175,27 +199,17 @@ fun BottomNavBar(
                 Icon(
                     painter = painterResource(R.drawable.settings),
                     contentDescription = "Settings",
-                    modifier = Modifier
-                        .size(34.dp),
-                    tint = Color.Unspecified
+                    modifier = Modifier.size(34.dp),
+                    tint = colors.textTertiary
                 )
                 Text(
                     text = "  Settings   ",
                     fontSize = 11.sp,
-                    color = Color(0xFF697F59),
+                    color = colors.textTertiary, // Use theme color instead of hardcoded
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                 )
             }
         }
-
     }
 }
-
-
-
-/*
-
-put an dot indicator if there is a new notif for the user
-
-*/

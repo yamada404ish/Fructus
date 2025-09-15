@@ -1,6 +1,5 @@
 package com.example.fructus.ui.notification
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,6 +40,7 @@ import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
 import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince
 
@@ -58,8 +59,10 @@ fun NotificationScreenContent(
     val recent = notifications.filter { calculateDaysSince(it.timestamp) <= 1 }
     val earlier = notifications.filter { calculateDaysSince(it.timestamp) > 1 }
 
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -86,13 +89,14 @@ fun NotificationScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        letterSpacing = 0.1.sp
+                        letterSpacing = 0.1.sp,
+                        color = colors.textPrimary
                     )
                 },
                 actions = {
                     Box {
                         Icon(
-                            painter = painterResource(R.drawable.archive),
+                            painter = painterResource(R.drawable.ic_archive),
                             contentDescription = "Archive",
                             modifier = Modifier
                                 .size(30.dp)
@@ -100,7 +104,8 @@ fun NotificationScreenContent(
                                     onClick = onArchiveClick,
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
-                                )
+                                ),
+                            tint = colors.textTertiary
                         )
 
                         // Badge showing archived count (only show if count > 0)
@@ -155,7 +160,7 @@ fun NotificationScreenContent(
                         fontSize = 14.sp,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF718860),
+                        color = colors.textTertiary,
                         modifier = Modifier.clickable { onMarkAllAsRead() }
                     )
                 }
@@ -171,15 +176,16 @@ fun NotificationScreenContent(
                         .padding(top = 100.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
+                    Icon (
                         painter = painterResource(R.drawable.empty),
                         contentDescription = "No notification available",
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(200.dp),
+                        tint = colors.textTertiary
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "No notification available",
-                        color = Color(0xFF9D9076),
+                        color = colors.textSecondary,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
@@ -189,17 +195,18 @@ fun NotificationScreenContent(
                 // Notifications list
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+
                 ) {
                     if (recent.isNotEmpty()) {
                         item {
                             Text(
                                 "Recent",
-                                fontSize = 16.sp,
+                                fontSize = 20.sp,
                                 fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Medium,
-                                color = Color(0xFF718860),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = colors.textPrimary
                             )
                         }
                         items(recent) { notification ->
@@ -214,11 +221,11 @@ fun NotificationScreenContent(
                         item {
                             Text(
                                 "Earlier",
-                                fontSize = 16.sp,
+                                fontSize = 20.sp,
                                 fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Medium,
-                                color = Color(0xFF718860),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = colors.textPrimary
                             )
                         }
                         items(earlier) { notification ->

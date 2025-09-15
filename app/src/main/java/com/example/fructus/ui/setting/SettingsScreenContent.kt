@@ -1,8 +1,10 @@
 package com.example.fructus.ui.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,11 +18,16 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -28,8 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
+import com.example.fructus.ui.setting.components.About
 import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,14 +47,21 @@ fun SettingsScreenContent(
     state: SettingsState,
     onNavigateUp: () -> Unit,
     onToggleNotifications: (Boolean) -> Unit,
+    onToggleDarkMode: (Boolean) -> Unit, // New parameter for dark mode
     onEnableNotifications: () -> Unit,
     onDismissSheet: () -> Unit,
     onShowClearDialog: () -> Unit,
     onClearAll: () -> Unit,
-    onDismissClearDialog: () -> Unit
+    onDismissClearDialog: () -> Unit,
+    onShowOnboarding: () -> Unit
 ) {
+    var showAbout by remember { mutableStateOf(false) }
+
+    // Use custom colors from theme
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg, // Use custom background color
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -57,6 +73,7 @@ fun SettingsScreenContent(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
+                        tint = colors.textPrimary, // Use custom text color
                         modifier = Modifier
                             .size(30.dp)
                             .clickable(
@@ -72,14 +89,14 @@ fun SettingsScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        letterSpacing = 0.1.sp
+                        letterSpacing = 0.1.sp,
+                        color = colors.textPrimary // Use custom text color
                     )
                 },
                 actions = {}
             )
         }
     ) { innerPadding ->
-        // Main content: two setting cards
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -88,7 +105,7 @@ fun SettingsScreenContent(
         ) {
             // Toggle notification switch
             SettingsOptionCard(
-                iconRes = R.drawable.bell_icon,
+                iconRes = R.drawable.ic_bell,
                 title = "Allow Notifications",
                 showSwitch = true,
                 isChecked = state.receiveNotifications,
@@ -97,13 +114,13 @@ fun SettingsScreenContent(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Enable Dark Mode
+            // Enable Dark Mode - now functional!
             SettingsOptionCard(
                 iconRes = R.drawable.dark_mode,
                 title = "Enable Dark Mode",
                 showSwitch = true,
-                isChecked = false,
-                onCheckedChange = {}
+                isChecked = state.isDarkMode, // Use state from ViewModel
+                onCheckedChange = onToggleDarkMode // Call the new handler
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -112,24 +129,25 @@ fun SettingsScreenContent(
             SettingsOptionCard(
                 iconRes = R.drawable.onboard,
                 title = "Onboarding",
+                onClick = onShowOnboarding
             )
 
-            Row (
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ){
-                //Clear notifications card
+            ) {
+                // About card
                 SettingsOptionCard(
-                    iconRes = R.drawable.about,
+                    iconRes = R.drawable.ic_about,
                     iconSize = 34,
                     title = "About",
-                    onClick = {}                                                    ,
+                    onClick = { showAbout = true },
                     modifier = Modifier.weight(1f)
                 )
 
-                //Clear notifications card
+                // Clear notifications card
                 SettingsOptionCard(
                     title = "Erase All Data",
                     onClick = onShowClearDialog,
@@ -139,12 +157,10 @@ fun SettingsScreenContent(
                     centerText = true
                 )
             }
-
-
         }
     }
 
-//     Show bottom sheet if permission is needed
+    // Show bottom sheet if permission is needed
     if (state.showSheet) {
         EnableNotificationBottomSheet(
             onEnableClick = onEnableNotifications,
@@ -159,5 +175,30 @@ fun SettingsScreenContent(
             onDismiss = onDismissClearDialog,
             onClearAll = onClearAll
         )
+    }
+
+    if (showAbout) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x80000000))
+                .clickable(
+                    onClick = { showAbout = false },
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .clickable(
+                        onClick = { /* consume click */ },
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+            ) {
+                About()
+            }
+        }
     }
 }

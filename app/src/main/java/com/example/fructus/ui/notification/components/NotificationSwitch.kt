@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.fructus.ui.theme.appColors
 
 @Composable
 fun CustomSwitchButton(
@@ -35,6 +36,8 @@ fun CustomSwitchButton(
     isChecked: Boolean,
     onCheckedChange:(Boolean) ->Unit
 ) {
+    val colors = MaterialTheme.appColors
+
    val switchSize by remember {
        mutableStateOf(buttonHeight-switchPadding*2)
    }
@@ -53,7 +56,7 @@ fun CustomSwitchButton(
     val animateSize by animateDpAsState(
         if (isChecked) padding else 0.dp,
         tween(
-            durationMillis = 700,
+            durationMillis = 1000,
             delayMillis = 0,
             easing = LinearOutSlowInEasing
         )
@@ -65,8 +68,7 @@ fun CustomSwitchButton(
             .width(buttonWidth)
             .height(buttonHeight)
             .clip(CircleShape)
-            .background(if (isChecked) Color(0xFFBADBA2) else MaterialTheme
-                .colorScheme.secondary)
+            .background(if (isChecked) Color(0xFFBADBA2) else colors.textSecondary)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null

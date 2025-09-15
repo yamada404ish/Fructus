@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +48,9 @@ fun RipenessProgressBar(
     segmentSpacing: Dp = 4.dp,
     totalWidth: Dp = 260.dp // 👈 controls how wide the whole bar+labels are
 ) {
+
+    val colors = MaterialTheme.appColors
+
     // Update colors based on current stage - only current stage lights up
     val segmentColors = RipenessStage.entries.map { stage ->
         when {
@@ -93,7 +98,7 @@ fun RipenessProgressBar(
         ) {
             RipenessStage.entries.forEach { stage ->
                 val isActive = stage == currentStage
-                val textColor = if (isActive) Color.Black else Color(0xFF9AA08C)
+                val textColor = if (isActive) colors.textPrimary else colors.ripenessStage
 
                 // 👇 Each label gets equal weight (same as segments above)
                 Box(
@@ -107,7 +112,8 @@ fun RipenessProgressBar(
                         fontSize = 12.sp,
                         fontFamily = poppinsFontFamily,
                         color = textColor,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
+                        letterSpacing = 2.sp
                     )
                 }
             }

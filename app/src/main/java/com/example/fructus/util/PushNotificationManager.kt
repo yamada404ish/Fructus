@@ -13,6 +13,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.fructus.MainActivity
+import kotlinx.coroutines.flow.first
 
 class PushNotificationManager(private val context: Context) {
 
@@ -25,6 +26,7 @@ class PushNotificationManager(private val context: Context) {
     }
 
     private val notificationManager = NotificationManagerCompat.from(context)
+    private val dataStore = DataStoreManager(context)
 
     init {
         createNotificationChannel()
@@ -60,12 +62,19 @@ class PushNotificationManager(private val context: Context) {
 
 
     /** Send a fruit spoilage notification */
-    fun sendFruitSpoilageNotification(
+    suspend fun sendFruitSpoilageNotification(
         message: String,
         fruitId: Int,
         actualNotificationId: Int? = null,
         pushNotificationId: Int = NOTIFICATION_ID_BASE + fruitId
     ) {
+
+        val allowNotifications = dataStore.receiveNotificationsFlow.first()
+        if (!allowNotifications) {
+            android.util.Log.w("PushNotification", "User disabled notifications in settings")
+            return
+        }
+
         if (!areNotificationsEnabled()) {
             android.util.Log.w("PushNotification", "Notifications are disabled by user")
             return
@@ -149,11 +158,11 @@ class PushNotificationManager(private val context: Context) {
     }
 
     /** Send test notification */
-    fun sendTestNotification() {
-
-        sendFruitSpoilageNotification(
-            message = "This is a test notification with sound + vibration",
-            fruitId = 99999
-        )
-    }
+//    fun sendTestNotification() {
+//
+//        sendFruitSpoilageNotification(
+//            message = "This is a test notification with sound + vibration",
+//            fruitId = 99999
+//        )
+//    }
 }

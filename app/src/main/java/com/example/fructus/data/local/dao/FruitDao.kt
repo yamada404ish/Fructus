@@ -17,7 +17,7 @@ interface FruitDao {
     fun getFruitById(id: Int): Flow<FruitEntity?>
 
     @Query("DELETE FROM fruits")
-    suspend fun deleteAll()
+    suspend fun  clearAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFruit(fruits: FruitEntity)
