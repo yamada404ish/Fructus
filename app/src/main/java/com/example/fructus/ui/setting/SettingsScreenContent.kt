@@ -105,7 +105,7 @@ fun SettingsScreenContent(
         ) {
             // Toggle notification switch
             SettingsOptionCard(
-                iconRes = R.drawable.bell_icon,
+                iconRes = R.drawable.ic_bell,
                 title = "Allow Notifications",
                 showSwitch = true,
                 isChecked = state.receiveNotifications,
@@ -140,7 +140,7 @@ fun SettingsScreenContent(
             ) {
                 // About card
                 SettingsOptionCard(
-                    iconRes = R.drawable.about,
+                    iconRes = R.drawable.ic_about,
                     iconSize = 34,
                     title = "About",
                     onClick = { showAbout = true },

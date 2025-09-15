@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +43,6 @@ fun BottomNavBar(
     isDarkMode: Boolean
 ) {
     val colors = MaterialTheme.appColors
-    val isDarkTheme = isSystemInDarkTheme() // Detect if we're in dark mode
 
     Box(
         modifier = Modifier
@@ -164,10 +162,10 @@ fun BottomNavBar(
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.bell),
+                        painter = painterResource(R.drawable.ic_notification_bell),
                         contentDescription = "Notifications",
                         modifier = Modifier.size(34.dp),
-                        tint = Color.Unspecified
+                        tint = colors.textTertiary
                     )
 
                     if (hasNewNotification) {
@@ -202,7 +200,7 @@ fun BottomNavBar(
                     painter = painterResource(R.drawable.settings),
                     contentDescription = "Settings",
                     modifier = Modifier.size(34.dp),
-                    tint = Color.Unspecified
+                    tint = colors.textTertiary
                 )
                 Text(
                     text = "  Settings   ",
