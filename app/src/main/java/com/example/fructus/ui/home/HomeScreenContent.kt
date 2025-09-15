@@ -155,7 +155,7 @@ fun HomeScreenContent(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ),
-                    tint = Color.Unspecified
+                    tint = colors.textTertiary
                 )
 
             }
@@ -191,15 +191,16 @@ fun HomeScreenContent(
                             .padding(top = 100.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Image(
+                        Icon (
                             painter = painterResource(R.drawable.empty),
                             contentDescription = "No fruits available",
-                            modifier = Modifier.size(200.dp)
+                            modifier = Modifier.size(200.dp),
+                            tint = colors.textTertiary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "No fruits available",
-                            color = Color(0xFF9D9076),
+                            color = colors.textSecondary,
                             fontFamily = poppinsFontFamily,
                             fontWeight = FontWeight.Medium,
                             fontSize = 16.sp
@@ -221,16 +222,17 @@ fun HomeScreenContent(
                                 .padding(top = 100.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Image(
+                            Icon (
                                 painter = painterResource(R.drawable.empty),
                                 contentDescription = "No fruits available",
-                                modifier = Modifier.size(200.dp)
+                                modifier = Modifier.size(200.dp),
+                                tint = colors.textTertiary
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
                                 text = if (selectedFilter == "Spoiled") "No spoiled fruits " +
                                         "available" else "No fruits available",
-                                color = Color(0xFF9D9076),
+                                color = colors.textSecondary,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp

@@ -1,21 +1,15 @@
 package com.example.fructus.ui.onboard.components
 
-import android.R.attr.button
-import android.annotation.SuppressLint
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,28 +20,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
-import com.example.fructus.ui.onboard.OnboardingScreenContent
-import com.example.fructus.ui.onboard.OnboardingViewModel
-import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
-import com.example.fructus.util.DataStoreManager
 
 @Composable
-fun OnboardingWelcomePage() {
+fun OnboardingWelcomePage(
+    isDarkMode: Boolean
+) {
+
+    val colors = MaterialTheme.appColors
     var isVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         isVisible = true
+    }
+
+    val backgroundImage = if (isDarkMode) {
+        R.drawable.dm_onboard1 // Dark mode image
+    } else {
+        R.drawable.lm_onboard1 // Light mode image
     }
 
     Box(
@@ -63,7 +61,7 @@ fun OnboardingWelcomePage() {
         ) {
             // Background Image
             Image(
-                painter = painterResource(id = R.drawable.onbg1),
+                painter = painterResource(id = backgroundImage),
                 contentDescription = "",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -86,7 +84,7 @@ fun OnboardingWelcomePage() {
                 Text(
                     "Welcome to",
                     fontFamily = poppinsFontFamily,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.textPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Normal
                 )
@@ -109,7 +107,7 @@ fun OnboardingWelcomePage() {
                 Text(
                     "Fructus",
                     fontFamily = poppinsFontFamily,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = colors.textPrimary,
                     fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -136,7 +134,7 @@ fun OnboardingWelcomePage() {
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.tertiary,
+                color = colors.textPrimary,
             )
         }
 

@@ -23,6 +23,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.fructus.ui.onboard.components.OnboardingPage2
 import com.example.fructus.ui.onboard.components.OnboardingPage3
 import com.example.fructus.ui.onboard.components.OnboardingWelcomePage
+import com.example.fructus.ui.theme.appColors
 import kotlinx.coroutines.launch
 
 
@@ -42,17 +44,19 @@ import kotlinx.coroutines.launch
 fun OnboardingScreenContent(
     viewModel: OnboardingViewModel?,
     onGetStarted: () -> Unit,
-//    onStarted: () -> Unit
+    isDarkMode: Boolean
 ) {
+
+    val colors = MaterialTheme.appColors
+
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
 
+
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(Color(0xFFF0EFE9))) {
+        .background(colors.bg)) {
         Column(modifier = Modifier.fillMaxSize()) {
-
-
 
             // Carousel pages 0-3
             AnimatedVisibility(
@@ -63,9 +67,15 @@ fun OnboardingScreenContent(
             ) {
                 HorizontalPager(state = pagerState) { page ->
                     when (page) {
-                        0 -> OnboardingWelcomePage()
-                        1 -> OnboardingPage2()
-                        2 -> OnboardingPage3()
+                        0 -> OnboardingWelcomePage(
+                            isDarkMode = isDarkMode
+                        )
+                        1 -> OnboardingPage2(
+                            isDarkMode = isDarkMode
+                        )
+                        2 -> OnboardingPage3(
+                            isDarkMode = isDarkMode
+                        )
                     }
                 }
             }
@@ -107,7 +117,7 @@ fun OnboardingScreenContent(
                                 .width(dotWidth)
                                 .height(8.dp) // Fixed height
                                 .background(
-                                    color = if (isSelected) Color(0xFFBADBA2) else Color(0xFFD1CEBA),
+                                    color = if (isSelected) colors.textTertiary else colors.textSecondary,
                                     shape = RoundedCornerShape(3.dp) // Half of height for pill shape
                                 )
                         )
@@ -131,7 +141,7 @@ fun OnboardingScreenContent(
                         .fillMaxWidth()
                         .padding(horizontal = 30.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFBADBA2), // background
+                        containerColor = colors.button, // background
                         contentColor = Color.Black
                     )// text/icon
                 )

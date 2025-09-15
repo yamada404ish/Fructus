@@ -1,6 +1,5 @@
 package com.example.fructus.ui.notification
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -97,7 +96,7 @@ fun NotificationScreenContent(
                 actions = {
                     Box {
                         Icon(
-                            painter = painterResource(R.drawable.archive),
+                            painter = painterResource(R.drawable.ic_archive),
                             contentDescription = "Archive",
                             modifier = Modifier
                                 .size(30.dp)
@@ -105,7 +104,8 @@ fun NotificationScreenContent(
                                     onClick = onArchiveClick,
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
-                                )
+                                ),
+                            tint = colors.textTertiary
                         )
 
                         // Badge showing archived count (only show if count > 0)
@@ -176,15 +176,16 @@ fun NotificationScreenContent(
                         .padding(top = 100.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
+                    Icon (
                         painter = painterResource(R.drawable.empty),
                         contentDescription = "No notification available",
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(200.dp),
+                        tint = colors.textTertiary
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "No notification available",
-                        color = Color(0xFF9D9076),
+                        color = colors.textSecondary,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
@@ -201,11 +202,11 @@ fun NotificationScreenContent(
                         item {
                             Text(
                                 "Recent",
-                                fontSize = 16.sp,
+                                fontSize = 20.sp,
                                 fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(vertical = 8.dp),
-                                color = colors.textTertiary
+                                color = colors.textPrimary
                             )
                         }
                         items(recent) { notification ->
@@ -220,11 +221,11 @@ fun NotificationScreenContent(
                         item {
                             Text(
                                 "Earlier",
-                                fontSize = 16.sp,
+                                fontSize = 20.sp,
                                 fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(vertical = 8.dp),
-                                color = colors.textTertiary
+                                color = colors.textPrimary
                             )
                         }
                         items(earlier) { notification ->
