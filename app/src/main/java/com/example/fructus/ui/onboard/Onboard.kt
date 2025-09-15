@@ -1,6 +1,8 @@
 package com.example.fructus.ui.onboard
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,6 +19,8 @@ fun OnboardingScreen(
     // Create a single instance of DataStoreManager and remember it across recompositions
     val dataStore = remember { DataStoreManager(context) }
 
+    val isDarkMode by dataStore.darkModeFlow.collectAsState(initial = false)
+
     // Create the OnboardingViewModel using the custom factory to inject DataStore
     val viewModel: OnboardingViewModel = viewModel(
         factory = OnboardingViewModelFactory(dataStore)
@@ -26,6 +30,6 @@ fun OnboardingScreen(
     OnboardingScreenContent(
         viewModel = viewModel,           // Pass the ViewModel to the content composable
         onGetStarted = onGetStarted,    // Pass the callback to trigger when onboarding finishes
-        //onStarted = onGetStarted         // Empty callback for now
+        isDarkMode = isDarkMode
     )
 }

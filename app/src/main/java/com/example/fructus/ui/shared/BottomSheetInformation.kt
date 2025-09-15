@@ -40,6 +40,7 @@ import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDrawableIdByName
+import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.loadRecipesFromJson
 import com.example.fructus.util.toRipenessStage
 
@@ -64,6 +65,7 @@ fun CustomBottomSheet(
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
+    val displayDescription = getFruitDescription(fruitName)
 
 
     // 🔎 Filter recipes based on detected fruit + ripeness
@@ -100,7 +102,7 @@ fun CustomBottomSheet(
                     color = colors.textPrimary
                 )
                 Text(
-                    text = "It is one of the most common banana cultivars in the Philippines.",
+                    text = displayDescription,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
@@ -178,7 +180,7 @@ fun CustomBottomSheet(
                         .fillMaxWidth()
                         .height(45.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (disableSave) Color(0xFFD1D1CC) else Color(0xFFBADBA2)
+                        containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button
                     )
                 ) {
                     Text(
@@ -187,7 +189,7 @@ fun CustomBottomSheet(
                             isSaved -> "Saved"
                             else -> "Save"
                         },
-                        color = if (isSpoiled || isSaved) Color(0xFF726F6F) else Color.Black,
+                        color = if (isSpoiled) colors.saveText else Color.Black,
                         fontSize = 18.sp,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Normal

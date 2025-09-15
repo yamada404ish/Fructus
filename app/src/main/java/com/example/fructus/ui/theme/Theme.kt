@@ -27,6 +27,7 @@ private val lightScheme = lightColorScheme(
     onSurfaceVariant = LightAppColors.ripenessStage,
     onSecondaryContainer = LightAppColors.outerBox,
     onTertiaryContainer = LightAppColors.innerBox,
+    tertiaryContainer = LightAppColors.button,
     // Add more mappings as needed
 )
 
@@ -45,6 +46,7 @@ private val darkScheme = darkColorScheme(
     onSurfaceVariant = DarkAppColors.ripenessStage,
     onSecondaryContainer = DarkAppColors.outerBox,
     onTertiaryContainer = DarkAppColors.innerBox,
+    tertiaryContainer = DarkAppColors.button,
     // Add more mappings as needed
 )
 
