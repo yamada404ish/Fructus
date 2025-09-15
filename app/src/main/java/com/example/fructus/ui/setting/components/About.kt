@@ -35,10 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -170,14 +168,5 @@ fun AboutOverlay(
                     )
             )
         }
-    }
-}
-
-
-@Preview
-@Composable
-private fun AboutPrev() {
-    FructusTheme {
-        About()
     }
 }
