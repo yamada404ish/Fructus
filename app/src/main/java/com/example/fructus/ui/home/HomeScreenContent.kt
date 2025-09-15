@@ -1,5 +1,13 @@
 package com.example.fructus.ui.home
 
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.*
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,30 +24,31 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
@@ -63,153 +72,139 @@ fun HomeScreenContent(
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
     viewModel: HomeViewModel = viewModel()
-
-
 ) {
+    // State for onboarding overlay
+    var showOnboarding by remember { mutableStateOf(false) }
 
-    Scaffold(
-        containerColor = Color.Transparent,
-
-        topBar = {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                Column(
+                    modifier = Modifier.padding(top = 10.dp)
+                ) {
+                    CenterAlignedTopAppBar(
+                        title = { FructusLogo() },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = Color.Transparent
+                        )
+                    )
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { onScanClick() },
+                    modifier = Modifier.offset(y = 60.dp),
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+                    containerColor = Color.Transparent
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.scan),
+                        contentDescription = "Scan Fruits",
+                        modifier = Modifier
+                            .size(88.dp)
+                            .clickable(
+                                onClick = { onScanClick() },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            )
+                    )
+                }
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+            bottomBar = {
+                BottomNavBar(
+                    hasNewNotification = hasNewNotification,
+                    onNotificationClick = onNotificationClick,
+                    onSettingsClick = onSettingsClick
+                )
+            }
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
-                    .padding(top = 10.dp),
+                    .padding(innerPadding)
+                    .padding(24.dp)
             ) {
-                CenterAlignedTopAppBar(
-                    title = { FructusLogo() },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
+                Text(
+                    text = "Your Fruits",
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    letterSpacing = 0.1.sp
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    FruitFilterToggle(
+                        selected = selectedFilter,
+                        onSelect = { onFilterChange(it) }
                     )
-                )
-            }
-        },
 
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onScanClick() }, // ✅ enabled scan function
-                modifier = Modifier.offset(y = (60).dp),
-                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
-                containerColor = Color.Transparent
-            ) {
-
-                Image(
-                    painter = painterResource(R.drawable.scan),
-                    contentDescription = "Scan Fruits",
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clickable(
-                            onClick = { onScanClick() },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = {
-            BottomNavBar(
-                hasNewNotification = hasNewNotification,
-                onNotificationClick = onNotificationClick,
-                onSettingsClick = onSettingsClick
-            )
-        }
-    ) { innerPadding ->
-
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(24.dp)
-        ) {
-            Text(
-                text = "Your Fruits",
-                fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                letterSpacing = 0.1.sp
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                FruitFilterToggle(
-                    selected = selectedFilter,
-                    onSelect = { onFilterChange(it) }
-                )
-
-                Icon(
-                    painter = painterResource(
-                        if (state.sortOrder == SortOrder.OLDEST) R.drawable.sort_newest else R.drawable.sort_oldest
-                    ),
-                    contentDescription = "Sort Fruits",
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clickable(
-                            onClick = { viewModel.toggleSortOrder() },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
-                    tint = Color.Unspecified
-                )
-
-            }
-            Spacer(Modifier.height(16.dp))
-
-            when {
-                state.isLoading -> {
-                    LazyVerticalGrid(
-                        GridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(bottom = 30.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(18.dp)
+                    // Icons row with guide button
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(4) { // Show 6 skeleton items
-                            Box(
-                                modifier = Modifier
-                                    .height(180.dp)
-                                    .background(
-                                        Color.Gray.copy(alpha = 0.3f),
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                            )
+                        // Quick Guide button
+                        Icon(
+                            painter = painterResource(R.drawable.guide), // Use your help icon or create one
+                            contentDescription = "Quick Guide",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable(
+                                    onClick = { showOnboarding = true },
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ),
+                            tint = Color(0xFF718860) // Adjust color to match your theme
+                        )
+
+                        // Sort button
+                        Icon(
+                            painter = painterResource(
+                                if (state.sortOrder == SortOrder.OLDEST) R.drawable.sort_newest
+                                else R.drawable.sort_oldest
+                            ),
+                            contentDescription = "Sort Fruits",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable(
+                                    onClick = { viewModel.toggleSortOrder() },
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ),
+                            tint = Color.Unspecified
+                        )
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+
+                when {
+                    state.isLoading -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(bottom = 30.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(18.dp)
+                        ) {
+                            items(4) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(180.dp)
+                                        .background(
+                                            Color.Gray.copy(alpha = 0.3f),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                )
+                            }
                         }
                     }
-                }
 
-                state.fruits.isEmpty() -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.empty),
-                            contentDescription = "No fruits available",
-                            modifier = Modifier.size(200.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No fruits available",
-                            color = Color(0xFF9D9076),
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-
-                else -> {
-
-                    val filteredFruits = when (selectedFilter) {
-                        "Spoiled" -> state.fruits.filter { isFruitSpoiled(it) }
-                        else -> state.fruits
-                    }
-
-                    if (filteredFruits.isEmpty()) {
+                    state.fruits.isEmpty() -> {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -223,40 +218,271 @@ fun HomeScreenContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = if (selectedFilter == "Spoiled") "No spoiled fruits " +
-                                        "available" else "No fruits available",
+                                text = "No fruits available",
                                 color = Color(0xFF9D9076),
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp
                             )
                         }
-                    } else {
-                        LazyVerticalGrid(
-                            GridCells.Fixed(2),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = 26.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(18.dp)
-                        ) {
-                            itemsIndexed(filteredFruits) { _, fruit ->
-                                FruitItem(
-                                    fruit = fruit,
-                                    onFruitClick = { onFruitClick(fruit.id) }
+                    }
+
+                    else -> {
+                        val filteredFruits = when (selectedFilter) {
+                            "Spoiled" -> state.fruits.filter { isFruitSpoiled(it) }
+                            else -> state.fruits
+                        }
+
+                        if (filteredFruits.isEmpty()) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(top = 100.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.empty),
+                                    contentDescription = "No fruits available",
+                                    modifier = Modifier.size(200.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = if (selectedFilter == "Spoiled")
+                                        "No spoiled fruits available"
+                                    else
+                                        "No fruits available",
+                                    color = Color(0xFF9D9076),
+                                    fontFamily = poppinsFontFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 16.sp
                                 )
                             }
-                            item(span = { GridItemSpan(2) }) { // make spacer span full row
-                                Spacer(modifier = Modifier.height(0.2f.dp))
+                        } else {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 26.dp),
+                                verticalArrangement = Arrangement.spacedBy(20.dp),
+                                horizontalArrangement = Arrangement.spacedBy(18.dp)
+                            ) {
+                                itemsIndexed(filteredFruits) { _, fruit ->
+                                    FruitItem(
+                                        fruit = fruit,
+                                        onFruitClick = { onFruitClick(fruit.id) }
+                                    )
+                                }
+                                item(span = { GridItemSpan(2) }) {
+                                    Spacer(modifier = Modifier.height(0.2f.dp))
+                                }
                             }
-
                         }
                     }
                 }
             }
         }
+
+
+        if (showOnboarding) {
+            FructusOnboardingOverlay(
+                onDismiss = { showOnboarding = false }
+            )
+        }
     }
 }
+
+
+@Composable
+fun FructusOnboardingOverlay(
+    onDismiss: () -> Unit
+) {
+    var isVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+    AnimatedVisibility(
+        visible = isVisible, // Adjust bottom padding based on your carousel height
+        enter = fadeIn(animationSpec = tween(500, delayMillis = 300)) + slideInVertically(
+            animationSpec = tween(500, delayMillis = 300)
+        )
+    ) {
+    // Animation states
+    val animatedAlpha by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(400)
+    )
+
+    val animatedScale by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(400, easing = EaseOutBounce)
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .zIndex(1000f)
+            .alpha(animatedAlpha)
+            .background(Color.Black.copy(alpha = 0.85f))
+            .clickable { onDismiss() }
+    ) {
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+                .scale(animatedScale)
+                .align(Alignment.Center)
+                .clickable { },
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Header with fruit image
+                Image(
+                    painter = painterResource(id = R.drawable.fructus_logo),
+                    contentDescription = "",
+                    modifier = Modifier.size(64.dp),
+                    contentScale = ContentScale.Fit
+                )
+
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "How to use",
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = poppinsFontFamily,
+                    color = Color(0xFF718860), // Green theme
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Scan and know about your fruits!",
+                    fontSize = 16.sp,
+                    fontFamily = poppinsFontFamily,
+                    color = Color(0xFF6B7280),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Guide steps
+                FructusGuideStep(
+                    painterResource(R.drawable.scan),
+                    title = "Scan Your Fruits",
+                    description = "Tap the scan button below to add new fruits"
+                )
+
+                FructusGuideStep(
+                    iconRes = painterResource(R.drawable.sort_oldest),
+                    title = "Filter & Sort",
+                    description = "Use the filter on the top right to toggle to or sort by newest/oldest"
+                )
+
+                FructusGuideStep(
+                    painterResource(R.drawable.bell),
+                    title = "Access Notifications",
+                    description = "Tap the notification icon to see your notifications"
+                )
+
+                FructusGuideStep(
+                    painterResource(R.drawable.settings),
+                    title = "Settings",
+                    description = "Access settings to personalize your fruit tracking experience"
+                )
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFBADBA2)
+                        )
+                    ) {
+                        Text(
+                            "Got It!",
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+
+        // Close button at top-right
+
+        }
+    }
+}
+
+@Composable
+fun FructusGuideStep(
+    iconRes: Painter,
+    title: String,
+    description: String
+) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon container
+            Box(
+                modifier = Modifier
+                    .size(48.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = iconRes,
+                    contentDescription = null,
+                    modifier = Modifier.size(50.dp),
+                    contentScale = ContentScale.Fit
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFontFamily,
+                    color = Color.Black
+                )
+                Text(
+                    text = description,
+                    fontSize = 14.sp,
+                    fontFamily = poppinsFontFamily,
+                    color = Color(0xFF6B7280),
+                    lineHeight = 20.sp
+                )
+            }
+        }
+    }
 
 @Preview
 @Composable
@@ -270,8 +496,7 @@ private fun HomeScreenPrev() {
             onSettingsClick = {},
             selectedFilter = "All",
             onFilterChange = {},
-            hasNewNotification =true
+            hasNewNotification = true
         )
-
     }
 }
