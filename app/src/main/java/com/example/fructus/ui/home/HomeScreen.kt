@@ -34,6 +34,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val db = remember { FruitDatabase.getDatabase(context) }
     val dataStore = remember { DataStoreManager(context) }
+    val isDarkMode by dataStore.darkModeFlow.collectAsState(initial = false)
 
     val viewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(db.fruitDao())
@@ -101,7 +102,8 @@ fun HomeScreen(
             } else {
                 showCameraPermissionModal = true
             }
-        }
+        },
+        isDarkMode = isDarkMode
     )
 }
 

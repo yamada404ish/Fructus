@@ -23,6 +23,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,25 +35,28 @@ import androidx.compose.ui.unit.dp
 import com.example.fructus.ui.onboard.components.OnboardingPage2
 import com.example.fructus.ui.onboard.components.OnboardingPage3
 import com.example.fructus.ui.onboard.components.OnboardingWelcomePage
+import com.example.fructus.ui.theme.appColors
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreenContent(
-    viewModel: OnboardingViewModel,
+    viewModel: OnboardingViewModel?,
     onGetStarted: () -> Unit,
-//    onStarted: () -> Unit
+    isDarkMode: Boolean
 ) {
+
+    val colors = MaterialTheme.appColors
+
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
 
+
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(Color(0xFFF0EFE9))) {
+        .background(colors.bg)) {
         Column(modifier = Modifier.fillMaxSize()) {
-
-
 
             // Carousel pages 0-3
             AnimatedVisibility(
@@ -63,9 +67,15 @@ fun OnboardingScreenContent(
             ) {
                 HorizontalPager(state = pagerState) { page ->
                     when (page) {
-                        0 -> OnboardingWelcomePage()
-                        1 -> OnboardingPage2()
-                        2 -> OnboardingPage3()
+                        0 -> OnboardingWelcomePage(
+                            isDarkMode = isDarkMode
+                        )
+                        1 -> OnboardingPage2(
+                            isDarkMode = isDarkMode
+                        )
+                        2 -> OnboardingPage3(
+                            isDarkMode = isDarkMode
+                        )
                     }
                 }
             }
@@ -75,78 +85,74 @@ fun OnboardingScreenContent(
 
             // Dot Indicators
 
-                Column(modifier = Modifier
-                    .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column(modifier = Modifier
+                .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    repeat(3) { index ->
+                        val isSelected = pagerState.currentPage == index
+                        val dotWidth by animateDpAsState(
+                            targetValue = if (isSelected) 24.dp else 8.dp, // Long vs small
+                            animationSpec = spring(
+                                Spring.DampingRatioMediumBouncy,
+                                Spring.StiffnessLow
+                            ),
+                            label = "dot_width"
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 10.dp)
+                                .padding(horizontal = 4.dp)
+                                .width(dotWidth)
+                                .height(8.dp) // Fixed height
+                                .background(
+                                    color = if (isSelected) colors.textTertiary else colors.textSecondary,
+                                    shape = RoundedCornerShape(3.dp) // Half of height for pill shape
+                                )
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                    scope.launch {
+                        // Only modify DataStore if viewModel exists (not preview mode)
+                        viewModel?.let {
+                            it.completeOnboarding()
+                            it.setRequestNotificationOnceBlocking()
+                        }
+                        onGetStarted()
+                    }
+                },
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.button, // background
+                        contentColor = Color.Black
+                    )// text/icon
                 )
                 {
-
-
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        repeat(3) { index ->
-                            val isSelected = pagerState.currentPage == index
-                            val dotWidth by animateDpAsState(
-                                targetValue = if (isSelected) 24.dp else 8.dp, // Long vs small
-                                animationSpec = spring(
-                                    Spring.DampingRatioMediumBouncy,
-                                    Spring.StiffnessLow
-                                ),
-                                label = "dot_width"
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(bottom = 10.dp)
-                                    .padding(horizontal = 4.dp)
-                                    .width(dotWidth)
-                                    .height(8.dp) // Fixed height
-                                    .background(
-                                        color = if (isSelected) Color(0xFFBADBA2) else Color(0xFFD1CEBA),
-                                        shape = RoundedCornerShape(3.dp) // Half of height for pill shape
-                                    )
-                            )
-                        }
-
-                    }
-
-
-
-                        Button(
-                            onClick = {
-                                scope.launch {
-                                    viewModel.completeOnboarding()
-                                    viewModel.setRequestNotificationOnce()
-                                    onGetStarted()
-                                }
-                            },
-                            modifier = Modifier
-                                .padding(bottom = 20.dp)
-                                .height(50.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 30.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFBADBA2), // background
-                                contentColor = Color.Black
-                            )// text/icon
-                        )
-                        {
-                            Text("Get Started")
-                        }
-
-
+                    Text("Get Started")
                 }
+
             }
         }
-
-
-
     }
+}
 
 
 

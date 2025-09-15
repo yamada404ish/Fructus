@@ -13,18 +13,19 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 
@@ -36,13 +37,15 @@ fun SuggestedRecipe(
     modifier: Modifier = Modifier,
 ) {
 
+    val colors = MaterialTheme.appColors
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFE8E6D5)
+            containerColor = colors.outerBox
         ),
     ) {
         Row(
@@ -72,6 +75,7 @@ fun SuggestedRecipe(
                     fontSize = 14.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
+                    color = colors.textPrimary
                 )
                 Text(
                     modifier = Modifier
@@ -80,7 +84,7 @@ fun SuggestedRecipe(
                     fontSize = 10.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Normal,
-                    color = Color.Gray,
+                    color = colors.textSecondary,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     lineHeight = 16.sp

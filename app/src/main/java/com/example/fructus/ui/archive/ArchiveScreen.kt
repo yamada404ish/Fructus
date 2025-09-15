@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,11 +34,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.R
 import com.example.fructus.data.local.entity.NotificationEntity
+import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,8 +56,10 @@ fun ArchiveScreen(
     onNavigateUp: () -> Unit = {},
 ) {
 
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = colors.bg,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -79,43 +86,52 @@ fun ArchiveScreen(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        letterSpacing = 0.1.sp
+                        letterSpacing = 0.1.sp,
+                        color = colors.textPrimary
                     )
                 }
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp)
-                .fillMaxSize()
-        ) {
-            if (archivedNotifications.isEmpty()) {
-                // Empty state
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+        if (archivedNotifications.isEmpty()) {
+            // Empty state - centered in entire screen
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset(y = (-50).dp), // Offset upward to account for top bar
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "No archived notifications",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 16.sp,
-                            color = Color.Gray
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Notifications will appear here after 7 days",
-                            fontFamily = poppinsFontFamily,
-                            fontSize = 12.sp,
-                            color = Color.Gray
-                        )
-                    }
+                    Icon (
+                        painter = painterResource(R.drawable.empty),
+                        contentDescription = "No notification available",
+                        modifier = Modifier.size(200.dp),
+                        tint = colors.textTertiary
+                    )
+                    Text(
+                        text = "No archived notifications",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 16.sp,
+                        color = colors.textSecondary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Notifications will appear here after 7 days",
+                        fontFamily = poppinsFontFamily,
+                        fontSize = 12.sp,
+                        color = colors.textSecondary
+                    )
                 }
-            } else {
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 24.dp)
+                    .fillMaxSize()
+            ) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -136,12 +152,15 @@ fun ArchivedNotificationCard(
     notification: NotificationEntity,
     onRestore: () -> Unit = {}
 ) {
+
+    val colors = MaterialTheme.appColors
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.7f)
+            containerColor = colors.card
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -160,8 +179,7 @@ fun ArchivedNotificationCard(
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    color = colors.textPrimary
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -170,9 +188,7 @@ fun ArchivedNotificationCard(
                     text = notification.message,
                     fontFamily = poppinsFontFamily,
                     fontSize = 14.sp,
-                    color = Color.Gray,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    color = colors.textSecondary
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -181,7 +197,7 @@ fun ArchivedNotificationCard(
                     text = formatTimestamp(notification.timestamp),
                     fontFamily = poppinsFontFamily,
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = colors.textSecondary
                 )
             }
 
@@ -202,4 +218,17 @@ fun ArchivedNotificationCard(
 private fun formatTimestamp(timestamp: Long): String {
     val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
     return formatter.format(Date(timestamp))
+}
+
+
+@Preview
+@Composable
+private fun ArchiveScreenPrev() {
+    FructusTheme {
+        ArchiveScreen(
+            archivedNotifications = listOf(),
+            onRestoreNotification = {},
+            onNavigateUp = { }
+        )
+    }
 }

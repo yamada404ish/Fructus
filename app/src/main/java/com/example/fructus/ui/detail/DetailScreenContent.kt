@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,11 +40,13 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.shared.FruitAnalysis
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDetailBackgroundRes
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
+import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.getFruitDrawableId
 import com.example.fructus.util.loadRecipesFromJson
 
@@ -57,8 +60,10 @@ fun DetailScreenContent(
     val shelfLifeDisplay = getDisplayShelfLife(fruit)
     val backgroundRes = getDetailBackgroundRes(fruit.name)
 
+    val colors = MaterialTheme.appColors
+
     Scaffold(
-        containerColor = Color.Transparent
+        containerColor = colors.bg
     ) { innerPadding ->
         Box(
 
@@ -117,9 +122,13 @@ fun CustomBottomSheetDetail(
     shelfLifeDisplay: String,
     confidence: Int,
 ) {
+
+    val colors = MaterialTheme.appColors
+
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
+    val displayDescription = getFruitDescription(fruitName)
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
@@ -137,10 +146,10 @@ fun CustomBottomSheetDetail(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.76f)
+                .fillMaxHeight(0.80f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
-                .background(Color(0xFFF0EFE9))
+                .background(colors.bg)
         ) {
             Column(
                 modifier = Modifier
@@ -174,13 +183,15 @@ fun CustomBottomSheetDetail(
                                 text = displayName,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp
+                                fontSize = 24.sp,
+                                color = colors.textPrimary
                             )
                             Text(
-                                text = "It is one of the most common banana cultivars in the Philippines.",
+                                text = displayDescription,
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                color = colors.textPrimary
                             )
                         }
                     }
@@ -201,13 +212,14 @@ fun CustomBottomSheetDetail(
                         text = "Try the following:",
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        color = colors.textPrimary
                     )
 
                     if (matchedRecipes.isEmpty()) {
                         Text(
                             text = "No recipes available for this stage.",
-                            color = Color.Gray,
+                            color = colors.textSecondary,
                             fontSize = 14.sp
                         )
                     } else {

@@ -1,5 +1,6 @@
 package com.example.fructus.navigation
 
+import android.app.Activity
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
@@ -28,6 +29,7 @@ import com.example.fructus.ui.notification.NotificationViewModel
 import com.example.fructus.ui.notification.NotificationViewModelFactory
 import com.example.fructus.ui.onboard.OnboardingScreen
 import com.example.fructus.ui.setting.SettingsScreen
+import com.example.fructus.ui.setting.components.OnboardingPreviewScreen
 import com.example.fructus.ui.shared.AppBackgroundScaffold
 import com.example.fructus.ui.splash.SplashScreen
 
@@ -39,10 +41,9 @@ fun FructusNav(
     targetFruitId: Int? = null,
     targetNotificationId: Int? = null
 ) {
-    // COMPLETELY bypass splash for notifications
+    // If notification tapped, bypass splash
     val startDestination = when {
-        shouldOpenNotifications && targetFruitId != null ->
-            Detail(targetFruitId, targetNotificationId) // ⭐ include notificationId
+        shouldOpenNotifications && targetFruitId != null -> Detail(targetFruitId, targetNotificationId)
         shouldOpenNotifications -> Notification
         else -> Splash
     }
@@ -51,19 +52,60 @@ fun FructusNav(
         navController = navController,
         startDestination = startDestination
     ) {
-        // Only add Splash route if NOT coming from notification
+        // ✅ Always handle onboarding via Splash, never directly
         if (!shouldOpenNotifications) {
             composable<Splash> {
                 AppBackgroundScaffold {
                     SplashScreen { onboardingCompleted ->
-                        val destination = if (onboardingCompleted) Home else OnBoard
-                        navController.navigate(destination) {
-                            popUpTo(Splash) { inclusive = true }
-                            launchSingleTop = true
+                        if (onboardingCompleted) {
+                            navController.navigate(Home) {
+                                popUpTo<Splash> { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.navigate(OnBoard) {
+                                popUpTo<Splash> { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     }
                 }
             }
+
+            composable<OnBoard> {
+                val context = LocalContext.current
+
+                // ⬅️ Handle back button → exit app instead of going back to Splash
+                BackHandler {
+                    // Check if we came from settings by looking at back stack
+                    val previousEntry = navController.previousBackStackEntry
+                    if (previousEntry?.destination?.route?.contains("Settings") == true) {
+                        // Go back to settings instead of exiting app
+                        navController.navigateUp()
+                    } else {
+                        // Original behavior - exit app
+                        (context as? Activity)?.finish()
+                    }
+                }
+
+                AppBackgroundScaffold {
+                    OnboardingScreen {
+                        // When "Get Started" is clicked, check where we came from
+                        val previousEntry = navController.previousBackStackEntry
+                        if (previousEntry?.destination?.route?.contains("Settings") == true) {
+                            // If came from settings, go back to settings
+                            navController.navigateUp()
+                        } else {
+                            // Original behavior - go to Home
+                            navController.navigate(Home) {
+                                popUpTo<OnBoard> { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         addCoreDestinations(
@@ -73,25 +115,12 @@ fun FructusNav(
     }
 }
 
+
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun NavGraphBuilder.addCoreDestinations(
     navController: NavHostController,
     shouldOpenNotifications: Boolean
 ) {
-    // Onboarding - only if not from notification
-    if (!shouldOpenNotifications) {
-        composable<OnBoard> {
-            AppBackgroundScaffold {
-                OnboardingScreen {
-                    navController.navigate(Home) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
-    }
-
     // Home
     composable<Home> {
         AppBackgroundScaffold {
@@ -210,11 +239,53 @@ private fun NavGraphBuilder.addCoreDestinations(
     }
 
     // Settings
+    // Settings
+//    composable<Settings> {
+////        AppBackgroundScaffold {
+////            SettingsScreen(
+////                onNavigateUp = { navController.navigateUp() },
+////                onNavigateToOnboarding = {
+////                    navController.navigate(Splash) {
+////                        popUpTo(0) { inclusive = true } // 🔑 clears back stack up to Home
+////                        launchSingleTop = true
+////                    }
+////                }
+////            )
+////        }
+////    }
     composable<Settings> {
         AppBackgroundScaffold {
             SettingsScreen(
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = { navController.navigateUp() },
+                // Preview onboarding - returns to settings
+                onNavigateToOnboardingPreview = {
+                    navController.navigate(OnBoardPreview) {
+                        launchSingleTop = true
+                    }
+                },
+                // Fresh start - goes through full flow
+                onNavigateToFreshStart = {
+                    navController.navigate(Splash) {
+                        popUpTo(0) { inclusive = true } // Clear entire back stack
+                        launchSingleTop = true
+                    }
+                }
             )
+        }
+    }
+
+    composable<OnBoardPreview> {
+        val context = LocalContext.current
+
+        BackHandler {
+            navController.navigateUp() // Always go back to settings
+        }
+
+        AppBackgroundScaffold {
+            // Create a special onboarding screen for preview mode
+            OnboardingPreviewScreen {
+                navController.navigateUp() // Go back to settings
+            }
         }
     }
 
