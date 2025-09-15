@@ -52,14 +52,15 @@ android {
         mlModelBinding = true
     }
 
-    aaptOptions {
-        noCompress += "tflite"
-    }
     ndkVersion = "27.0.12077973"
 }
 
 dependencies {
     // Core + Compose
+        // or use the latest version available
+    implementation("androidx.compose.animation:animation:1.7.0")
+    implementation("com.canopas.intro-showcase-view:introshowcaseview:2.0.0")
+    implementation("com.canopas.intro-showcase-view:introshowcaseview:<latest-version>")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
