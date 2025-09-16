@@ -107,13 +107,3 @@ fun HomeScreen(
     )
 }
 
-
-/*
-Initializes the DB and ViewModel
-
-Checks if notification permission should be requested (based on DataStore)
-
-If yes and not yet granted, shows a permission dialog (only once!)
-
-Displays the home screen with fruit list and notification icon
-*/
