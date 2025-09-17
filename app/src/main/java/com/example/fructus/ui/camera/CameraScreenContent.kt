@@ -465,6 +465,7 @@ package com.example.fructus.ui.camera
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -548,6 +549,13 @@ fun CameraScreenContent(
         "---"
     } else {
         formatShelfLifeRange(shelfLifeRange)
+    }
+
+    BackHandler {
+        // ✅ Turn off flashlight when user presses phone back button
+        cameraRef.value?.cameraControl?.enableTorch(false)
+        flashEnabled.value = false
+        onNavigateUp()
     }
 
 
@@ -654,6 +662,8 @@ fun CameraScreenContent(
                                 detectedState.value = false
                                 isSaved.value = false
                             } else {
+                                cameraRef.value?.cameraControl?.enableTorch(false)
+                                flashEnabled.value = false
                                 onNavigateUp()
 
                             }
