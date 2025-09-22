@@ -7,16 +7,20 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.example.fructus.util.DataStoreManager
 
 @Composable
 fun Camera(
     context: Context,
     onNavigateUp: () -> Unit = {},
+    onHome: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner =context as LifecycleOwner
@@ -26,6 +30,9 @@ fun Camera(
     val detected = remember { mutableStateOf(false) }
     val detectedFruit = remember { mutableStateOf("") }
     val detectedRipeness = remember { mutableStateOf("") }
+
+    val dataStore = remember { DataStoreManager(context) }
+    val isDarkMode by dataStore.darkModeFlow.collectAsState(initial = false)
 
     val db = remember { com.example.fructus.data.local.FruitDatabase.getDatabase(context) }
     val cameraViewModel: CameraViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
@@ -69,6 +76,8 @@ fun Camera(
         onNavigateUp = onNavigateUp,
         onSaveFruit = { fruit, ripeness, process, confidence ->
             cameraViewModel.saveFruit(fruit, ripeness, process, confidence )
-        }
+        },
+        isDarkMode = isDarkMode,
+        onHome = onHome
     )
 }
