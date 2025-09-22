@@ -28,7 +28,7 @@ data class ClassificationResult(
 )
 
 // --------------------- FRUIT TYPE CLASSIFIER ---------------------
-fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.95f): ClassificationResult {
+fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): ClassificationResult {
     val modelName = "fruit_type_model.tflite"
     val labels = listOf(
         "Cavendish", "Lakatan", "Carabao", "Saba",
@@ -281,7 +281,7 @@ fun Bitmap.segmentFruit(): Bitmap {
 }
 
 // --------------------- BLACK FRAME CHECK ---------------------
-fun Bitmap.isMostlyBlack(threshold: Int = 30, ratio: Double = 0.90): Boolean {
+fun Bitmap.isMostlyBlack(threshold: Int = 30, ratio: Double = 00.9): Boolean {
     val pixels = IntArray(width * height)
     getPixels(pixels, 0, width, 0, 0, width, height)
     var darkCount = 0
