@@ -66,8 +66,8 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
+import com.example.fructus.ui.home.components.Dropdown
 import com.example.fructus.ui.home.components.FructusLogo
-import com.example.fructus.ui.home.components.FruitFilterToggle
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
 import com.example.fructus.ui.theme.appColors
@@ -165,10 +165,11 @@ fun HomeScreenContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    FruitFilterToggle(
-                        selected = selectedFilter,
-                        onSelect = { onFilterChange(it) }
-                    )
+                    Dropdown()
+//                    FruitFilterToggle(
+//                        selected = selectedFilter,
+//                        onSelect = { onFilterChange(it) }
+//                    )
 
                     Row (
                         verticalAlignment = Alignment.CenterVertically,
