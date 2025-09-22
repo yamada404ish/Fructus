@@ -3,6 +3,7 @@ package com.example.fructus
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -12,6 +13,7 @@ import com.example.fructus.ui.FructusApp
 import com.example.fructus.util.NotificationSoundUtils
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import org.opencv.android.OpenCVLoader   // ✅ Added
 
 class MainActivity : ComponentActivity() {
 
@@ -24,6 +26,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        // ✅ Initialize OpenCV once when MainActivity starts
+        if (!OpenCVLoader.initDebug()) {
+            Log.e("OpenCV", "OpenCV initialization failed!")
+        } else {
+            Log.d("OpenCV", "OpenCV initialized successfully.")
+        }
 
         NotificationSoundUtils.checkNotificationSettings(this)
         NotificationSoundUtils.logDeviceAudioSettings(this)
