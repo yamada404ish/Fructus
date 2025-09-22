@@ -5,7 +5,6 @@ import androidx.compose.animation.core.EaseOutBounce
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -55,7 +53,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +63,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
+import com.example.fructus.ui.home.components.FructusGuideStep
 import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FruitFilterToggle
 import com.example.fructus.ui.home.components.FruitItem
@@ -94,7 +92,6 @@ fun HomeScreenContent(
 
     val colors = MaterialTheme.appColors
 
-    Box(modifier = Modifier.fillMaxSize()) {
 
 
         Scaffold(
@@ -313,7 +310,6 @@ fun HomeScreenContent(
                 onDismiss = { showOnboarding = false }
             )
         }
-    }
 }
 
 @Composable
@@ -325,12 +321,7 @@ fun FructusOnboardingOverlay(
     LaunchedEffect(Unit) {
         isVisible = true
     }
-    AnimatedVisibility(
-        visible = isVisible, // Adjust bottom padding based on your carousel height
-        enter = fadeIn(animationSpec = tween(500, delayMillis = 300)) + slideInVertically(
-            animationSpec = tween(500, delayMillis = 300)
-        )
-    ) {
+
         // Animation states
         val animatedAlpha by animateFloatAsState(
             targetValue = 1f,
@@ -343,14 +334,23 @@ fun FructusOnboardingOverlay(
         )
 
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
+
                 .fillMaxSize()
                 .zIndex(1000f)
                 .alpha(animatedAlpha)
                 .background(Color.Black.copy(alpha = 0.85f))
                 .clickable { onDismiss() }
+
         ) {
 
+
+            AnimatedVisibility(
+                visible = isVisible, // Adjust bottom padding based on your carousel height
+                enter = fadeIn(animationSpec = tween(300, delayMillis = 100)
+                )
+            ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -364,6 +364,7 @@ fun FructusOnboardingOverlay(
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
             ) {
+
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
@@ -450,58 +451,8 @@ fun FructusOnboardingOverlay(
                         }
                     }
                 }
+                }
             }
         }
-    }
+
 }
-
-@Composable
-fun FructusGuideStep(
-    iconRes: Painter,
-    title: String,
-    description: String
-) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Icon container
-        Box(
-            modifier = Modifier
-                .size(48.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = iconRes,
-                contentDescription = null,
-                modifier = Modifier.size(50.dp),
-                contentScale = ContentScale.Fit
-            )
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = poppinsFontFamily,
-                color = Color.Black
-            )
-            Text(
-                text = description,
-                fontSize = 14.sp,
-                fontFamily = poppinsFontFamily,
-                color = Color(0xFF6B7280),
-                lineHeight = 20.sp
-            )
-        }
-    }
-}
-
