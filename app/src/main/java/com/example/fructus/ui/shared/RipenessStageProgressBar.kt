@@ -113,7 +113,6 @@ fun RipenessProgressBar(
                         fontFamily = poppinsFontFamily,
                         color = textColor,
                         fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
-                        letterSpacing = 2.sp
                     )
                 }
             }

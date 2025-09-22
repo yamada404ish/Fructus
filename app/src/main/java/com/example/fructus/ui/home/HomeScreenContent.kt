@@ -63,9 +63,12 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
+<<<<<<< HEAD
 import com.example.fructus.ui.home.components.FructusGuideStep
+=======
+import com.example.fructus.ui.home.components.Dropdown
+>>>>>>> last
 import com.example.fructus.ui.home.components.FructusLogo
-import com.example.fructus.ui.home.components.FruitFilterToggle
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
 import com.example.fructus.ui.theme.appColors
@@ -162,10 +165,15 @@ fun HomeScreenContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    FruitFilterToggle(
-                        selected = selectedFilter,
-                        onSelect = { onFilterChange(it) }
+                    Dropdown(
+                        selectedMenu = selectedFilter,
+                        onMenuSelected = { onFilterChange(it) }
                     )
+
+//                    FruitFilterToggle(
+//                        selected = selectedFilter,
+//                        onSelect = { onFilterChange(it) }
+//                    )
 
                     Row (
                         verticalAlignment = Alignment.CenterVertically,
@@ -253,9 +261,14 @@ fun HomeScreenContent(
                     else -> {
 
                         val filteredFruits = when (selectedFilter) {
+                            "All" -> state.fruits
+                            "Unripe" -> state.fruits.filter { it.ripeningStage.equals("unripe", true) }
+                            "Ripe" -> state.fruits.filter { it.ripeningStage.equals("ripe", true) }
+                            "Overripe" -> state.fruits.filter { it.ripeningStage.equals("overripe", true) }
                             "Spoiled" -> state.fruits.filter { isFruitSpoiled(it) }
                             else -> state.fruits
                         }
+
 
                         if (filteredFruits.isEmpty()) {
                             Column(

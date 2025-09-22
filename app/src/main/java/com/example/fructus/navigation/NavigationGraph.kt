@@ -302,6 +302,12 @@ private fun NavGraphBuilder.addCoreDestinations(
                     popUpTo<Home> { inclusive = true }
                     launchSingleTop = true
                 }
+            },
+            onHome = {
+                navController.navigate(Home) {
+                    popUpTo<Home> { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         )
     }

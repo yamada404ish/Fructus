@@ -258,7 +258,6 @@ fun  FruitAnalysis(
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
                 fontSize = 12.sp,
-                letterSpacing = 0.1f.sp,
                 color = colors.textSecondary
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -305,7 +304,7 @@ fun InfoCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = colors.textPrimary
@@ -313,3 +312,4 @@ fun InfoCard(
         }
     }
 }
+

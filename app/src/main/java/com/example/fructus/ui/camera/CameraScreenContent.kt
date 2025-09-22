@@ -507,6 +507,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.fructus.R
+import com.example.fructus.ui.camera.components.ScanAgain
 import com.example.fructus.ui.shared.CustomBottomSheet
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
@@ -532,6 +533,8 @@ fun CameraScreenContent(
     detectedRipenessState: MutableState<String>,
     onSaveFruit: (String, String, Boolean, Int) -> Unit,
     onNavigateUp: () -> Unit,
+    isDarkMode: Boolean,
+    onHome: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -550,6 +553,8 @@ fun CameraScreenContent(
     } else {
         formatShelfLifeRange(shelfLifeRange)
     }
+
+    val showScanAgainDialog = remember { mutableStateOf(false) }
 
     BackHandler {
         // ✅ Turn off flashlight when user presses phone back button
@@ -647,32 +652,34 @@ fun CameraScreenContent(
                 .padding(top = 50.dp, start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                painter = painterResource(
-                    if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable
-                        .ic_back
-                ),
-                contentDescription = if (isBottomSheetVisible.value) "Exit BottomSheet" else "Back",
-                modifier = Modifier
-                    .size(50.dp)
-                    .clickable(
-                        onClick = {
-                            if (isBottomSheetVisible.value) {
-                                isBottomSheetVisible.value = false
-                                detectedState.value = false
-                                isSaved.value = false
-                            } else {
-                                cameraRef.value?.cameraControl?.enableTorch(false)
-                                flashEnabled.value = false
-                                onNavigateUp()
-
-                            }
-                        },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
+            if (!showScanAgainDialog.value) {
+                Icon(
+                    painter = painterResource(
+                        if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable
+                            .ic_back
                     ),
-                tint = Color.Unspecified
-            )
+                    contentDescription = if (isBottomSheetVisible.value) "Exit BottomSheet" else "Back",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clickable(
+                            onClick = {
+                                if (isBottomSheetVisible.value) {
+                                    isBottomSheetVisible.value = false
+                                    detectedState.value = false
+                                    isSaved.value = false
+                                } else {
+                                    cameraRef.value?.cameraControl?.enableTorch(false)
+                                    flashEnabled.value = false
+                                    onNavigateUp()
+
+                                }
+                            },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ),
+                    tint = Color.Unspecified
+                )
+            }
 
             if (!isBottomSheetVisible.value) {
 
@@ -830,6 +837,8 @@ fun CameraScreenContent(
                                     "Saved Successfully!",
                                     Toast.LENGTH_SHORT
                                 ).show()
+
+                                showScanAgainDialog.value = true
                             }
                         },
                     )
@@ -846,5 +855,26 @@ fun CameraScreenContent(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
+    }
+    if (showScanAgainDialog.value) {
+        ScanAgain(
+            onYes = {
+                // Reset everything back to "fresh camera state"
+                detectedState.value = false
+                detectedFruitState.value = ""         // 👈 no fruit yet
+                detectedRipenessState.value = ""      // 👈 no ripeness yet
+                isSaved.value = false
+                isBottomSheetVisible.value = false
+                isScanning.value = false               // 👈 start scanning again
+                showScanAgainDialog.value = false
+            }
+            ,
+            onNo = {
+                // ❌ Just close the dialog
+                showScanAgainDialog.value = false
+                onHome()
+            },
+            isDarkMode = isDarkMode
+        )
     }
 }
