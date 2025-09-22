@@ -49,11 +49,14 @@ import com.example.fructus.ui.shared.CustomBottomSheet
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
 import com.example.fructus.util.classifyRipeness
-import com.example.fructus.util.cropToScanBox   // ✅ Added
+import com.example.fructus.util.cropToScanBox
 import com.example.fructus.util.formatShelfLifeRange
 import com.example.fructus.util.getShelfLifeRange
 import com.example.fructus.util.rotate
-import com.example.fructus.util.toBitmap        // make sure this import exists
+import com.example.fructus.util.toBitmap
+import java.io.File
+import java.io.FileOutputStream
+import com.example.fructus.util.saveBitmapToInternalStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +72,7 @@ fun CameraScreenContent(
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
     detectedRipenessState: MutableState<String>,
-    onSaveFruit: (String, String, Boolean, Int) -> Unit,
+    onSaveFruit: (String, String, Boolean, Int, String?) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
 
@@ -81,6 +84,7 @@ fun CameraScreenContent(
     val cameraRef = remember { mutableStateOf<Camera?>(null) }
     val isScanning = remember { mutableStateOf(false) }
     val isBottomSheetVisible = remember { mutableStateOf(false) }
+    val capturedImagePath = remember { mutableStateOf<String?>(null) } // ✅ Added state
 
     val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
     val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
@@ -119,6 +123,13 @@ fun CameraScreenContent(
                                     val ripenessResult = classifyRipeness(fruitResult.label, croppedForBox, it)
                                     isSaved.value = false
 
+                                    // ✅ Save captured image when detection is valid
+                                    val fileName = "fruit_${System.currentTimeMillis()}"
+                                    val imagePath = saveBitmapToInternalStorage(it, croppedForBox, fileName)
+
+                                    // ✅ Step 3.4: store path in state
+                                    capturedImagePath.value = imagePath
+
                                     detectedFruitState.value = fruitResult.label
                                     detectedRipenessState.value = ripenessResult.label
 
@@ -128,7 +139,8 @@ fun CameraScreenContent(
                                     Log.d(
                                         "Prediction",
                                         "Fruit: ${fruitResult.label} (${fruitResult.confidence}), " +
-                                                "Ripeness: ${ripenessResult.label} (${ripenessResult.confidence})"
+                                                "Ripeness: ${ripenessResult.label} (${ripenessResult.confidence}), " +
+                                                "Image saved at: $imagePath"
                                     )
                                 } catch (e: Exception) {
                                     Log.e("PredictionError", "Error during classification", e)
@@ -332,7 +344,7 @@ fun CameraScreenContent(
                         isSaved = isSaved.value,
                         onSave = {
                             if (!isSaved.value) {
-                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence)
+                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence, capturedImagePath.value)
                                 isSaved.value = true
                                 showSuccessMessage.value = true
                                 Toast.makeText(context, "Saved Successfully!", Toast.LENGTH_SHORT).show()

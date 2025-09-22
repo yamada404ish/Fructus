@@ -67,8 +67,8 @@ fun Camera(
         detectedFruitState = detectedFruit,
         detectedRipenessState = detectedRipeness,
         onNavigateUp = onNavigateUp,
-        onSaveFruit = { fruit, ripeness, process, confidence ->
-            cameraViewModel.saveFruit(fruit, ripeness, process, confidence )
+        onSaveFruit = { fruit, ripeness, process, confidence, imagePath ->
+            cameraViewModel.saveFruit(fruit, ripeness, process, confidence, imagePath)
         }
     )
 }

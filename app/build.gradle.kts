@@ -130,6 +130,9 @@ dependencies {
     implementation(libs.camerax.view)
     implementation(libs.camerax.mlkit)
 
+    //coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     // OpenCV
     implementation(project(":opencv"))
 

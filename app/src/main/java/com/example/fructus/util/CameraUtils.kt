@@ -19,6 +19,8 @@ import java.nio.channels.FileChannel
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import java.io.File
+import java.io.FileOutputStream
 
 data class ClassificationResult(
     val label: String,
@@ -180,6 +182,16 @@ fun ImageProxy.toBitmap(): Bitmap? {
 fun Bitmap.rotate(degrees: Int): Bitmap {
     val matrix = Matrix().apply { postRotate(degrees.toFloat()) }
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}
+fun saveBitmapToFile(context: Context, bitmap: Bitmap, fileName: String = "fruit_${System.currentTimeMillis()}.jpg"): String {
+    val dir = File(context.filesDir, "fruits")
+    if (!dir.exists()) dir.mkdirs()
+
+    val file = File(dir, fileName)
+    FileOutputStream(file).use { out ->
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+    }
+    return file.absolutePath
 }
 
 // --------------------- FIXED CROP TO SCAN BOX ---------------------

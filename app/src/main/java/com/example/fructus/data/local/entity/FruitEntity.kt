@@ -13,6 +13,7 @@ data class FruitEntity (
     val confidence: Int,
     val scannedDate: String,
     val scannedTime: String,
-    val scannedTimestamp: Long
+    val scannedTimestamp: Long,
+    val imagePath: String? = null
 )
 
