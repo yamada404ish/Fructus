@@ -110,7 +110,7 @@ fun FruitItem(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
+                        fontSize = 15.sp,
                         color = colors.textPrimary
                     )
 

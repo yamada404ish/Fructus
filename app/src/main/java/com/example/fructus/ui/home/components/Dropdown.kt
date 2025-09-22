@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -27,52 +26,50 @@ import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dropdown() {
-
+fun Dropdown(
+    selectedMenu: String,
+    onMenuSelected: (String) -> Unit
+) {
     val colors = MaterialTheme.appColors
     val menu = arrayOf("All", "Unripe", "Ripe", "Overripe", "Spoiled")
-    val selectedMenu = remember { mutableStateOf(menu[0]) }
     val expanded = remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded.value,
         onExpandedChange = { expanded.value = !expanded.value },
     ) {
-        DisableSelection {
-            TextField(
-                value = selectedMenu.value,
-                onValueChange = {},
-                readOnly = true,
-                singleLine = true,
-                label = null,
-                placeholder = null,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded.value)
-                },
-                modifier = Modifier
-                    .menuAnchor()
-                    .width(130.dp)
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                textStyle = androidx.compose.ui.text.TextStyle(
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    color = colors.textPrimary
-                ),
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    focusedContainerColor  = colors.card,
-                    unfocusedContainerColor = colors.card,
-                    disabledContainerColor = colors.card,
-                    focusedTextColor  = colors.textPrimary,
-                    unfocusedTextColor = colors.textPrimary,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.Transparent
-                )
+        TextField(
+            value = selectedMenu,
+            onValueChange = {},
+            readOnly = true,
+            singleLine = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded.value)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .width(130.dp)
+                .height(56.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            textStyle = androidx.compose.ui.text.TextStyle(
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Medium,
+                color = colors.textPrimary
+            ),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                focusedContainerColor = colors.card,
+                unfocusedContainerColor = colors.card,
+                disabledContainerColor = colors.card,
+                focusedTextColor = colors.textPrimary,
+                unfocusedTextColor = colors.textPrimary,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = Color.Transparent
             )
-        }
+        )
 
         Spacer(Modifier.height(62.dp))
+
         ExposedDropdownMenu(
             expanded = expanded.value,
             onDismissRequest = { expanded.value = false },
@@ -87,25 +84,25 @@ fun Dropdown() {
             tonalElevation = 0.dp
         ) {
             menu
-                .filter { it != selectedMenu.value }
+                .filter { it != selectedMenu }
                 .forEach { item ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = item,
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.textPrimary
-                        )
-                    },
-                    onClick = {
-                        selectedMenu.value = item
-                        expanded.value = false
-                    },
-                    modifier = Modifier.background(Color.Transparent)
-                )
-            }
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = item,
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Medium,
+                                color = colors.textPrimary
+                            )
+                        },
+                        onClick = {
+                            onMenuSelected(item) // ✅ notify parent
+                            expanded.value = false
+                        },
+                        modifier = Modifier.background(Color.Transparent)
+                    )
+                }
         }
-
     }
 }
+

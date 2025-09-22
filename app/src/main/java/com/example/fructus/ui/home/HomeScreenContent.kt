@@ -165,7 +165,11 @@ fun HomeScreenContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Dropdown()
+                    Dropdown(
+                        selectedMenu = selectedFilter,
+                        onMenuSelected = { onFilterChange(it) }
+                    )
+
 //                    FruitFilterToggle(
 //                        selected = selectedFilter,
 //                        onSelect = { onFilterChange(it) }
@@ -257,9 +261,14 @@ fun HomeScreenContent(
                     else -> {
 
                         val filteredFruits = when (selectedFilter) {
+                            "All" -> state.fruits
+                            "Unripe" -> state.fruits.filter { it.ripeningStage.equals("unripe", true) }
+                            "Ripe" -> state.fruits.filter { it.ripeningStage.equals("ripe", true) }
+                            "Overripe" -> state.fruits.filter { it.ripeningStage.equals("overripe", true) }
                             "Spoiled" -> state.fruits.filter { isFruitSpoiled(it) }
                             else -> state.fruits
                         }
+
 
                         if (filteredFruits.isEmpty()) {
                             Column(
