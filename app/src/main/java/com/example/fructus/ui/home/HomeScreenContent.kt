@@ -145,7 +145,7 @@ fun HomeScreenContent(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(bottom = 48.dp, start = 24.dp, end = 24.dp)
+                .padding(bottom = 55.dp, start = 24.dp, end = 24.dp)
                 .fillMaxSize()
         ) {
             Text(
@@ -163,8 +163,9 @@ fun HomeScreenContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Dropdown(
-                    selectedMenu = selectedFilter,
-                    onMenuSelected = { onFilterChange(it) }
+                    selectedItem = selectedFilter,
+                    items = listOf("All", "Unripe", "Ripe", "Overripe", "Spoiled"),
+                    onItemSelected = { onFilterChange(it) }
                 )
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
@@ -198,7 +199,6 @@ fun HomeScreenContent(
                         tint = colors.textTertiary
                     )
                 }
-
             }
 
             when {
