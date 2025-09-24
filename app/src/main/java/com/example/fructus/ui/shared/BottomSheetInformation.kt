@@ -82,7 +82,7 @@ fun CustomBottomSheet(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(if (isSpoiled) 0.55f else 0.84f)
+                .fillMaxHeight(if (isSpoiled) 0.55f else 0.82f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(colors.bg)

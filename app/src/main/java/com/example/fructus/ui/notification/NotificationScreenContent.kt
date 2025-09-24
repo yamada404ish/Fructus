@@ -112,11 +112,6 @@ fun NotificationScreenContent(
                         if (onArchiveCount > 0) {
                             Box(
                                 modifier = Modifier
-//                                    .size(20.dp)
-//                                    .background(
-//                                        color = Color(0xFFE74C3C),
-//                                        shape = CircleShape
-//                                    )
                                     .align(Alignment.TopEnd)
                                     .offset(x = 0.dp, y = (-6).dp),
                                 contentAlignment = Alignment.Center
