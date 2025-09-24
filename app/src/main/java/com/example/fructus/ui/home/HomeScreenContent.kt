@@ -164,7 +164,7 @@ fun HomeScreenContent(
             ) {
                 Dropdown(
                     selectedItem = selectedFilter,
-                    items = listOf("All", "Unripe", "Ripe", "Overripe", "Spoiled"),
+                    items = listOf("All", "Unripe", "Ripe", "Overripe","Spoiling", "Spoiled"),
                     onItemSelected = { onFilterChange(it) }
                 )
                 Row (
