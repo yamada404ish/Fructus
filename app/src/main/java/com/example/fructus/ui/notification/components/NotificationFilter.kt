@@ -13,8 +13,8 @@ import com.example.fructus.ui.notification.model.Filter
 @Composable
 fun NotificationFilters(
     modifier: Modifier = Modifier,
-    items: List<Filter>,                          // ✅ Accept list of filters
-    selectedFilter: Filter,                       // ✅ Accept selected filter value
+    items: List<Filter>,
+    selectedFilter: Filter,
     onSelectedFilter: (Filter) -> Unit
 ) {
     LazyRow (

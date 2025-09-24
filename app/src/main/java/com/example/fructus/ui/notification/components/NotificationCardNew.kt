@@ -1,8 +1,7 @@
 package com.example.fructus.ui.notification.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,61 +44,47 @@ fun NotificationCard(
     val colors = MaterialTheme.appColors
 
     val clicked = remember { mutableStateOf(false) }
-    val backgroundColor = if (notification.isRead) Color.Transparent else colors.accent
+    val backgroundColor = if (notification.isRead) colors.bg else colors.accent
 
-    Card (
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .border(
-                width = if (notification.isRead) 1.dp else 0.dp,
-                color = colors.stroke,
-                shape = RoundedCornerShape(16.dp)
-            )
-
+            .height(80.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                // ✅ Only allow single click
                 if (!clicked.value) {
                     clicked.value = true
                     onClick()
                 }
-            }
-            .height(80.dp),
+            },
+        shape = RoundedCornerShape(16.dp), // Card handles shape
         elevation = CardDefaults.cardElevation(1.dp),
-
+        border = if (notification.isRead) BorderStroke(1.dp, colors.stroke) else null,
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
-        ),
-
-
-    ){
-        Row (
+        )
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-                .background(
-                    color = Color.Transparent,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image (
+            Image(
                 painter = painterResource(getFruitDrawableId(notification.fruitName)),
                 contentDescription = "Item Image",
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .aspectRatio(1f),
                 contentScale = ContentScale.Crop
-
             )
             Spacer(modifier = Modifier.size(12.dp))
-            Column (
+            Column(
                 horizontalAlignment = Alignment.Start,
-                modifier = Modifier
-                    .weight(1f)
-            ){
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = notification.message,
                     fontSize = 12.sp,
@@ -109,8 +93,7 @@ fun NotificationCard(
                     letterSpacing = 0.1.sp,
                     lineHeight = 13.sp,
                     color = colors.textPrimary,
-                    modifier = Modifier
-                        .padding (top = 6.dp)
+                    modifier = Modifier.padding(top = 6.dp)
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -119,10 +102,9 @@ fun NotificationCard(
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     lineHeight = 13.sp,
-                    color = colors.textSecondary,
+                    color = colors.textSecondary
                 )
             }
-
         }
     }
 }

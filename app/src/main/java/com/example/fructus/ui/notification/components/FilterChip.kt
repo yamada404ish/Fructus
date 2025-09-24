@@ -3,12 +3,14 @@ package com.example.fructus.ui.notification.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,12 +37,15 @@ fun FilterChip(
                 if (isSelected) Color(0xFFBADBA2) else Color.Transparent,
                         shape = RoundedCornerShape(12.dp)
             )
-            .border(     // ✅ Outline for unselected
+            .border(
                 width = if (isSelected) 0.dp else 1.dp,
                 color = colors.stroke,
                 shape = RoundedCornerShape(12.dp)
             )
-            .clickable { onClick() }
+            .clickable (
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { onClick() }
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
@@ -49,10 +54,9 @@ fun FilterChip(
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
             color = if (isSelected) {
-                // Selected text: dark color for readability on green background
-                Color(0xFF2D4A1F) // Dark green that contrasts well with the light green background
+                Color(0xFF2D4A1F)
             } else {
-                // Unselected text: use theme color (white in dark mode, dark in light mode)
+
                 colors.textPrimary
             }
         )

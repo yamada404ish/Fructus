@@ -29,9 +29,11 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -47,7 +49,7 @@ fun BottomNavBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(80.dp)
     ) {
         // Custom curved background with conditional shadow
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -212,4 +214,19 @@ fun BottomNavBar(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun NavbarPrev() {
+    FructusTheme {
+        BottomNavBar(
+            onNotificationClick = {},
+            onSettingsClick = {},
+            hasNewNotification = false,
+            isDarkMode = false
+        )
+
+    }
+    
 }

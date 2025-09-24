@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
@@ -108,27 +109,34 @@ fun NotificationScreenContent(
                             tint = colors.textTertiary
                         )
 
-                        // Badge showing archived count (only show if count > 0)
                         if (onArchiveCount > 0) {
                             Box(
                                 modifier = Modifier
-                                    .size(18.dp)
-                                    .background(
-                                        color = Color(0xFFE74C3C), // Red badge color
-                                        shape = CircleShape
-                                    )
+//                                    .size(20.dp)
+//                                    .background(
+//                                        color = Color(0xFFE74C3C),
+//                                        shape = CircleShape
+//                                    )
                                     .align(Alignment.TopEnd)
-                                    .offset(x = 4.dp, y = (-4).dp), // Position at top-right corner
+                                    .offset(x = 0.dp, y = (-6).dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = if (onArchiveCount > 99) "99+" else onArchiveCount
-                                        .toString(),
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = poppinsFontFamily
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .background(Color(0xFFE74C3C), shape = RoundedCornerShape(50))
+                                        .padding(horizontal = 7.dp, vertical = 4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (onArchiveCount > 99) "99+" else onArchiveCount.toString(),
+                                        color = Color.White,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = poppinsFontFamily,
+                                        textAlign = TextAlign.Center,
+                                        lineHeight = 1.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -161,7 +169,12 @@ fun NotificationScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         color = colors.textTertiary,
-                        modifier = Modifier.clickable { onMarkAllAsRead() }
+                        modifier = Modifier.clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) {
+                            onMarkAllAsRead()
+                        }
                     )
                 }
             }

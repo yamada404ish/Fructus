@@ -157,64 +157,65 @@ fun CustomBottomSheetDetail(
                     .padding(16.dp)
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
-                // Scrollable content
+
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(getFruitDrawableId(fruitName)),
+                        contentDescription = "Fruit Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .size(100.dp)
+
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Column {
+                        Text(
+                            text = displayName,
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = colors.textPrimary
+                        )
+                        Text(
+                            text = displayDescription,
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp,
+                            color = colors.textPrimary
+                        )
+                    }
+                }
+
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                FruitAnalysis(
+                    ripeningStage = ripeningStage,
+                    ripeningProcess = ripeningProcess,
+                    shelfLifeDisplay = shelfLifeDisplay,
+                    confidence = confidence,
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "Try the following:",
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    color = colors.textPrimary
+                )
+
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Row (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(getFruitDrawableId(fruitName)),
-                            contentDescription = "Fruit Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .size(100.dp)
-
-                        )
-                        Spacer(modifier = Modifier.width(20.dp))
-
-                        Column {
-                            Text(
-                                text = displayName,
-                                fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                                color = colors.textPrimary
-                            )
-                            Text(
-                                text = displayDescription,
-                                fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 12.sp,
-                                color = colors.textPrimary
-                            )
-                        }
-                    }
-
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    FruitAnalysis(
-                        ripeningStage = ripeningStage,
-                        ripeningProcess = ripeningProcess,
-                        shelfLifeDisplay = shelfLifeDisplay,
-                        confidence = confidence,
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = "Try the following:",
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp,
-                        color = colors.textPrimary
-                    )
 
                     if (matchedRecipes.isEmpty()) {
                         Text(
@@ -233,6 +234,7 @@ fun CustomBottomSheetDetail(
                         }
                     }
                 }
+
             }
         }
     }

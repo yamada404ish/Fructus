@@ -19,6 +19,8 @@ data class AppColors(
     val outerBox: Color,
     val innerBox: Color,
 
+    val dropdown: Color,
+
 
 )
 
@@ -38,13 +40,15 @@ val LightAppColors = AppColors(
 
     outerBox = Color(0xFFE8E6D5),
     innerBox = Color(0xFFD1CEBA),
+
+    dropdown = Color(0xFFE8E6D5),
 )
 
 val DarkAppColors = AppColors(
     main = Color(0xFF388E3C),
     accent = Color(0xFF3E443E), // notification card
     stroke = Color(0xFF6C7A6C),  // border notification card
-    card = Color(0xFF313030 ), // fruit items / pop up
+    card = Color(0xFF313030), // fruit items / pop up
     bg = Color(0xFF121212), // background
     surface = Color(0xFF1F201F), // bottom nav bar
     textPrimary = Color.White,
@@ -56,4 +60,6 @@ val DarkAppColors = AppColors(
 
     outerBox = Color(0xFF1F201F),
     innerBox = Color(0xFF3E443E),
+
+    dropdown = Color(0xFF1F201F),
 )

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -57,6 +55,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -68,8 +67,11 @@ import com.example.fructus.ui.home.components.FructusGuideStep
 import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.calculateDaysSince
+import com.example.fructus.util.getShelfLifeRange
 import com.example.fructus.util.isFruitSpoiled
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +100,7 @@ fun HomeScreenContent(
         topBar = {
             Column(
                 modifier = Modifier
-                    .padding(top = 10.dp),
+                    .padding(top = 8.dp),
             ) {
                 CenterAlignedTopAppBar(
                     title = { FructusLogo() },
@@ -116,7 +118,6 @@ fun HomeScreenContent(
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 containerColor = Color.Transparent
             ) {
-
                 Image(
                     painter = painterResource(R.drawable.scan),
                     contentDescription = "Scan Fruits",
@@ -144,7 +145,8 @@ fun HomeScreenContent(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(24.dp)
+                .padding(bottom = 48.dp, start = 24.dp, end = 24.dp)
+                .fillMaxSize()
         ) {
             Text(
                 text = "Your Fruits",
@@ -164,12 +166,6 @@ fun HomeScreenContent(
                     selectedMenu = selectedFilter,
                     onMenuSelected = { onFilterChange(it) }
                 )
-
-//                    FruitFilterToggle(
-//                        selected = selectedFilter,
-//                        onSelect = { onFilterChange(it) }
-//                    )
-
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -184,7 +180,7 @@ fun HomeScreenContent(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
                             ),
-                        tint = Color(0xFF718860) // Adjust color to match your theme
+                        tint = Color(0xFF718860)
                     )
 
                     Icon(
@@ -204,15 +200,14 @@ fun HomeScreenContent(
                 }
 
             }
-            Spacer(Modifier.height(16.dp))
 
             when {
                 state.isLoading -> {
                     LazyVerticalGrid(
                         GridCells.Fixed(2),
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(bottom = 30.dp),
+                            .weight(1f)
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
@@ -232,9 +227,10 @@ fun HomeScreenContent(
                 state.fruits.isEmpty() -> {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 100.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.empty),
@@ -260,6 +256,13 @@ fun HomeScreenContent(
                         "Unripe" -> state.fruits.filter { it.ripeningStage.equals("unripe", true) }
                         "Ripe" -> state.fruits.filter { it.ripeningStage.equals("ripe", true) }
                         "Overripe" -> state.fruits.filter { it.ripeningStage.equals("overripe", true) }
+                        "Spoiling" -> state.fruits.filter { fruit ->
+                            val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
+                            val estimatedShelfLife = shelfLifeRange.minDays
+                            val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
+                            val remainingShelfLife = estimatedShelfLife - daysSinceScan
+                            remainingShelfLife == 1
+                        }
                         "Spoiled" -> state.fruits.filter { isFruitSpoiled(it) }
                         else -> state.fruits
                     }
@@ -292,8 +295,8 @@ fun HomeScreenContent(
                         LazyVerticalGrid(
                             GridCells.Fixed(2),
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = 26.dp),
+                                .weight(1f)
+                                .fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                             horizontalArrangement = Arrangement.spacedBy(18.dp)
                         ) {
@@ -303,10 +306,6 @@ fun HomeScreenContent(
                                     onFruitClick = { onFruitClick(fruit.id) }
                                 )
                             }
-                            item(span = { GridItemSpan(2) }) { // make spacer span full row
-                                Spacer(modifier = Modifier.height(0.2f.dp))
-                            }
-
                         }
                     }
                 }
@@ -462,5 +461,23 @@ fun FructusOnboardingOverlay(
             }
         }
     }
+}
 
+
+@Preview
+@Composable
+private fun HomescreenPrev() {
+    FructusTheme {
+        HomeScreenContent(
+            hasNewNotification = false,
+            state = HomeState(),
+            onFruitClick = {},
+            onNotificationClick = {},
+            onScanClick = {},
+            onSettingsClick = {},
+            selectedFilter = "All",
+            onFilterChange = {},
+            isDarkMode = false
+        )
+    }
 }

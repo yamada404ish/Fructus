@@ -51,7 +51,7 @@ fun SuggestedRecipe(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.Top
         ) {
             // Food image
@@ -59,12 +59,12 @@ fun SuggestedRecipe(
                 painter = painterResource(imageRes),
                 contentDescription = "recipe image",
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(50.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(18.dp))
 
             // Text content
             Column(
@@ -72,7 +72,7 @@ fun SuggestedRecipe(
             ) {
                 Text(
                     text = title,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     color = colors.textPrimary
@@ -87,7 +87,7 @@ fun SuggestedRecipe(
                     color = colors.textSecondary,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-                    lineHeight = 16.sp
+                    lineHeight = 12.sp
                 )
             }
         }

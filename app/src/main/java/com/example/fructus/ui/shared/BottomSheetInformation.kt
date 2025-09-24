@@ -119,7 +119,7 @@ fun CustomBottomSheet(
                     confidence = confidence,
                 )
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // 👉 Only show recipes if NOT spoiled
                 if (!isSpoiled) {
@@ -127,7 +127,7 @@ fun CustomBottomSheet(
                         text = "Try the following:",
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         color = colors.textPrimary
                     )
 
@@ -162,7 +162,7 @@ fun CustomBottomSheet(
                                         title = recipe.name,
                                         description = recipe.description,
                                         imageRes = context.getDrawableIdByName(recipe.imageResName),
-                                        modifier = Modifier.padding(vertical = 8.dp)
+                                        modifier = Modifier.padding(vertical = 6.dp)
                                     )
                                 }
                             }
@@ -240,7 +240,7 @@ fun  FruitAnalysis(
                 letterSpacing = 0.1f.sp,
                 color = colors.textSecondary
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -252,15 +252,14 @@ fun  FruitAnalysis(
                 InfoCard(title = "Process", value = if (shelfLifeDisplay == "---") "---" else if
                         (ripeningProcess) "Natural" else "Artificial")
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 "Ripeness Stage upon scanning",
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 color = colors.textSecondary
             )
-            Spacer(modifier = Modifier.height(4.dp))
             RipenessProgressBar(
                 currentStage = ripeningStage.toRipenessStage(),
                 modifier = Modifier.fillMaxWidth()
@@ -289,10 +288,10 @@ fun InfoCard(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize() // Fill the card space
+                .fillMaxSize()
                 .padding(10.dp),
-            verticalArrangement = Arrangement.Center, // Center vertically
-            horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,

@@ -55,17 +55,17 @@ fun RipenessProgressBar(
     val segmentColors = RipenessStage.entries.map { stage ->
         when {
             stage == currentStage -> when (stage) {
-                RipenessStage.UNRIPE -> Color(0xFF4CAF50)      // Green
-                RipenessStage.RIPE -> Color(0xFFFFC107)        // Yellow
-                RipenessStage.OVERRIPE -> Color(0xFFFF9800)    // Orange
-                RipenessStage.SPOILED -> Color(0xFFF44336)     // Red
+                RipenessStage.UNRIPE -> Color(0xFF4CAF50)
+                RipenessStage.RIPE -> Color(0xFFFFC107)
+                RipenessStage.OVERRIPE -> Color(0xFFFF9800)
+                RipenessStage.SPOILED -> Color(0xFFF44336)
             }
             else -> Color(0xFFD1CEBA)
         }
     }
 
     Column(
-        modifier = modifier.width(totalWidth), // 👈 fixed width keeps it centered
+        modifier = modifier.width(totalWidth),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,9 +88,8 @@ fun RipenessProgressBar(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
-        // Stage labels (aligned under each segment)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(segmentSpacing),
@@ -100,7 +99,6 @@ fun RipenessProgressBar(
                 val isActive = stage == currentStage
                 val textColor = if (isActive) colors.textPrimary else colors.ripenessStage
 
-                // 👇 Each label gets equal weight (same as segments above)
                 Box(
                     modifier = Modifier
                         .padding(start = 10.dp, end = 10.dp)

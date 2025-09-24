@@ -93,7 +93,7 @@ fun FruitItem(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .size(150.dp),
+                        .size(140.dp),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -124,7 +124,7 @@ fun FruitItem(
                             text = fruit.scannedDate,
                             fontFamily = poppinsFontFamily,
                             fontStyle = FontStyle.Italic,
-                            fontSize = 12.sp,
+                            fontSize = 10.sp,
                             color = colors.textSecondary
                         )
 
@@ -137,7 +137,7 @@ fun FruitItem(
                                     },
                                     shape = RoundedCornerShape(40)
                                 )
-                                .padding(horizontal = 10.dp, vertical = 2.dp),
+                                .padding(horizontal = 8.dp, vertical = 0.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

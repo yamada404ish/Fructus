@@ -29,7 +29,8 @@ object OnBoardPreview
 @Serializable
 data class Detail (
     val id: Int,
-    val notificationId: Int? = null
+    val notificationId: Int? = null,
+    val fromNotifications: Boolean = false
 )
 
 //@Serializable

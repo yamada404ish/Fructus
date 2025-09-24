@@ -139,12 +139,38 @@ private fun NavGraphBuilder.addCoreDestinations(
     }
 
     // Detail - ALWAYS available
-    composable<Detail> {
-        AppBackgroundScaffold {
-            val args = it.toRoute<Detail>() // ⭐ now gives you both id + notificationId
+    composable<Detail> { backStackEntry ->
+        val args = backStackEntry.toRoute<Detail>()
 
-            BackHandler {
-                if (shouldOpenNotifications) {
+        BackHandler {
+            if (args.fromNotifications) {
+                // ✅ Go back to Notifications screen
+                navController.navigate(Notification) {
+                    launchSingleTop = true
+                    popUpTo(Notification) { inclusive = false }
+                }
+            } else if (shouldOpenNotifications) {
+                // ✅ Case: app was launched from system notification
+                navController.navigate(Home) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            } else {
+                navController.navigateUp()
+            }
+        }
+
+        DetailScreen(
+            fruitId = args.id,
+            notificationId = args.notificationId,
+            shouldOpenNotifications = shouldOpenNotifications,
+            onNavigate = {
+                if (args.fromNotifications) {
+                    navController.navigate(Notification) {
+                        launchSingleTop = true
+                        popUpTo(Notification) { inclusive = false }
+                    }
+                } else if (shouldOpenNotifications) {
                     navController.navigate(Home) {
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
@@ -153,25 +179,9 @@ private fun NavGraphBuilder.addCoreDestinations(
                     navController.navigateUp()
                 }
             }
-
-
-            DetailScreen(
-                fruitId = args.id,
-                notificationId = args.notificationId, // ⭐ pass notificationId to DetailScreen
-                shouldOpenNotifications = shouldOpenNotifications,
-                onNavigate = {
-                    if (shouldOpenNotifications) {
-                        navController.navigate(Home) {
-                            popUpTo(0) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    } else {
-                        navController.navigateUp()
-                    }
-                }
-            )
-        }
+        )
     }
+
 
     // Notifications
     composable<Notification> {
@@ -211,9 +221,10 @@ private fun NavGraphBuilder.addCoreDestinations(
                         navController.navigateUp()
                     }
                 },
-                // ⭐ update: include notificationId when navigating
+
                 onNotificationNavigate = { fruitId, notificationId ->
-                    navController.navigate(Detail(fruitId, notificationId))
+                    navController.navigate(Detail(fruitId, notificationId, fromNotifications =
+                        true))
                 }
             )
         }
@@ -238,21 +249,7 @@ private fun NavGraphBuilder.addCoreDestinations(
         }
     }
 
-    // Settings
-    // Settings
-//    composable<Settings> {
-////        AppBackgroundScaffold {
-////            SettingsScreen(
-////                onNavigateUp = { navController.navigateUp() },
-////                onNavigateToOnboarding = {
-////                    navController.navigate(Splash) {
-////                        popUpTo(0) { inclusive = true } // 🔑 clears back stack up to Home
-////                        launchSingleTop = true
-////                    }
-////                }
-////            )
-////        }
-////    }
+    // Setting
     composable<Settings> {
         AppBackgroundScaffold {
             SettingsScreen(
