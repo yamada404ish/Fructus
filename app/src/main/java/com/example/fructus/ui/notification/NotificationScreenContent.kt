@@ -181,7 +181,7 @@ fun NotificationScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 100.dp),
+                        .padding(top = 80.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon (

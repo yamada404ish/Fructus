@@ -108,13 +108,13 @@ fun ArchiveScreen(
                         modifier = Modifier.size(200.dp),
                         tint = colors.textTertiary
                     )
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "No archived notifications",
                         fontFamily = poppinsFontFamily,
                         fontSize = 16.sp,
                         color = colors.textSecondary
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Notifications will appear here after 7 days",
                         fontFamily = poppinsFontFamily,
