@@ -11,6 +11,6 @@ git checkout main
 git pull origin main
 git merge your-branch-name
 git add .
-git commit
+git commit -m "commit message nyo dito"
 git push origin main
 ```
