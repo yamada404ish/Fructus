@@ -53,7 +53,7 @@ fun OnboardingScreenContent(
     val scope = rememberCoroutineScope()
 
 
-    Box(modifier = Modifier
+    Column(modifier = Modifier
         .fillMaxSize()
         .background(colors.bg)) {
         Column(modifier = Modifier.fillMaxSize()) {

@@ -65,6 +65,7 @@ import com.example.fructus.ui.home.components.BottomNavBar
 import com.example.fructus.ui.home.components.Dropdown
 import com.example.fructus.ui.home.components.FructusGuideStep
 import com.example.fructus.ui.home.components.FructusLogo
+import com.example.fructus.ui.home.components.FructusOnboardingOverlay
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
 import com.example.fructus.ui.theme.FructusTheme
@@ -319,149 +320,7 @@ fun HomeScreenContent(
     }
 }
 
-@Composable
-fun FructusOnboardingOverlay(
-    onDismiss: () -> Unit
-) {
-    var isVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        isVisible = true
-    }
-
-        // Animation states
-    val animatedAlpha by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(400)
-    )
-
-    val animatedScale by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(400, easing = EaseOutBounce)
-    )
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-
-            .fillMaxSize()
-            .zIndex(1000f)
-            .alpha(animatedAlpha)
-            .background(Color.Black.copy(alpha = 0.85f))
-            .clickable { onDismiss() }
-
-    ) {
-
-
-        AnimatedVisibility(
-            visible = isVisible, // Adjust bottom padding based on your carousel height
-            enter = fadeIn(animationSpec = tween(300, delayMillis = 100)
-            )
-        ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-                .scale(animatedScale)
-                .align(Alignment.Center)
-                .clickable { },
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Header with fruit image
-                Image(
-                    painter = painterResource(id = R.drawable.fructus_logo),
-                    contentDescription = "",
-                    modifier = Modifier.size(64.dp),
-                    contentScale = ContentScale.Fit
-                )
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "How to use",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = poppinsFontFamily,
-                    color = Color(0xFF718860), // Green theme
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Scan and know about your fruits!",
-                    fontSize = 16.sp,
-                    fontFamily = poppinsFontFamily,
-                    color = Color(0xFF6B7280),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Guide steps
-                FructusGuideStep(
-                    painterResource(R.drawable.scan),
-                    title = "Scan Your Fruits",
-                    description = "Tap the scan button below to add new fruits"
-                )
-
-                FructusGuideStep(
-                    iconRes = painterResource(R.drawable.sort_oldest),
-                    title = "Filter & Sort",
-                    description = "Use the filter on the top right to toggle to or sort by newest/oldest"
-                )
-
-                FructusGuideStep(
-                    painterResource(R.drawable.ic_bell),
-                    title = "Access Notifications",
-                    description = "Tap the notification icon to see your notifications"
-                )
-
-                FructusGuideStep(
-                    painterResource(R.drawable.settings),
-                    title = "Settings",
-                    description = "Access settings to personalize your fruit tracking experience"
-                )
-
-                Spacer(modifier = Modifier.height(28.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    Button(
-                        onClick = onDismiss,
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFBADBA2)
-                        )
-                    ) {
-                        Text(
-                            "Got It!",
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        )
-                    }
-                }
-            }
-            }
-        }
-    }
-}
 
 
 @Preview

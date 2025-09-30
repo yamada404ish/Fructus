@@ -56,7 +56,7 @@ val DarkAppColors = AppColors(
     textTertiary = Color(0xFFA1C18A), // green text
     ripenessStage = Color(0xFF5E695E),
     button = Color(0xFF8FBF7B),
-     saveText = Color(0xFFCDD5CF),
+    saveText = Color(0xFFCDD5CF),
 
     outerBox = Color(0xFF1F201F),
     innerBox = Color(0xFF3E443E),

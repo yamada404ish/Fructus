@@ -43,7 +43,7 @@ class OnboardingViewModel(
 
 // Factory to inject DataStore into OnboardingViewModel
 class OnboardingViewModelFactory(
-    private val dataStore: DataStoreManager
+    val dataStore: DataStoreManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return OnboardingViewModel(dataStore) as T
