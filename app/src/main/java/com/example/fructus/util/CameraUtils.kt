@@ -40,17 +40,13 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): C
     // ✅ Crop to scan box before preprocessing
     val cropped = bitmap.cropToScanBox(context)
 
-    // 👉 OPTIONAL: run the 11-step segmentation to remove background
-    // val cropped = bitmap.cropToScanBox(context).segmentFruit()
-
-    // 🚫 Skip classification if mostly black
-    if (cropped.isMostlyBlack()) {
+    // 🚫 Skip classification if mostly background (black, gray, or white)
+    if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
     }
 
     val input = preprocessBitmap(cropped)
-
     val output = Array(1) { FloatArray(labels.size) }
     model.run(input, output)
     model.close()
@@ -67,7 +63,8 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): C
 
 // --------------------- RIPENESS CLASSIFIER ---------------------
 fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, threshold: Float = 0.7f): ClassificationResult {
-    if (fruitType.equals("Spoiled Banana", true) ||
+    if (
+        fruitType.equals("Spoiled Banana", true) ||
         fruitType.equals("Spoiled Tomato", true) ||
         fruitType.equals("Spoiled Mango", true)
     ) {
@@ -88,17 +85,13 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, thresh
 
     val cropped = bitmap.cropToScanBox(context)
 
-    // 👉 OPTIONAL: run the 11-step segmentation to remove background
-    // val cropped = bitmap.cropToScanBox(context).segmentFruit()
-
-    // 🚫 Skip classification if mostly black
-    if (cropped.isMostlyBlack()) {
+    // 🚫 Skip classification if mostly background (black, gray, or white)
+    if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
     }
 
     val input = preprocessBitmap(cropped)
-
     val output = Array(1) { FloatArray(labels.size) }
     model.run(input, output)
     model.close()
@@ -142,6 +135,7 @@ fun preprocessBitmap(bitmap: Bitmap): ByteBuffer {
 
     val pixels = IntArray(inputSize * inputSize)
     resized.getPixels(pixels, 0, inputSize, 0, 0, inputSize, inputSize)
+
     for (pixel in pixels) {
         val r = ((pixel shr 16) and 0xFF) / 255.0f
         val g = ((pixel shr 8) and 0xFF) / 255.0f
@@ -156,7 +150,6 @@ fun preprocessBitmap(bitmap: Bitmap): ByteBuffer {
 @androidx.camera.core.ExperimentalGetImage
 fun ImageProxy.toBitmap(): Bitmap? {
     val image = this.image ?: return null
-
     val yBuffer = image.planes[0].buffer
     val uBuffer = image.planes[1].buffer
     val vBuffer = image.planes[2].buffer
@@ -175,7 +168,6 @@ fun ImageProxy.toBitmap(): Bitmap? {
     yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
     val jpegBytes = out.toByteArray()
     this.close()
-
     return BitmapFactory.decodeByteArray(jpegBytes, 0, jpegBytes.size)
 }
 
@@ -183,14 +175,12 @@ fun Bitmap.rotate(degrees: Int): Bitmap {
     val matrix = Matrix().apply { postRotate(degrees.toFloat()) }
     return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
 }
+
 fun saveBitmapToFile(context: Context, bitmap: Bitmap, fileName: String = "fruit_${System.currentTimeMillis()}.jpg"): String {
     val dir = File(context.filesDir, "fruits")
     if (!dir.exists()) dir.mkdirs()
-
     val file = File(dir, fileName)
-    FileOutputStream(file).use { out ->
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
-    }
+    FileOutputStream(file).use { out -> bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out) }
     return file.absolutePath
 }
 
@@ -225,6 +215,7 @@ fun calculateHistogram(bitmap: Bitmap): IntArray {
     val histogram = IntArray(256)
     val pixels = IntArray(bitmap.width * bitmap.height)
     bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
     for (pixel in pixels) {
         val r = (pixel shr 16) and 0xFF
         val g = (pixel shr 8) and 0xFF
@@ -254,12 +245,11 @@ fun Bitmap.segmentFruit(): Bitmap {
 
     val gray = Mat()
     Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
-
     Imgproc.medianBlur(gray, gray, 5)
 
     val edges = Mat()
     Imgproc.Canny(gray, edges, 10.0, 100.0)
-    Imgproc.dilate(edges, edges, Mat(), Point(-1.0,-1.0), 1)
+    Imgproc.dilate(edges, edges, Mat(), Point(-1.0, -1.0), 1)
 
     val contours = mutableListOf<MatOfPoint>()
     Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
@@ -280,17 +270,38 @@ fun Bitmap.segmentFruit(): Bitmap {
     return output
 }
 
-// --------------------- BLACK FRAME CHECK ---------------------
-fun Bitmap.isMostlyBlack(threshold: Int = 30, ratio: Double = 00.9): Boolean {
+// --------------------- BACKGROUND CHECK ---------------------
+fun Bitmap.isMostlyBackground(
+    blackThreshold: Int = 30,
+    whiteThreshold: Int = 220,
+    grayTolerance: Int = 15,
+    ratio: Double = 0.9
+): Boolean {
     val pixels = IntArray(width * height)
     getPixels(pixels, 0, width, 0, 0, width, height)
-    var darkCount = 0
+    var backgroundCount = 0
+
     for (p in pixels) {
         val r = (p shr 16) and 0xFF
         val g = (p shr 8) and 0xFF
         val b = p and 0xFF
         val avg = (r + g + b) / 3
-        if (avg < threshold) darkCount++
+
+        // Black
+        if (avg < blackThreshold) {
+            backgroundCount++
+        }
+        // White
+        else if (avg > whiteThreshold) {
+            backgroundCount++
+        }
+        // Gray (all channels close to each other)
+        else if (kotlin.math.abs(r - g) < grayTolerance &&
+            kotlin.math.abs(g - b) < grayTolerance &&
+            kotlin.math.abs(r - b) < grayTolerance
+        ) {
+            backgroundCount++
+        }
     }
-    return darkCount > width * height * ratio
+    return backgroundCount > width * height * ratio
 }

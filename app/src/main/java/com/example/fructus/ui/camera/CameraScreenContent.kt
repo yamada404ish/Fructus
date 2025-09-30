@@ -64,10 +64,8 @@ fun CameraScreenContent(
     detected: Boolean,
     detectedFruit: String,
     detectedRipeness: String,
-
     dtProcess: Boolean = true,
     dtConfidence: Int = 90,
-
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
@@ -75,19 +73,19 @@ fun CameraScreenContent(
     onSaveFruit: (String, String, Boolean, Int, String?) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
-
     val context = LocalContext.current
-
     val isSaved = remember { mutableStateOf(false) }
     val showSuccessMessage = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
     val cameraRef = remember { mutableStateOf<Camera?>(null) }
     val isScanning = remember { mutableStateOf(false) }
     val isBottomSheetVisible = remember { mutableStateOf(false) }
-    val capturedImagePath = remember { mutableStateOf<String?>(null) } // ✅ Added state
+    val capturedImagePath = remember { mutableStateOf<String?>(null) }
 
+    // ✅ Added state
     val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
-    val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
+    val shelfLifeDisplay =
+        if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
 
     BackHandler {
         cameraRef.value?.cameraControl?.enableTorch(false)
@@ -107,32 +105,32 @@ fun CameraScreenContent(
                     .build()
                     .also { analysis ->
                         analysis.setAnalyzer(ContextCompat.getMainExecutor(it)) { imageProxy ->
-
                             if (isScanning.value && !detectedState.value) {
                                 val bitmap = imageProxy.toBitmap() ?: run {
                                     imageProxy.close()
                                     return@setAnalyzer
                                 }
-                                val rotatedBitmap = bitmap.rotate(imageProxy.imageInfo.rotationDegrees)
-
+                                val rotatedBitmap =
+                                    bitmap.rotate(imageProxy.imageInfo.rotationDegrees)
                                 try {
                                     // ✅ Crop to the scan box before classification
                                     val croppedForBox = rotatedBitmap.cropToScanBox(it)
-
                                     val fruitResult = classifyFruit(croppedForBox, it)
-                                    val ripenessResult = classifyRipeness(fruitResult.label, croppedForBox, it)
+                                    val ripenessResult =
+                                        classifyRipeness(fruitResult.label, croppedForBox, it)
+
                                     isSaved.value = false
 
                                     // ✅ Save captured image when detection is valid
                                     val fileName = "fruit_${System.currentTimeMillis()}"
-                                    val imagePath = saveBitmapToInternalStorage(it, croppedForBox, fileName)
+                                    val imagePath =
+                                        saveBitmapToInternalStorage(it, croppedForBox, fileName)
 
                                     // ✅ Step 3.4: store path in state
                                     capturedImagePath.value = imagePath
 
                                     detectedFruitState.value = fruitResult.label
                                     detectedRipenessState.value = ripenessResult.label
-
                                     detectedState.value = true
                                     isScanning.value = false
 
@@ -151,29 +149,30 @@ fun CameraScreenContent(
                     }
 
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(it)
-                cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
-                    val preview = Preview.Builder().build().also { prev ->
-                        prev.setSurfaceProvider(previewView.surfaceProvider)
-                    }
-
-                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                    try {
-                        cameraProvider.unbindAll()
-                        val camera = cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview,
-                            analyzer
-                        )
-                        cameraRef.value = camera
-                    } catch (e: Exception) {
-                        Log.e("CameraX", "Use case binding failed", e)
-                        Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }, ContextCompat.getMainExecutor(it))
-
+                cameraProviderFuture.addListener(
+                    {
+                        val cameraProvider = cameraProviderFuture.get()
+                        val preview = Preview.Builder().build().also { prev ->
+                            prev.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+                        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                        try {
+                            cameraProvider.unbindAll()
+                            val camera = cameraProvider.bindToLifecycle(
+                                lifecycleOwner,
+                                cameraSelector,
+                                preview,
+                                analyzer
+                            )
+                            cameraRef.value = camera
+                        } catch (e: Exception) {
+                            Log.e("CameraX", "Use case binding failed", e)
+                            Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    },
+                    ContextCompat.getMainExecutor(it)
+                )
                 previewView
             },
             modifier = Modifier.fillMaxSize()
@@ -293,6 +292,7 @@ fun CameraScreenContent(
                         )
                     }
                 }
+
                 LaunchedEffect(detectedFruit) {
                     kotlinx.coroutines.delay(2000)
                     detectedState.value = false
@@ -317,6 +317,7 @@ fun CameraScreenContent(
                         )
                     }
                 }
+
                 LaunchedEffect(detectedFruit) {
                     kotlinx.coroutines.delay(2000)
                     detectedState.value = false
@@ -344,10 +345,20 @@ fun CameraScreenContent(
                         isSaved = isSaved.value,
                         onSave = {
                             if (!isSaved.value) {
-                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence, capturedImagePath.value)
+                                onSaveFruit(
+                                    detectedFruit,
+                                    detectedRipeness,
+                                    dtProcess,
+                                    dtConfidence,
+                                    capturedImagePath.value
+                                )
                                 isSaved.value = true
                                 showSuccessMessage.value = true
-                                Toast.makeText(context, "Saved Successfully!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Saved Successfully!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         },
                     )
