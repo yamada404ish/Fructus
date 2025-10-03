@@ -182,7 +182,7 @@ fun HomeScreenContent(
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
                             ),
-                        tint = Color(0xFF718860)
+                        tint = colors.textTertiary
                     )
 
                     Icon(
