@@ -96,6 +96,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.compose.foundation.layout)
     kapt(libs.androidx.room.compiler)
 //    ksp(libs.androidx.room.compiler)
     testImplementation("androidx.room:room-testing")

@@ -483,12 +483,20 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -500,21 +508,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import com.example.fructus.R
+import com.example.fructus.ui.camera.components.HowTo
+import com.example.fructus.ui.camera.components.HowToOverlay
 import com.example.fructus.ui.camera.components.ScanAgain
 import com.example.fructus.ui.shared.CustomBottomSheet
+import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
 import com.example.fructus.util.classifyRipeness
 import com.example.fructus.util.formatShelfLifeRange
 import com.example.fructus.util.getShelfLifeRange
 import com.example.fructus.util.rotate
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -556,6 +572,10 @@ fun CameraScreenContent(
 
     val showScanAgainDialog = remember { mutableStateOf(false) }
 
+    val showHowTo = remember { mutableStateOf(false)}
+
+    val colors = MaterialTheme.appColors
+
     BackHandler {
         // ✅ Turn off flashlight when user presses phone back button
         cameraRef.value?.cameraControl?.enableTorch(false)
@@ -567,6 +587,7 @@ fun CameraScreenContent(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+
         // CAMERA PREVIEW
         AndroidView(
             factory = {
@@ -650,13 +671,13 @@ fun CameraScreenContent(
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
                 .padding(top = 50.dp, start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            // Back icon
             if (!showScanAgainDialog.value) {
                 Icon(
                     painter = painterResource(
-                        if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable
-                            .ic_back
+                        if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable.ic_back
                     ),
                     contentDescription = if (isBottomSheetVisible.value) "Exit BottomSheet" else "Back",
                     modifier = Modifier
@@ -671,7 +692,6 @@ fun CameraScreenContent(
                                     cameraRef.value?.cameraControl?.enableTorch(false)
                                     flashEnabled.value = false
                                     onNavigateUp()
-
                                 }
                             },
                             indication = null,
@@ -681,8 +701,29 @@ fun CameraScreenContent(
                 )
             }
 
-            if (!isBottomSheetVisible.value) {
+            Spacer(modifier = Modifier.weight(1f))
 
+            // this button
+            Button(
+                onClick = { showHowTo.value = true },
+                modifier = Modifier
+                    .height(45.dp)
+                    .defaultMinSize(minWidth = 130.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.button
+                ),
+            ) {
+                Text(
+                    "How To Use",
+                    fontFamily = poppinsFontFamily,
+                    color = Color.Black
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Flashlight icon
+            if (!isBottomSheetVisible.value) {
                 Icon(
                     painter = painterResource(
                         if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
@@ -702,6 +743,7 @@ fun CameraScreenContent(
                 )
             }
         }
+
 
         // ✅ Start Scan button (only show if not detected & not scanning)
         if (!detected && !isScanning.value) {
@@ -768,7 +810,7 @@ fun CameraScreenContent(
                     }
                 }
                 LaunchedEffect(detectedFruit) {
-                    kotlinx.coroutines.delay(2000)
+                    delay(2000)
                     detectedState.value = false
                     isScanning.value = false
                 }
@@ -795,7 +837,7 @@ fun CameraScreenContent(
                     }
                 }
                 LaunchedEffect(detectedFruit) {
-                    kotlinx.coroutines.delay(2000)
+                    delay(2000)
                     detectedState.value = false
                     isScanning.value = false
                 }
@@ -875,6 +917,47 @@ fun CameraScreenContent(
                 onHome()
             },
             isDarkMode = isDarkMode
+        )
+    }
+
+    if (showHowTo.value) {
+        HowToOverlay(onDismiss = { showHowTo.value = false })
+    }
+
+}
+
+@androidx.compose.ui.tooling.preview.Preview
+@Composable
+fun CameraScreenContentPreview() {
+    val fakeDetected = remember { mutableStateOf(true) } // Set to true to see the bottom sheet
+    val fakeFruit = remember { mutableStateOf("Banana") }
+    val fakeRipeness = remember { mutableStateOf("Ripe") }
+
+    // Create a fake LifecycleOwner for the preview
+    val fakeLifecycleOwner = object : LifecycleOwner {
+        private val lifecycleRegistry = LifecycleRegistry(this)
+
+        init {
+            lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        }
+
+        override val lifecycle: Lifecycle
+            get() = lifecycleRegistry
+    }
+
+    FructusTheme {
+        CameraScreenContent(
+            detected = fakeDetected.value,
+            detectedFruit = fakeFruit.value,
+            detectedRipeness = fakeRipeness.value,
+            lifecycleOwner = fakeLifecycleOwner, // Use the fake owner
+            detectedState = fakeDetected,
+            detectedFruitState = fakeFruit,
+            detectedRipenessState = fakeRipeness,
+            onSaveFruit = { _, _, _, _ -> },
+            onNavigateUp = {},
+            isDarkMode = false,
+            onHome = {}
         )
     }
 }
