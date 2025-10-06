@@ -15,7 +15,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 
-// 🔹 OpenCV imports for segmentation
+// 🔹 OpenCV imports
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -37,7 +37,7 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
 
     val model = Interpreter(loadModelFile(context, modelName))
 
-    // ✅ Crop to scan box before preprocessing
+    // ✅ Crop to scan box
     val cropped = bitmap.cropToScanBox(context)
 
     // 🚫 Skip classification if mostly background
@@ -58,13 +58,13 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     // 🔹 Fruit-specific thresholds
     val thresholds = mapOf(
         "Tomato" to 0.9f,
-        "Lakatan" to 0.9f,
-        "Saba" to 0.6f,
-        "Cavendish" to 0.7f,
-        "Carabao" to 0.7f,
-        "Spoiled Banana" to 0.8f,
-        "Spoiled Mango" to 0.8f,
-        "Spoiled Tomato" to 0.8f
+        "Lakatan" to 0.8f,
+        "Saba" to 0.8f,
+        "Cavendish" to 0.8f,
+        "Carabao" to 0.8f,
+        "Spoiled Banana" to 0.6f,
+        "Spoiled Mango" to 0.6f,
+        "Spoiled Tomato" to 0.6f
     )
 
     val threshold = thresholds[predictedLabel] ?: 0.8f
@@ -100,7 +100,6 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
 
     val cropped = bitmap.cropToScanBox(context)
 
-    // 🚫 Skip classification if mostly background
     if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
@@ -115,8 +114,7 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    // 🔹 Ripeness threshold (applied for all fruits)
-    val ripenessThreshold = 0.5f
+    val ripenessThreshold = 0.45f
 
     return if (confidence >= ripenessThreshold) {
         ClassificationResult(predictedLabel, confidence)
@@ -211,7 +209,6 @@ fun Bitmap.cropToScanBox(context: Context): Bitmap {
     // Your overlay is 460.dp square
     val boxSizePx = (460 * context.resources.displayMetrics.density).toInt()
 
-    // Scale overlay box from screen → bitmap space
     val scaleX = this.width.toFloat() / screenWidthPx
     val scaleY = this.height.toFloat() / screenHeightPx
 
@@ -257,8 +254,13 @@ fun compareHistograms(h1: IntArray?, h2: IntArray?): Float {
     return if (total == 0L) 0f else 1f - (diff.toFloat() / total.toFloat())
 }
 
-// --------------------- 11-STEP SEGMENTATION (Background Removal) ---------------------
+// --------------------- 11-STEP SEGMENTATION ---------------------
 fun Bitmap.segmentFruit(): Bitmap {
+    // ✅ Step 0: Confirm fruit presence first
+    if (this.isMostlyBackground()) {
+        return this // Skip segmentation entirely
+    }
+
     val src = Mat()
     Utils.bitmapToMat(this, src)
 
@@ -286,6 +288,12 @@ fun Bitmap.segmentFruit(): Bitmap {
 
     val output = Bitmap.createBitmap(cropped.width(), cropped.height(), Bitmap.Config.ARGB_8888)
     Utils.matToBitmap(cropped, output)
+
+    // ✅ Optional: skip tiny detections
+    if (output.width < width * 0.2 || output.height < height * 0.2) {
+        return this
+    }
+
     return output
 }
 
@@ -306,16 +314,11 @@ fun Bitmap.isMostlyBackground(
         val b = p and 0xFF
         val avg = (r + g + b) / 3
 
-        // Black
         if (avg < blackThreshold) {
             backgroundCount++
-        }
-        // White
-        else if (avg > whiteThreshold) {
+        } else if (avg > whiteThreshold) {
             backgroundCount++
-        }
-        // Gray (all channels close to each other)
-        else if (kotlin.math.abs(r - g) < grayTolerance &&
+        } else if (kotlin.math.abs(r - g) < grayTolerance &&
             kotlin.math.abs(g - b) < grayTolerance &&
             kotlin.math.abs(r - b) < grayTolerance
         ) {
