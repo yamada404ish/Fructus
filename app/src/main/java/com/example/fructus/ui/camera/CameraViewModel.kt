@@ -14,25 +14,24 @@ class CameraViewModel(
     private val fruitDao: FruitDao
 ) : ViewModel() {
 
-    fun saveFruit(name: String, ripeness: String, process: Boolean, confidence: Int) {
+    fun saveFruit(name: String, ripeness: String, process: Boolean, confidence: Int, imagePath: String?) {
         viewModelScope.launch {
             val now = Date()
             val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())
             val currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
             val timestamp = now.time
 
-            // ✅ Insert placeholder values for now
             val fruit = FruitEntity(
                 name = name,
                 ripeningStage = ripeness,
-                ripeningProcess = process, // placeholder
-                confidence = confidence, // placeholder
+                ripeningProcess = process,
+                confidence = confidence,
                 scannedDate = currentDate,
                 scannedTime = currentTime,
-                scannedTimestamp = timestamp
+                scannedTimestamp = timestamp,
+                imagePath = imagePath
             )
             fruitDao.insertFruit(fruit)
-
         }
     }
 }

@@ -60,10 +60,18 @@ import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.classifyFruit
 import com.example.fructus.util.classifyRipeness
+import com.example.fructus.util.cropToScanBox
 import com.example.fructus.util.formatShelfLifeRange
 import com.example.fructus.util.getShelfLifeRange
 import com.example.fructus.util.rotate
+<<<<<<< HEAD
 import kotlinx.coroutines.delay
+=======
+import com.example.fructus.util.toBitmap
+import java.io.File
+import java.io.FileOutputStream
+import com.example.fructus.util.saveBitmapToInternalStorage
+>>>>>>> loads
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,37 +79,36 @@ fun CameraScreenContent(
     detected: Boolean,
     detectedFruit: String,
     detectedRipeness: String,
+<<<<<<< HEAD
 
+=======
+>>>>>>> loads
     dtProcess: Boolean = true,
-    dtConfidence: Int = 90,
-
+    dtConfidence: Int = 0,
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
     detectedRipenessState: MutableState<String>,
-    onSaveFruit: (String, String, Boolean, Int) -> Unit,
+    onSaveFruit: (String, String, Boolean, Int, String?) -> Unit,
     onNavigateUp: () -> Unit,
     isDarkMode: Boolean,
     onHome: () -> Unit
 ) {
-
     val context = LocalContext.current
-
     val isSaved = remember { mutableStateOf(false) }
     val showSuccessMessage = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
     val cameraRef = remember { mutableStateOf<Camera?>(null) }
-    val isScanning = remember { mutableStateOf(false) } // ✅ control scanning start
-    val isBottomSheetVisible = remember {mutableStateOf(false)}
+    val isScanning = remember { mutableStateOf(false) }
+    val isBottomSheetVisible = remember { mutableStateOf(false) }
+    val capturedImagePath = remember { mutableStateOf<String?>(null) }
 
-    // 🔎 Shelf life check (centralized in util)
+    // ✅ Added state
     val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
-    val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) {
-        "---"
-    } else {
-        formatShelfLifeRange(shelfLifeRange)
-    }
+    val shelfLifeDisplay =
+        if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
 
+<<<<<<< HEAD
     val showScanAgainDialog = remember { mutableStateOf(false) }
 
     val showHowTo = remember { mutableStateOf(false)}
@@ -141,6 +148,15 @@ fun CameraScreenContent(
         modifier = Modifier.fillMaxSize()
     ) {
 
+=======
+    BackHandler {
+        cameraRef.value?.cameraControl?.enableTorch(false)
+        flashEnabled.value = false
+        onNavigateUp()
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+>>>>>>> loads
         // CAMERA PREVIEW
         AndroidView(
             factory = {
@@ -152,8 +168,6 @@ fun CameraScreenContent(
                     .build()
                     .also { analysis ->
                         analysis.setAnalyzer(ContextCompat.getMainExecutor(it)) { imageProxy ->
-
-                            // ✅ Only run analyzer when scanning is active
                             if (isScanning.value && !detectedState.value) {
                                 val bitmap = imageProxy.toBitmap() ?: run {
                                     imageProxy.close()
@@ -161,24 +175,40 @@ fun CameraScreenContent(
                                 }
                                 val rotatedBitmap =
                                     bitmap.rotate(imageProxy.imageInfo.rotationDegrees)
-
                                 try {
-                                    val fruitResult = classifyFruit(rotatedBitmap, it)
+                                    // ✅ Crop to the scan box before classification
+                                    val croppedForBox = rotatedBitmap.cropToScanBox(it)
+                                    val fruitResult = classifyFruit(croppedForBox, it)
                                     val ripenessResult =
-                                        classifyRipeness(fruitResult.label, rotatedBitmap, it)
+                                        classifyRipeness(fruitResult.label, croppedForBox, it)
+
+                                    // ✅ Always log confidence, even if "No fruit detected"
+                                    Log.d(
+                                        "PredictionRaw",
+                                        "FruitResult -> Label: ${fruitResult.label}, Confidence: ${fruitResult.confidence} | " +
+                                                "RipenessResult -> Label: ${ripenessResult.label}, Confidence: ${ripenessResult.confidence}"
+                                    )
+
                                     isSaved.value = false
 
-                                    // ✅ assign label (String) instead of ClassificationResult
+                                    // ✅ Save captured image when detection is valid
+                                    val fileName = "fruit_${System.currentTimeMillis()}"
+                                    val imagePath =
+                                        saveBitmapToInternalStorage(it, croppedForBox, fileName)
+
+                                    // ✅ Step 3.4: store path in state
+                                    capturedImagePath.value = imagePath
+
                                     detectedFruitState.value = fruitResult.label
                                     detectedRipenessState.value = ripenessResult.label
-
                                     detectedState.value = true
-                                    isScanning.value = false // stop scanning after detect
+                                    isScanning.value = false
 
                                     Log.d(
                                         "Prediction",
                                         "Fruit: ${fruitResult.label} (${fruitResult.confidence}), " +
-                                                "Ripeness: ${ripenessResult.label} (${ripenessResult.confidence})"
+                                                "Ripeness: ${ripenessResult.label} (${ripenessResult.confidence}), " +
+                                                "Image saved at: $imagePath"
                                     )
                                 } catch (e: Exception) {
                                     Log.e("PredictionError", "Error during classification", e)
@@ -189,6 +219,7 @@ fun CameraScreenContent(
                     }
 
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(it)
+<<<<<<< HEAD
                 cameraProviderFuture.addListener({
                     val cameraProvider = cameraProviderFuture.get()
                     val preview = Preview.Builder().build().also { prev ->
@@ -213,6 +244,32 @@ fun CameraScreenContent(
                     }
                 }, ContextCompat.getMainExecutor(it))
 
+=======
+                cameraProviderFuture.addListener(
+                    {
+                        val cameraProvider = cameraProviderFuture.get()
+                        val preview = Preview.Builder().build().also { prev ->
+                            prev.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+                        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                        try {
+                            cameraProvider.unbindAll()
+                            val camera = cameraProvider.bindToLifecycle(
+                                lifecycleOwner,
+                                cameraSelector,
+                                preview,
+                                analyzer
+                            )
+                            cameraRef.value = camera
+                        } catch (e: Exception) {
+                            Log.e("CameraX", "Use case binding failed", e)
+                            Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    },
+                    ContextCompat.getMainExecutor(it)
+                )
+>>>>>>> loads
                 previewView
             },
             modifier = Modifier.fillMaxSize()
@@ -226,6 +283,7 @@ fun CameraScreenContent(
                 .padding(top = 50.dp, start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+<<<<<<< HEAD
             if (!isBottomSheetVisible.value) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
@@ -273,6 +331,34 @@ fun CameraScreenContent(
 
             // Flashlight icon
             if (!isBottomSheetVisible.value) {
+=======
+            Icon(
+                painter = painterResource(
+                    if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable.ic_back
+                ),
+                contentDescription = if (isBottomSheetVisible.value) "Exit BottomSheet" else "Back",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clickable(
+                        onClick = {
+                            if (isBottomSheetVisible.value) {
+                                isBottomSheetVisible.value = false
+                                detectedState.value = false
+                                isSaved.value = false
+                            } else {
+                                cameraRef.value?.cameraControl?.enableTorch(false)
+                                flashEnabled.value = false
+                                onNavigateUp()
+                            }
+                        },
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ),
+                tint = Color.Unspecified
+            )
+
+            if (!isBottomSheetVisible.value) {
+>>>>>>> loads
                 Icon(
                     painter = painterResource(
                         if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
@@ -294,10 +380,13 @@ fun CameraScreenContent(
             }
         }
 
+<<<<<<< HEAD
 
         // ✅ Start Scan button (only show if not detected & not scanning)
+=======
+        // Start Scan button
+>>>>>>> loads
         if (!detected && !isScanning.value) {
-
             Icon(
                 painter = painterResource(R.drawable.camera_scan_icon),
                 contentDescription = "camera icon",
@@ -311,8 +400,7 @@ fun CameraScreenContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     ),
-                tint  = Color.Unspecified
-
+                tint = Color.Unspecified
             )
         }
 
@@ -330,26 +418,24 @@ fun CameraScreenContent(
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
                 if (detectedFruit == "No fruit detected" || detectedRipeness == "Unknown") {
-                    // ❌ Don't open bottom sheet, just show message
                     isBottomSheetVisible.value = false
                 } else {
-                    // ✅ Valid fruit detected -> open bottom sheet
                     isBottomSheetVisible.value = true
                 }
             }
         }
 
-        // Overlay when detected
+        // Detection overlays
         if (detected) {
-            if (detectedFruit == "No fruit detected"){
-                AnimatedVisibility (
+            if (detectedFruit == "No fruit detected") {
+                AnimatedVisibility(
                     visible = detectedState.value,
                     enter = fadeIn(animationSpec = tween(100)),
                     exit = fadeOut(animationSpec = tween(100))
-                ){
+                ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center // 👈 centers inside full screen
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             "No fruit detected",
@@ -360,23 +446,21 @@ fun CameraScreenContent(
                         )
                     }
                 }
+
                 LaunchedEffect(detectedFruit) {
                     delay(2000)
                     detectedState.value = false
                     isScanning.value = false
                 }
-            }
-
-            // temporary for unknown ripeness stage
-            else if (detectedRipeness == "Unknown") {
-                AnimatedVisibility (
+            } else if (detectedRipeness == "Unknown") {
+                AnimatedVisibility(
                     visible = detectedState.value,
                     enter = fadeIn(animationSpec = tween(300)),
                     exit = fadeOut(animationSpec = tween(300))
-                ){
+                ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center // 👈 centers inside full screen
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             "Try again",
@@ -387,17 +471,13 @@ fun CameraScreenContent(
                         )
                     }
                 }
+
                 LaunchedEffect(detectedFruit) {
                     delay(2000)
                     detectedState.value = false
                     isScanning.value = false
                 }
-            }
-
-            // temporary for unknown ripeness stage
-
-            else if (isBottomSheetVisible.value) {
-
+            } else if (isBottomSheetVisible.value) {
                 AnimatedVisibility(
                     visible = isBottomSheetVisible.value,
                     enter = slideInVertically(
@@ -419,11 +499,20 @@ fun CameraScreenContent(
                         isSaved = isSaved.value,
                         onSave = {
                             if (!isSaved.value) {
+<<<<<<< HEAD
                                 onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence)
 
+=======
+                                onSaveFruit(
+                                    detectedFruit,
+                                    detectedRipeness,
+                                    dtProcess,
+                                    dtConfidence,
+                                    capturedImagePath.value
+                                )
+>>>>>>> loads
                                 isSaved.value = true
                                 showSuccessMessage.value = true
-
                                 Toast.makeText(
                                     context,
                                     "Saved Successfully!",
@@ -438,7 +527,10 @@ fun CameraScreenContent(
                 }
             }
         } else if (isScanning.value) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> loads
             Text(
                 "Scanning...",
                 fontFamily = poppinsFontFamily,
@@ -449,6 +541,7 @@ fun CameraScreenContent(
             )
         }
     }
+<<<<<<< HEAD
     if (showScanAgainDialog.value) {
         ScanAgain(
             onYes = {
@@ -514,4 +607,6 @@ fun CameraScreenContentPreview() {
             onHome = {}
         )
     }
+=======
+>>>>>>> loads
 }

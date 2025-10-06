@@ -1,18 +1,9 @@
 package com.example.fructus.ui.home.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,19 +17,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.fructus.R
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
-import com.example.fructus.util.getFruitDrawableId
 import com.example.fructus.util.getShelfLifeRange
+import java.io.File
 
 @Composable
 fun FruitItem(
@@ -53,7 +43,6 @@ fun FruitItem(
     val remainingShelfLife = estimatedShelfLife - daysSinceScan
 
     val displayShelfLife = getDisplayShelfLife(fruit)
-
     val colors = MaterialTheme.appColors
 
     val backgroundColor = when {
@@ -64,19 +53,18 @@ fun FruitItem(
         else -> Color.LightGray
     }
 
-
-    Card (
+    Card(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .clickable(
                 onClick = { onFruitClick(fruit) },
-                indication = null, // 🚫 remove ripple, prevents ghost click
+                indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             )
             .shadow(8.dp, RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         elevation = CardDefaults.cardElevation(12.dp)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -84,17 +72,29 @@ fun FruitItem(
             horizontalAlignment = Alignment.Start
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(getFruitDrawableId(fruit.name)),
+                val imageModel: Any = if (!fruit.imagePath.isNullOrEmpty()) {
+                    File(fruit.imagePath)
+                } else {
+                    R.drawable.unknown_fruit
+                }
+
+                AsyncImage(
+                    model = imageModel,
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
+<<<<<<< HEAD
                         .size(140.dp),
                     contentScale = ContentScale.Crop
+=======
+                        .size(150.dp),
+                    contentScale = ContentScale.Crop,
+                    placeholder = androidx.compose.ui.res.painterResource(R.drawable.unknown_fruit),
+                    error = androidx.compose.ui.res.painterResource(R.drawable.unknown_fruit)
+>>>>>>> loads
                 )
             }
 
@@ -105,16 +105,19 @@ fun FruitItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    // 🍌 Fruit name (centered above)
                     Text(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
+<<<<<<< HEAD
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
+=======
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontSize = 20.sp,
+>>>>>>> loads
                         color = colors.textPrimary
                     )
 
-                    // 📅 Scanned date and 🕒 Shelf life side by side
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,18 +126,20 @@ fun FruitItem(
                         Text(
                             text = fruit.scannedDate,
                             fontFamily = poppinsFontFamily,
+<<<<<<< HEAD
                             fontStyle = FontStyle.Italic,
                             fontSize = 10.sp,
+=======
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            fontSize = 12.sp,
+>>>>>>> loads
                             color = colors.textSecondary
                         )
 
                         Box(
                             modifier = Modifier
                                 .background(
-                                    color = when (displayShelfLife) {
-                                        "Spoiled!" -> Color(0xFFEE4949) // 🔴 Red for spoiled
-                                        else -> backgroundColor
-                                    },
+                                    color = if (displayShelfLife == "Spoiled!") Color(0xFFEE4949) else backgroundColor,
                                     shape = RoundedCornerShape(40)
                                 )
                                 .padding(horizontal = 8.dp, vertical = 0.dp),
@@ -143,12 +148,9 @@ fun FruitItem(
                             Text(
                                 text = displayShelfLife,
                                 fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                                 fontSize = 12.sp,
-                                color = when (displayShelfLife) {
-                                    "Spoiled!" -> Color(0xFFFFFFFF) // ⚪ White text for spoiled
-                                    else -> Color.Black
-                                }
+                                color = if (displayShelfLife == "Spoiled!") Color.White else Color.Black
                             )
                         }
                     }
