@@ -35,15 +35,7 @@ fun HowToOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.85f))
-            .clickable(
-                onClick = {
-                    isVisible = false
-                    onDismiss()
-                },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ),
+            .background(Color.Black.copy(alpha = 0.85f)),
         contentAlignment = Alignment.Center
     ) {
         // Fade animation only (no slide)

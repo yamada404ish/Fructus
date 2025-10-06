@@ -577,11 +577,17 @@ fun CameraScreenContent(
     val colors = MaterialTheme.appColors
 
     BackHandler {
-        // ✅ Turn off flashlight when user presses phone back button
-        cameraRef.value?.cameraControl?.enableTorch(false)
-        flashEnabled.value = false
-        onNavigateUp()
+        if (showHowTo.value) {
+            // just close HowTo overlay
+            showHowTo.value = false
+        } else {
+            // normal behavior
+            cameraRef.value?.cameraControl?.enableTorch(false)
+            flashEnabled.value = false
+            onNavigateUp()
+        }
     }
+
 
 
     Box(
@@ -683,6 +689,7 @@ fun CameraScreenContent(
                     modifier = Modifier
                         .size(50.dp)
                         .clickable(
+                            enabled = !showHowTo.value,
                             onClick = {
                                 if (isBottomSheetVisible.value) {
                                     isBottomSheetVisible.value = false
@@ -732,6 +739,7 @@ fun CameraScreenContent(
                     modifier = Modifier
                         .size(50.dp)
                         .clickable(
+                            enabled = !showHowTo.value,
                             onClick = {
                                 cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
                                 flashEnabled.value = !flashEnabled.value
@@ -756,6 +764,7 @@ fun CameraScreenContent(
                     .padding(bottom = 50.dp)
                     .size(100.dp)
                     .clickable(
+                        enabled = !showHowTo.value,
                         onClick = { isScanning.value = true },
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
@@ -921,7 +930,10 @@ fun CameraScreenContent(
     }
 
     if (showHowTo.value) {
-        HowToOverlay(onDismiss = { showHowTo.value = false })
+        HowToOverlay(
+            onDismiss = { showHowTo.value = false },
+
+        )
     }
 
 }
