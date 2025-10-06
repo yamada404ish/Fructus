@@ -7,7 +7,6 @@ fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
     val name = fruitName.lowercase().trim()
     val stage = ripeness.lowercase().trim()
 
-    // ✅ handle spoiled either by name or stage
     if (name.contains("spoiled") || stage == "spoiled") {
         return ShelfLifeRange(-1, -1)
     }
@@ -17,10 +16,10 @@ fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
 
     return when (name) {
         "lakatan", "cavendish" -> when (stage) {
-            "unripe" -> ShelfLifeRange(7, 10)
+            "unripe" -> ShelfLifeRange(9, 11)
             "ripe" -> ShelfLifeRange(4, 6)
             "overripe" -> ShelfLifeRange(1, 2)
-            else -> ShelfLifeRange(3, 5) // fallback
+            else -> ShelfLifeRange(3, 5)
         }
         "saba" -> when (stage) {
             "unripe" -> ShelfLifeRange(14, 20)
@@ -29,25 +28,24 @@ fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
             else -> ShelfLifeRange(4, 6)
         }
         "tomato" -> when (stage) {
-            "unripe" -> ShelfLifeRange(14, 21) // ✅ fixed unripe tomato
-            "ripe" -> ShelfLifeRange(5, 7)
+            "unripe" -> ShelfLifeRange(14, 21)
+            "ripe" -> ShelfLifeRange(9, 7)
             "overripe" -> ShelfLifeRange(1, 2)
             else -> ShelfLifeRange(3, 5)
         }
         "carabao" -> when (stage) {
-            "unripe" -> ShelfLifeRange(10, 14)
-            "ripe" -> ShelfLifeRange(5, 6)
-            "overripe" -> ShelfLifeRange(1, 2)
+            "unripe" -> ShelfLifeRange(11, 13)
+            "ripe" -> ShelfLifeRange(3, 7)
+            "overripe" -> ShelfLifeRange(1, 3)
             else -> ShelfLifeRange(3, 5)
         }
-        else -> ShelfLifeRange(3, 5) // ✅ default fallback for unknown fruits
+        else -> ShelfLifeRange(3, 5)
     }
 }
 
 fun getDisplayShelfLife(fruit: FruitEntity): String {
     val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
 
-    // ✅ Spoiled case → show "---"
     if (shelfLifeRange.minDays == -1) return "---"
 
     val estimatedShelfLife = shelfLifeRange.minDays
@@ -65,7 +63,6 @@ fun isFruitSpoiled(fruit: FruitEntity): Boolean {
     val name = fruit.name.lowercase().trim()
     val stage = fruit.ripeningStage.lowercase().trim()
 
-    // ✅ check spoiled by both name & stage
     if (name.contains("spoiled") || stage == "spoiled") return true
 
     val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
