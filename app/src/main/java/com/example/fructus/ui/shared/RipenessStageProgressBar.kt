@@ -88,7 +88,7 @@ fun RipenessProgressBar(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(2.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -107,7 +107,7 @@ fun RipenessProgressBar(
                 ) {
                     Text(
                         text = stage.displayName,
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         fontFamily = poppinsFontFamily,
                         color = textColor,
                         fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,

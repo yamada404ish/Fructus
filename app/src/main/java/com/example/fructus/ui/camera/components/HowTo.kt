@@ -1,27 +1,3 @@
-
-//on HowTo() composable how to make when i click the l drawable the text
-//
-//" Keep the fruit inside " will change to " Check the lighting " text and if i click again the "Check the lighting text " will change to " Press Scan "
-//
-//
-//then the lottie raw from how_to2 to how_to1 and then it will go to how_to3
-//
-//
-//
-//then the icon drawable from one will change to two then to three
-//
-//
-//and the text "Make sure the entire fruit is captured within the box." will change to "Make sure fruit is well lit, if not use the flashlight" and then will from that will change to "Press scan to capture fruit"
-//
-//
-//
-//
-//so the l drawable can be click 3 times
-
-
-
-
-
 package com.example.fructus.ui.camera.components
 
 import androidx.compose.foundation.Image
@@ -47,7 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,31 +35,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.fructus.R
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
 fun HowTo(
-    modifier: Modifier,
     onClose: () -> Unit
 ) {
 
     val colors = MaterialTheme.appColors
 
-    var stepIndex by remember { mutableStateOf(0) }
+    var stepIndex by remember { mutableIntStateOf(0) }
     val step = howToSteps[stepIndex]
-
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.how_to2))
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever
-    )
 
     Box (
         modifier = Modifier
@@ -137,54 +101,68 @@ fun HowTo(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                Row (
+                Row(
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
+
+                    if (stepIndex > 0) {
+                        Icon(
+                            painter = painterResource(R.drawable.l),
+                            contentDescription = "Previous",
+                            modifier = Modifier
+                                .size(22.dp)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    if (stepIndex > 0) stepIndex--
+                                },
+                            tint = colors.textSecondary
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.size(22.dp)) // keep spacing consistent
+                    }
+
+
                     Icon(
-                        painter = painterResource(R.drawable.l), // Use your help icon or create one
-                        contentDescription = "Previous",
-                        modifier = Modifier
-                            .size(22.dp)
-                            .clickable(
-                                enabled = stepIndex > 0,
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                if (stepIndex > 0) stepIndex--
-                            },
-                        tint = if (stepIndex > 0) colors.textSecondary else Color.Gray
-                    )
-                    Icon(
-                        painter = painterResource(step.iconRes), // Use your help icon or create one
+                        painter = painterResource(step.iconRes),
                         contentDescription = "Step Icon",
                         modifier = Modifier
                             .size(50.dp)
                             .clickable(
-                                onClick = {  },
+                                onClick = {
+                                    stepIndex = (stepIndex + 1) % howToSteps.size
+                                },
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
                             ),
                         tint = Color.Unspecified
                     )
-                    Icon(
-                        painter = painterResource(R.drawable.r), // Use your help icon or create one
-                        contentDescription = "Next",
-                        modifier = Modifier
-                            .size(22.dp)
-                            .clickable(
-                                enabled = stepIndex < howToSteps.lastIndex,
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                if (stepIndex < howToSteps.lastIndex) stepIndex++
-                            },
-                        tint = if (stepIndex < howToSteps.lastIndex) colors.textSecondary else Color.Gray
-                    )
+
+
+                    if (stepIndex < howToSteps.lastIndex) {
+                        Icon(
+                            painter = painterResource(R.drawable.r),
+                            contentDescription = "Next",
+                            modifier = Modifier
+                                .size(22.dp)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    if (stepIndex < howToSteps.lastIndex) stepIndex++
+                                },
+                            tint = colors.textSecondary
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.size(22.dp)) // keep spacing consistent
+                    }
                 }
+
 
                 Spacer(modifier = Modifier.height(0.dp))
 

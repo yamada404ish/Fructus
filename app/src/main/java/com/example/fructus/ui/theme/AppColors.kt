@@ -19,6 +19,8 @@ data class AppColors(
     val outerBox: Color,
     val innerBox: Color,
 
+    val tip: Color,
+
     val dropdown: Color,
 
 
@@ -41,6 +43,8 @@ val LightAppColors = AppColors(
     outerBox = Color(0xFFE8E6D5),
     innerBox = Color(0xFFD1CEBA),
 
+    tip = Color(0xFFC9DABE),
+
     dropdown = Color(0xFFE8E6D5),
 )
 
@@ -60,6 +64,8 @@ val DarkAppColors = AppColors(
 
     outerBox = Color(0xFF1F201F),
     innerBox = Color(0xFF3E443E),
+
+    tip = Color(0xFF3E443E),
 
     dropdown = Color(0xFF1F201F),
 )

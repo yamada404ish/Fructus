@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.data.local.entity.FruitEntity
+import com.example.fructus.ui.camera.components.Tips
 import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.shared.FruitAnalysis
 import com.example.fructus.ui.theme.appColors
@@ -146,7 +147,7 @@ fun CustomBottomSheetDetail(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.80f)
+                .fillMaxHeight(0.90f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(colors.bg)
@@ -200,6 +201,20 @@ fun CustomBottomSheetDetail(
                     shelfLifeDisplay = shelfLifeDisplay,
                     confidence = confidence,
                 )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "Tips to Prolong Shelf life:",
+                    fontFamily = poppinsFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    color = colors.textPrimary
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Tips()
 
                 Spacer(modifier = Modifier.height(10.dp))
 

@@ -59,16 +59,17 @@ fun FructusNav(
                     SplashScreen { onboardingCompleted ->
                         if (onboardingCompleted) {
                             navController.navigate(Home) {
-                                popUpTo<Splash> { inclusive = true }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         } else {
                             navController.navigate(OnBoard) {
-                                popUpTo<Splash> { inclusive = true }
+                                popUpTo(0) { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
                     }
+
                 }
             }
 
