@@ -72,7 +72,6 @@ fun CameraScreenContent(
     detectedFruit: String,
     detectedRipeness: String,
 
-    // ✅ Placeholder values for now
     dtProcess: Boolean = true,
     dtConfidence: Int = 90,
 
@@ -206,7 +205,7 @@ fun CameraScreenContent(
                             preview,
                             analyzer
                         )
-                        cameraRef.value = camera // ✅ keep reference for flashlight toggle
+                        cameraRef.value = camera
                     } catch (e: Exception) {
                         Log.e("CameraX", "Use case binding failed", e)
                         Toast.makeText(it, "Camera error: ${e.message}", Toast.LENGTH_SHORT)
@@ -402,11 +401,11 @@ fun CameraScreenContent(
                 AnimatedVisibility(
                     visible = isBottomSheetVisible.value,
                     enter = slideInVertically(
-                        initialOffsetY = { fullHeight -> fullHeight }, // 👈 start offscreen
+                        initialOffsetY = { fullHeight -> fullHeight },
                         animationSpec = tween(durationMillis = 900)
                     ),
                     exit = slideOutVertically(
-                        targetOffsetY = { fullHeight -> fullHeight }, // 👈 slide down when hidden
+                        targetOffsetY = { fullHeight -> fullHeight },
                         animationSpec = tween(durationMillis = 900)
                     )
                 ) {
@@ -420,9 +419,8 @@ fun CameraScreenContent(
                         isSaved = isSaved.value,
                         onSave = {
                             if (!isSaved.value) {
-                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence) // ✅
-                                // call
-                                // parent save function
+                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence)
+
                                 isSaved.value = true
                                 showSuccessMessage.value = true
 
@@ -440,7 +438,7 @@ fun CameraScreenContent(
                 }
             }
         } else if (isScanning.value) {
-            // ✅ Show scanning status while analyzer is active
+
             Text(
                 "Scanning...",
                 fontFamily = poppinsFontFamily,
@@ -456,11 +454,11 @@ fun CameraScreenContent(
             onYes = {
                 // Reset everything back to "fresh camera state"
                 detectedState.value = false
-                detectedFruitState.value = ""         // 👈 no fruit yet
-                detectedRipenessState.value = ""      // 👈 no ripeness yet
+                detectedFruitState.value = ""
+                detectedRipenessState.value = ""
                 isSaved.value = false
                 isBottomSheetVisible.value = false
-                isScanning.value = false               // 👈 start scanning again
+                isScanning.value = false              
                 showScanAgainDialog.value = false
             }
             ,
