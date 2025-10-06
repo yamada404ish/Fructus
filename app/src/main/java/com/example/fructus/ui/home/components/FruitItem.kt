@@ -17,6 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -86,15 +88,10 @@ fun FruitItem(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-<<<<<<< HEAD
                         .size(140.dp),
-                    contentScale = ContentScale.Crop
-=======
-                        .size(150.dp),
                     contentScale = ContentScale.Crop,
                     placeholder = androidx.compose.ui.res.painterResource(R.drawable.unknown_fruit),
                     error = androidx.compose.ui.res.painterResource(R.drawable.unknown_fruit)
->>>>>>> loads
                 )
             }
 
@@ -108,13 +105,8 @@ fun FruitItem(
                     Text(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
-<<<<<<< HEAD
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
-=======
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        fontSize = 20.sp,
->>>>>>> loads
                         color = colors.textPrimary
                     )
 
@@ -126,13 +118,8 @@ fun FruitItem(
                         Text(
                             text = fruit.scannedDate,
                             fontFamily = poppinsFontFamily,
-<<<<<<< HEAD
                             fontStyle = FontStyle.Italic,
                             fontSize = 10.sp,
-=======
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                            fontSize = 12.sp,
->>>>>>> loads
                             color = colors.textSecondary
                         )
 

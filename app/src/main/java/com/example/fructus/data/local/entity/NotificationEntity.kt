@@ -18,5 +18,7 @@ data class NotificationEntity(
     val isArchived: Boolean = false,
 
     // store as epoch millis
-    val timestamp: Long
+    val timestamp: Long,
+
+    val imagePath: String? = null
 )

@@ -37,6 +37,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.fructus.R
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.camera.components.Tips
 import com.example.fructus.ui.detail.components.SuggestedRecipe
@@ -50,6 +52,7 @@ import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.getFruitDrawableId
 import com.example.fructus.util.loadRecipesFromJson
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,9 +106,10 @@ fun DetailScreenContent(
             )
 
             CustomBottomSheetDetail(
-                fruitName = fruit.name,
-                ripeningStage = fruit.ripeningStage,
-                ripeningProcess = fruit.ripeningProcess,
+                fruit = fruit,
+//                fruitName = fruit.name,
+//                ripeningStage = fruit.ripeningStage,
+//                ripeningProcess = fruit.ripeningProcess,
                 shelfLifeDisplay = shelfLifeDisplay,
                 confidence = 90
             )
@@ -117,9 +121,10 @@ fun DetailScreenContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomBottomSheetDetail(
-    fruitName: String,
-    ripeningStage: String,
-    ripeningProcess: Boolean,
+    fruit: FruitEntity,
+//    fruitName: String,
+//    ripeningStage: String,
+//    ripeningProcess: Boolean,
     shelfLifeDisplay: String,
     confidence: Int,
 ) {
@@ -128,13 +133,19 @@ fun CustomBottomSheetDetail(
 
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
-    val displayName = getDisplayFruitName(fruitName)
-    val displayDescription = getFruitDescription(fruitName)
+    val displayName = getDisplayFruitName(fruit.name)
+    val displayDescription = getFruitDescription(fruit.name)
 
     // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
-        it.fruitType.equals(fruitName, ignoreCase = true) &&
-                it.stage.equals(ripeningStage, ignoreCase = true)
+        it.fruitType.equals(fruit.name, ignoreCase = true) &&
+                it.stage.equals(fruit.ripeningStage, ignoreCase = true)
+    }
+
+    val imageModel: Any = if (!fruit.imagePath.isNullOrEmpty()) {
+        File(fruit.imagePath)
+    } else {
+        R.drawable.unknown_fruit
     }
 
 
@@ -163,14 +174,17 @@ fun CustomBottomSheetDetail(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Image(
-                        painter = painterResource(getFruitDrawableId(fruitName)),
+
+
+                    AsyncImage(
+                        model = imageModel,
                         contentDescription = "Fruit Image",
-                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .size(100.dp)
-
+                            .size(100.dp),
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(R.drawable.unknown_fruit),
+                        error = painterResource(R.drawable.unknown_fruit)
                     )
                     Spacer(modifier = Modifier.width(20.dp))
 
@@ -195,61 +209,62 @@ fun CustomBottomSheetDetail(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                FruitAnalysis(
-                    ripeningStage = ripeningStage,
-                    ripeningProcess = ripeningProcess,
-                    shelfLifeDisplay = shelfLifeDisplay,
-                    confidence = confidence,
-                )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "Tips to Prolong Shelf life:",
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp,
-                    color = colors.textPrimary
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Tips()
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "Try the following:",
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp,
-                    color = colors.textPrimary
-                )
-
-                Column(
+                Column (
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
+                        .padding(bottom = 16.dp)
                 ) {
+                    FruitAnalysis(
+                        ripeningStage = fruit.ripeningStage,
+                        ripeningProcess = fruit.ripeningProcess,
+                        shelfLifeDisplay = shelfLifeDisplay,
+                        confidence = confidence,
+                    )
 
-                    if (matchedRecipes.isEmpty()) {
-                        Text(
-                            text = "No recipes available for this stage.",
-                            color = colors.textSecondary,
-                            fontSize = 14.sp
-                        )
-                    } else {
-                        matchedRecipes.forEach { recipe ->
-                            SuggestedRecipe(
-                                title = recipe.name,
-                                description = recipe.description,
-                                imageRes = context.getDrawableIdByName(recipe.imageResName),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Tips to Prolong Shelf life:",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
+                        color = colors.textPrimary
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Tips()
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Try the following:",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
+                        color = colors.textPrimary
+                    )
+
+
+                        if (matchedRecipes.isEmpty()) {
+                            Text(
+                                text = "No recipes available for this stage.",
+                                color = colors.textSecondary,
+                                fontSize = 14.sp
                             )
+                        } else {
+                            matchedRecipes.forEach { recipe ->
+                                SuggestedRecipe(
+                                    title = recipe.name,
+                                    description = recipe.description,
+                                    imageRes = context.getDrawableIdByName(recipe.imageResName),
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            }
                         }
-                    }
                 }
-
             }
         }
     }

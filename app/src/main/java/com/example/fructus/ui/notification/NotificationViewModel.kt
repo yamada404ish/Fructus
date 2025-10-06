@@ -88,7 +88,8 @@ class NotificationViewModel(
                                 scannedDate = fruit.scannedDate,
                                 scannedTime = fruit.scannedTime,
                                 timestamp = System.currentTimeMillis(),
-                                isArchived = false
+                                isArchived = false,
+                                imagePath = fruit.imagePath
                             )
 
                             // Insert and get the ID
@@ -99,7 +100,9 @@ class NotificationViewModel(
                                 fruit.name,
                                 fruit.scannedDate,
                                 message,
-                                fruit.scannedTime
+                                fruit.scannedTime,
+
+
                             )
 
                             // Send push notification with the actual notification ID

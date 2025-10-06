@@ -109,67 +109,64 @@ fun CustomBottomSheet(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                FruitAnalysis(
-                    ripeningStage = ripeningStage,
-                    ripeningProcess = if (isSpoiled) false else ripeningProcess,
-                    shelfLifeDisplay = shelfLifeDisplay, // Use -1 to represent
-                    // "---"
-                    confidence = confidence,
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // 👉 Only show recipes if NOT spoiled
-                if (!isSpoiled) {
-
-                    Text(
-                        text = "Tips to Prolong Shelf life:",
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp,
-                        color = colors.textPrimary
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 16.dp)
+                ) {
+                    FruitAnalysis(
+                        ripeningStage = ripeningStage,
+                        ripeningProcess = if (isSpoiled) false else ripeningProcess,
+                        shelfLifeDisplay = shelfLifeDisplay, // Use -1 to represent
+                        // "---"
+                        confidence = confidence,
                     )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Tips()
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(
-                        text = "Try the following:",
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp,
-                        color = colors.textPrimary
-                    )
+                    // 👉 Only show recipes if NOT spoiled
+                    if (!isSpoiled) {
 
-                    // Scrollable content
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        if (matchedRecipes.isEmpty()) {
-                            // shrink content
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "No recipes available for this stage.",
-                                    color = Color.Gray,
-                                    fontSize = 14.sp
-                                )
-                            }
-                        } else {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .verticalScroll(rememberScrollState())
-                            ) {
+                        Text(
+                            text = "Tips to Prolong Shelf life:",
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp,
+                            color = colors.textPrimary
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Tips()
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = "Try the following:",
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp,
+                            color = colors.textPrimary
+                        )
+
+                        // Scrollable content
+                            if (matchedRecipes.isEmpty()) {
+                                // shrink content
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "No recipes available for this stage.",
+                                        color = Color.Gray,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            } else {
+
                                 matchedRecipes.forEach { recipe ->
                                     SuggestedRecipe(
                                         title = recipe.name,
@@ -178,103 +175,104 @@ fun CustomBottomSheet(
                                         modifier = Modifier.padding(vertical = 6.dp)
                                     )
                                 }
+
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(4.dp))
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
+                    if (isSpoiled) {
+                        // Show only one full-width button when spoiled
 
-                if (isSpoiled) {
-                    // Show only one full-width button when spoiled
-
-                    Column (
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-
-                        Button(
-                            onClick = onSave,
-                            enabled = !disableSave,
+                        Column (
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button )
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Text(
-                                text = when {
-                                    isSpoiled -> "Fruit is already spoiled"
-                                    isSaved -> "Saved" else -> "Save" },
-                                color = if (isSpoiled) colors.saveText else Color.Black,
-                                fontSize = 18.sp,
-                                fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Normal
-                            )
-                        }
 
-                        Button(
-                            onClick = onCancel,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.button
-                            )
-                        ) {
-                            Text(
-                                "Scan Again",
-                                fontFamily = poppinsFontFamily,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = colors.textPrimary
-                            )
-                        }
-                    }
-                } else {
-                    // Normal case: show Cancel + Save buttons
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp, top = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        OutlinedButton(
-                            onClick = onCancel,
-                            modifier = Modifier
-                                .width(150.dp)
-                                .height(45.dp),
-                            border = BorderStroke(1.dp, colors.button),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color.Transparent
-                            ),
-                        ) {
-                            Text(
-                                "Cancel",
-                                fontFamily = poppinsFontFamily,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = colors.textPrimary
-                            )
-                        }
+                            Button(
+                                onClick = onSave,
+                                enabled = !disableSave,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button )
+                            ) {
+                                Text(
+                                    text = when {
+                                        isSpoiled -> "Fruit is already spoiled"
+                                        isSaved -> "Saved" else -> "Save" },
+                                    color = if (isSpoiled) colors.saveText else Color.Black,
+                                    fontSize = 18.sp,
+                                    fontFamily = poppinsFontFamily,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
 
-                        Button(
-                            onClick = onSave,
-                            enabled = !disableSave,
-                            modifier = Modifier
-                                .width(150.dp)
-                                .height(45.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button
-                            )
-                        ) {
-                            Text(
-                                text = if (isSaved) "Saved" else "Save",
-                                color = Color.Black,
-                                fontSize = 18.sp,
-                                fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Normal
-                            )
+                            Button(
+                                onClick = onCancel,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colors.button
+                                )
+                            ) {
+                                Text(
+                                    "Scan Again",
+                                    fontFamily = poppinsFontFamily,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = colors.textPrimary
+                                )
+                            }
                         }
+                    } else {
+                        // Normal case: show Cancel + Save buttons
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 4.dp, end = 4.dp, top = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            OutlinedButton(
+                                onClick = onCancel,
+                                modifier = Modifier
+                                    .width(150.dp)
+                                    .height(45.dp),
+                                border = BorderStroke(1.dp, colors.button),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = Color.Transparent
+                                ),
+                            ) {
+                                Text(
+                                    "Cancel",
+                                    fontFamily = poppinsFontFamily,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = colors.textPrimary
+                                )
+                            }
+
+                            Button(
+                                onClick = onSave,
+                                enabled = !disableSave,
+                                modifier = Modifier
+                                    .width(150.dp)
+                                    .height(45.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button
+                                )
+                            ) {
+                                Text(
+                                    text = if (isSaved) "Saved" else "Save",
+                                    color = Color.Black,
+                                    fontSize = 18.sp,
+                                    fontFamily = poppinsFontFamily,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+
                     }
                 }
             }

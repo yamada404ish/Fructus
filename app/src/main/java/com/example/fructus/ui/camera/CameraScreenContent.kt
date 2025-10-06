@@ -64,14 +64,13 @@ import com.example.fructus.util.cropToScanBox
 import com.example.fructus.util.formatShelfLifeRange
 import com.example.fructus.util.getShelfLifeRange
 import com.example.fructus.util.rotate
-<<<<<<< HEAD
 import kotlinx.coroutines.delay
-=======
+
 import com.example.fructus.util.toBitmap
 import java.io.File
 import java.io.FileOutputStream
 import com.example.fructus.util.saveBitmapToInternalStorage
->>>>>>> loads
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,12 +78,10 @@ fun CameraScreenContent(
     detected: Boolean,
     detectedFruit: String,
     detectedRipeness: String,
-<<<<<<< HEAD
 
-=======
->>>>>>> loads
     dtProcess: Boolean = true,
     dtConfidence: Int = 0,
+
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
@@ -108,7 +105,6 @@ fun CameraScreenContent(
     val shelfLifeDisplay =
         if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
 
-<<<<<<< HEAD
     val showScanAgainDialog = remember { mutableStateOf(false) }
 
     val showHowTo = remember { mutableStateOf(false)}
@@ -142,21 +138,8 @@ fun CameraScreenContent(
         }
     }
 
-
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-=======
-    BackHandler {
-        cameraRef.value?.cameraControl?.enableTorch(false)
-        flashEnabled.value = false
-        onNavigateUp()
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
->>>>>>> loads
+
         // CAMERA PREVIEW
         AndroidView(
             factory = {
@@ -219,7 +202,7 @@ fun CameraScreenContent(
                     }
 
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(it)
-<<<<<<< HEAD
+
                 cameraProviderFuture.addListener({
                     val cameraProvider = cameraProviderFuture.get()
                     val preview = Preview.Builder().build().also { prev ->
@@ -244,7 +227,7 @@ fun CameraScreenContent(
                     }
                 }, ContextCompat.getMainExecutor(it))
 
-=======
+
                 cameraProviderFuture.addListener(
                     {
                         val cameraProvider = cameraProviderFuture.get()
@@ -269,7 +252,7 @@ fun CameraScreenContent(
                     },
                     ContextCompat.getMainExecutor(it)
                 )
->>>>>>> loads
+
                 previewView
             },
             modifier = Modifier.fillMaxSize()
@@ -283,7 +266,6 @@ fun CameraScreenContent(
                 .padding(top = 50.dp, start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-<<<<<<< HEAD
             if (!isBottomSheetVisible.value) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
@@ -331,34 +313,7 @@ fun CameraScreenContent(
 
             // Flashlight icon
             if (!isBottomSheetVisible.value) {
-=======
-            Icon(
-                painter = painterResource(
-                    if (isBottomSheetVisible.value) R.drawable.ic_camera_exit else R.drawable.ic_back
-                ),
-                contentDescription = if (isBottomSheetVisible.value) "Exit BottomSheet" else "Back",
-                modifier = Modifier
-                    .size(50.dp)
-                    .clickable(
-                        onClick = {
-                            if (isBottomSheetVisible.value) {
-                                isBottomSheetVisible.value = false
-                                detectedState.value = false
-                                isSaved.value = false
-                            } else {
-                                cameraRef.value?.cameraControl?.enableTorch(false)
-                                flashEnabled.value = false
-                                onNavigateUp()
-                            }
-                        },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ),
-                tint = Color.Unspecified
-            )
 
-            if (!isBottomSheetVisible.value) {
->>>>>>> loads
                 Icon(
                     painter = painterResource(
                         if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
@@ -380,12 +335,6 @@ fun CameraScreenContent(
             }
         }
 
-<<<<<<< HEAD
-
-        // ✅ Start Scan button (only show if not detected & not scanning)
-=======
-        // Start Scan button
->>>>>>> loads
         if (!detected && !isScanning.value) {
             Icon(
                 painter = painterResource(R.drawable.camera_scan_icon),
@@ -499,10 +448,6 @@ fun CameraScreenContent(
                         isSaved = isSaved.value,
                         onSave = {
                             if (!isSaved.value) {
-<<<<<<< HEAD
-                                onSaveFruit(detectedFruit, detectedRipeness, dtProcess, dtConfidence)
-
-=======
                                 onSaveFruit(
                                     detectedFruit,
                                     detectedRipeness,
@@ -510,7 +455,6 @@ fun CameraScreenContent(
                                     dtConfidence,
                                     capturedImagePath.value
                                 )
->>>>>>> loads
                                 isSaved.value = true
                                 showSuccessMessage.value = true
                                 Toast.makeText(
@@ -527,10 +471,6 @@ fun CameraScreenContent(
                 }
             }
         } else if (isScanning.value) {
-<<<<<<< HEAD
-
-=======
->>>>>>> loads
             Text(
                 "Scanning...",
                 fontFamily = poppinsFontFamily,
@@ -541,22 +481,19 @@ fun CameraScreenContent(
             )
         }
     }
-<<<<<<< HEAD
     if (showScanAgainDialog.value) {
         ScanAgain(
             onYes = {
-                // Reset everything back to "fresh camera state"
                 detectedState.value = false
                 detectedFruitState.value = ""
                 detectedRipenessState.value = ""
                 isSaved.value = false
                 isBottomSheetVisible.value = false
-                isScanning.value = false              
+                isScanning.value = false
                 showScanAgainDialog.value = false
             }
             ,
             onNo = {
-                // ❌ Just close the dialog
                 showScanAgainDialog.value = false
                 onHome()
             },
@@ -570,43 +507,4 @@ fun CameraScreenContent(
 
         )
     }
-
-}
-
-@androidx.compose.ui.tooling.preview.Preview
-@Composable
-fun CameraScreenContentPreview() {
-    val fakeDetected = remember { mutableStateOf(true) } // Set to true to see the bottom sheet
-    val fakeFruit = remember { mutableStateOf("Banana") }
-    val fakeRipeness = remember { mutableStateOf("Ripe") }
-
-    // Create a fake LifecycleOwner for the preview
-    val fakeLifecycleOwner = object : LifecycleOwner {
-        private val lifecycleRegistry = LifecycleRegistry(this)
-
-        init {
-            lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
-        }
-
-        override val lifecycle: Lifecycle
-            get() = lifecycleRegistry
-    }
-
-    FructusTheme {
-        CameraScreenContent(
-            detected = fakeDetected.value,
-            detectedFruit = fakeFruit.value,
-            detectedRipeness = fakeRipeness.value,
-            lifecycleOwner = fakeLifecycleOwner, // Use the fake owner
-            detectedState = fakeDetected,
-            detectedFruitState = fakeFruit,
-            detectedRipenessState = fakeRipeness,
-            onSaveFruit = { _, _, _, _ -> },
-            onNavigateUp = {},
-            isDarkMode = false,
-            onHome = {}
-        )
-    }
-=======
->>>>>>> loads
 }
