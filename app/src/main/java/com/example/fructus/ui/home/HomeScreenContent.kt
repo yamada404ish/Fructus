@@ -169,14 +169,15 @@ fun HomeScreenContent(
                     onItemSelected = { onFilterChange(it) }
                 )
                 Row (
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.guide), // Use your help icon or create one
                         contentDescription = "Quick Guide",
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(34.dp)
+                            .padding(bottom = 4.dp)
                             .clickable(
                                 onClick = { showOnboarding = true },
                                 indication = null,

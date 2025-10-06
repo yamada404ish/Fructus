@@ -1,6 +1,8 @@
 package com.example.fructus.ui.shared
 
 
+import android.R.attr.onClick
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +37,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fructus.ui.camera.components.Tips
 import com.example.fructus.ui.camera.model.ShelfLifeRange
 import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.theme.appColors
@@ -48,6 +52,7 @@ import com.example.fructus.util.toRipenessStage
 @Composable
 fun CustomBottomSheet(
     onSave:() -> Unit,
+    onCancel: () -> Unit,
     fruitName: String,
     ripeningStage: String,
     ripeningProcess: Boolean,
@@ -82,7 +87,7 @@ fun CustomBottomSheet(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(if (isSpoiled) 0.55f else 0.82f)
+                .fillMaxHeight(if (isSpoiled) 0.54f else 0.90f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(colors.bg)
@@ -92,7 +97,7 @@ fun CustomBottomSheet(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = displayName,
@@ -101,15 +106,8 @@ fun CustomBottomSheet(
                     fontSize = 30.sp,
                     color = colors.textPrimary
                 )
-                Text(
-                    text = displayDescription,
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    color = colors.textPrimary
-                )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 FruitAnalysis(
                     ripeningStage = ripeningStage,
@@ -123,6 +121,21 @@ fun CustomBottomSheet(
 
                 // 👉 Only show recipes if NOT spoiled
                 if (!isSpoiled) {
+
+                    Text(
+                        text = "Tips to Prolong Shelf life:",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
+                        color = colors.textPrimary
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Tips()
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
                     Text(
                         text = "Try the following:",
                         fontFamily = poppinsFontFamily,
@@ -169,31 +182,100 @@ fun CustomBottomSheet(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
 
-                // Fixed Save button at the bottom
-                Button(
-                    onClick = onSave,
-                    enabled = !disableSave,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(45.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button
-                    )
-                ) {
-                    Text(
-                        text = when {
-                            isSpoiled -> "Fruit is already spoiled"
-                            isSaved -> "Saved"
-                            else -> "Save"
-                        },
-                        color = if (isSpoiled) colors.saveText else Color.Black,
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Normal
-                    )
+                if (isSpoiled) {
+                    // Show only one full-width button when spoiled
+
+                    Column (
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        Button(
+                            onClick = onSave,
+                            enabled = !disableSave,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button )
+                        ) {
+                            Text(
+                                text = when {
+                                    isSpoiled -> "Fruit is already spoiled"
+                                    isSaved -> "Saved" else -> "Save" },
+                                color = if (isSpoiled) colors.saveText else Color.Black,
+                                fontSize = 18.sp,
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+
+                        Button(
+                            onClick = onCancel,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colors.button
+                            )
+                        ) {
+                            Text(
+                                "Scan Again",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = colors.textPrimary
+                            )
+                        }
+                    }
+                } else {
+                    // Normal case: show Cancel + Save buttons
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 4.dp, end = 4.dp, top = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        OutlinedButton(
+                            onClick = onCancel,
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(45.dp),
+                            border = BorderStroke(1.dp, colors.button),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color.Transparent
+                            ),
+                        ) {
+                            Text(
+                                "Cancel",
+                                fontFamily = poppinsFontFamily,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = colors.textPrimary
+                            )
+                        }
+
+                        Button(
+                            onClick = onSave,
+                            enabled = !disableSave,
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(45.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (disableSave) Color(0xFFD1D1CC) else colors.button
+                            )
+                        ) {
+                            Text(
+                                text = if (isSaved) "Saved" else "Save",
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                                fontFamily = poppinsFontFamily,
+                                fontWeight = FontWeight.Normal
+                            )
+                        }
+                    }
                 }
             }
         }
