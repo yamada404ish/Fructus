@@ -65,7 +65,7 @@ fun CameraScreenContent(
     detectedFruit: String,
     detectedRipeness: String,
     dtProcess: Boolean = true,
-    dtConfidence: Int = 90,
+    dtConfidence: Int = 0,
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
@@ -118,6 +118,13 @@ fun CameraScreenContent(
                                     val fruitResult = classifyFruit(croppedForBox, it)
                                     val ripenessResult =
                                         classifyRipeness(fruitResult.label, croppedForBox, it)
+
+                                    // ✅ Always log confidence, even if "No fruit detected"
+                                    Log.d(
+                                        "PredictionRaw",
+                                        "FruitResult -> Label: ${fruitResult.label}, Confidence: ${fruitResult.confidence} | " +
+                                                "RipenessResult -> Label: ${ripenessResult.label}, Confidence: ${ripenessResult.confidence}"
+                                    )
 
                                     isSaved.value = false
 

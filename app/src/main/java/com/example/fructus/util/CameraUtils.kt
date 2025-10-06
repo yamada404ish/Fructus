@@ -28,7 +28,7 @@ data class ClassificationResult(
 )
 
 // --------------------- FRUIT TYPE CLASSIFIER ---------------------
-fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): ClassificationResult {
+fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     val modelName = "fruit_type_model.tflite"
     val labels = listOf(
         "Cavendish", "Lakatan", "Carabao", "Saba",
@@ -40,7 +40,7 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): C
     // ✅ Crop to scan box before preprocessing
     val cropped = bitmap.cropToScanBox(context)
 
-    // 🚫 Skip classification if mostly background (black, gray, or white)
+    // 🚫 Skip classification if mostly background
     if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
@@ -53,16 +53,31 @@ fun classifyFruit(bitmap: Bitmap, context: Context, threshold: Float = 0.90f): C
 
     val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
     val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+    val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    return if (maxIndex != -1 && confidence >= threshold) {
-        ClassificationResult(labels[maxIndex], confidence)
+    // 🔹 Fruit-specific thresholds
+    val thresholds = mapOf(
+        "Tomato" to 0.9f,
+        "Lakatan" to 0.9f,
+        "Saba" to 0.6f,
+        "Cavendish" to 0.7f,
+        "Carabao" to 0.7f,
+        "Spoiled Banana" to 0.8f,
+        "Spoiled Mango" to 0.8f,
+        "Spoiled Tomato" to 0.8f
+    )
+
+    val threshold = thresholds[predictedLabel] ?: 0.8f
+
+    return if (confidence >= threshold) {
+        ClassificationResult(predictedLabel, confidence)
     } else {
         ClassificationResult("No fruit detected", confidence)
     }
 }
 
 // --------------------- RIPENESS CLASSIFIER ---------------------
-fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, threshold: Float = 0.7f): ClassificationResult {
+fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): ClassificationResult {
     if (
         fruitType.equals("Spoiled Banana", true) ||
         fruitType.equals("Spoiled Tomato", true) ||
@@ -85,7 +100,7 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, thresh
 
     val cropped = bitmap.cropToScanBox(context)
 
-    // 🚫 Skip classification if mostly background (black, gray, or white)
+    // 🚫 Skip classification if mostly background
     if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
@@ -98,9 +113,13 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context, thresh
 
     val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
     val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+    val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    return if (maxIndex != -1 && confidence >= threshold) {
-        ClassificationResult(labels[maxIndex], confidence)
+    // 🔹 Ripeness threshold (applied for all fruits)
+    val ripenessThreshold = 0.5f
+
+    return if (confidence >= ripenessThreshold) {
+        ClassificationResult(predictedLabel, confidence)
     } else {
         ClassificationResult("Unknown", confidence)
     }
