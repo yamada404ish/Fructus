@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.camera.components.Tips
@@ -324,13 +325,13 @@ fun  FruitAnalysis(
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                InfoCard(title = "Shelf Life", value = shelfLifeDisplay)
-                InfoCard(title = "Confidence", value = "${(confidence * 100).toInt()}%")
-                InfoCard(title = "Process", value = if (shelfLifeDisplay == "---") "---" else if
-                        (ripeningProcess) "Natural" else "Artificial")
+                InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f))
+                InfoCard(title = "Ripeness \nConfidence", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
+                InfoCard(title = "Ripening \nProcess", value = if (shelfLifeDisplay == "---") "---" else if
+                        (ripeningProcess) "Natural" else "Artificial", modifier = Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -338,7 +339,7 @@ fun  FruitAnalysis(
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
                 fontSize = 10.sp,
-                color = colors.textSecondary
+                color = colors.textSecondary,
             )
             RipenessProgressBar(
                 currentStage = ripeningStage.toRipenessStage(),
@@ -378,15 +379,17 @@ fun InfoCard(
                 fontSize = 12.sp,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
                 color = colors.textPrimary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = 12.sp,
+                fontSize = 14.sp,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
-                color = colors.textPrimary
+                color = colors.textPrimary,
+                textAlign = TextAlign.Center
             )
         }
     }
