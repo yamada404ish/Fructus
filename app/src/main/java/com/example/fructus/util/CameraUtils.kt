@@ -44,6 +44,8 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
         return ClassificationResult("No fruit detected", 0f)
     }
 
+
+
     val input = preprocessBitmap(cropped)
     val output = Array(1) { FloatArray(labels.size) }
     model.run(input, output)
