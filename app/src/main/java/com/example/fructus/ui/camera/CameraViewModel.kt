@@ -14,7 +14,7 @@ class CameraViewModel(
     private val fruitDao: FruitDao
 ) : ViewModel() {
 
-    fun saveFruit(name: String, ripeness: String, process: Boolean, confidence: Int, imagePath: String?) {
+    fun saveFruit(name: String, ripeness: String, process: Boolean, confidence: Float, imagePath: String?) {
         viewModelScope.launch {
             val now = Date()
             val currentDate = SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(Date())

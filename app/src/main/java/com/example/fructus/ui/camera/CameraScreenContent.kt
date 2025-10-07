@@ -86,11 +86,13 @@ fun CameraScreenContent(
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
     detectedRipenessState: MutableState<String>,
-    onSaveFruit: (String, String, Boolean, Int, String?) -> Unit,
+    onSaveFruit: (String, String, Boolean, Float, String?) -> Unit,
     onNavigateUp: () -> Unit,
     isDarkMode: Boolean,
     onHome: () -> Unit
 ) {
+    val detectedConfidence = remember { mutableStateOf(0f) }
+
     val context = LocalContext.current
     val isSaved = remember { mutableStateOf(false) }
     val showSuccessMessage = remember { mutableStateOf(false) }
@@ -184,6 +186,7 @@ fun CameraScreenContent(
 
                                     detectedFruitState.value = fruitResult.label
                                     detectedRipenessState.value = ripenessResult.label
+                                    detectedConfidence.value = fruitResult.confidence
                                     detectedState.value = true
                                     isScanning.value = false
 
@@ -442,7 +445,7 @@ fun CameraScreenContent(
                         fruitName = detectedFruit,
                         ripeningStage = detectedRipeness,
                         ripeningProcess = dtProcess,
-                        confidence = dtConfidence,
+                        confidence = detectedConfidence.value,
                         shelfLifeRange = shelfLifeRange,
                         shelfLifeDisplay = shelfLifeDisplay,
                         isSaved = isSaved.value,
@@ -452,7 +455,7 @@ fun CameraScreenContent(
                                     detectedFruit,
                                     detectedRipeness,
                                     dtProcess,
-                                    dtConfidence,
+                                    detectedConfidence.value,
                                     capturedImagePath.value
                                 )
                                 isSaved.value = true
@@ -487,6 +490,7 @@ fun CameraScreenContent(
                 detectedState.value = false
                 detectedFruitState.value = ""
                 detectedRipenessState.value = ""
+                detectedConfidence.value = 0f
                 isSaved.value = false
                 isBottomSheetVisible.value = false
                 isScanning.value = false

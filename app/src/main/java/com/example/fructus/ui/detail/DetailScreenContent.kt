@@ -111,7 +111,7 @@ fun DetailScreenContent(
 //                ripeningStage = fruit.ripeningStage,
 //                ripeningProcess = fruit.ripeningProcess,
                 shelfLifeDisplay = shelfLifeDisplay,
-                confidence = 90
+                confidence = fruit.confidence
             )
 
         }
@@ -126,7 +126,7 @@ fun CustomBottomSheetDetail(
 //    ripeningStage: String,
 //    ripeningProcess: Boolean,
     shelfLifeDisplay: String,
-    confidence: Int,
+    confidence: Float,
 ) {
 
     val colors = MaterialTheme.appColors

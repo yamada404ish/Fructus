@@ -10,7 +10,7 @@ data class FruitEntity (
     val name: String,
     val ripeningStage: String,
     val ripeningProcess: Boolean,
-    val confidence: Int,
+    val confidence: Float,
     val scannedDate: String,
     val scannedTime: String,
     val scannedTimestamp: Long,

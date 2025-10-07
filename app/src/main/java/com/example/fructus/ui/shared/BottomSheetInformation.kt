@@ -57,7 +57,7 @@ fun CustomBottomSheet(
     ripeningStage: String,
     ripeningProcess: Boolean,
     shelfLifeRange: ShelfLifeRange,
-    confidence: Int,
+    confidence: Float,
     isSaved: Boolean,
     shelfLifeDisplay: String
 ) {
@@ -285,7 +285,7 @@ fun  FruitAnalysis(
     ripeningStage: String,
     ripeningProcess: Boolean,
     shelfLifeDisplay: String,
-    confidence: Int,
+    confidence: Float,
 ) {
 
     val colors = MaterialTheme.appColors
@@ -328,7 +328,7 @@ fun  FruitAnalysis(
                 verticalAlignment = Alignment.Top
             ) {
                 InfoCard(title = "Shelf Life", value = shelfLifeDisplay)
-                InfoCard(title = "Confidence", value = "$confidence%")
+                InfoCard(title = "Confidence", value = "${(confidence * 100).toInt()}%")
                 InfoCard(title = "Process", value = if (shelfLifeDisplay == "---") "---" else if
                         (ripeningProcess) "Natural" else "Artificial")
             }
