@@ -186,7 +186,7 @@ fun CameraScreenContent(
 
                                     detectedFruitState.value = fruitResult.label
                                     detectedRipenessState.value = ripenessResult.label
-                                    detectedConfidence.value = fruitResult.confidence
+                                    detectedConfidence.value = ripenessResult.confidence
                                     detectedState.value = true
                                     isScanning.value = false
 
