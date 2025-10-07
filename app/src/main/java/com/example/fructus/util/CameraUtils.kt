@@ -37,10 +37,8 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
 
     val model = Interpreter(loadModelFile(context, modelName))
 
-    // ✅ Crop to scan box
     val cropped = bitmap.cropToScanBox(context)
 
-    // 🚫 Skip classification if mostly background
     if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
