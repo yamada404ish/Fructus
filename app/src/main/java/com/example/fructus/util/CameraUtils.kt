@@ -58,11 +58,11 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     // 🔹 Fruit-specific thresholds
     val thresholds = mapOf(
         "Tomato" to 0.9f,
-        "Lakatan" to 0.9f,
-        "Saba" to 0.8f,
+        "Lakatan" to 0.95f,
+        "Saba" to 0.55f,
         "Cavendish" to 0.8f,
-        "Carabao" to 0.6f,
-        "Spoiled Banana" to 0.55f,
+        "Carabao" to 0.65f,
+        "Spoiled Banana" to 0.6f,
         "Spoiled Mango" to 0.6f,
         "Spoiled Tomato" to 0.6f
     )

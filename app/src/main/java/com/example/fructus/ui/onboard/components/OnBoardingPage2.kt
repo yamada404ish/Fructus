@@ -101,7 +101,6 @@ fun OnboardingPage2(
                     fontSize = 50.sp,
                     fontWeight = FontWeight.Bold
                 )
-
             }
 
         }
