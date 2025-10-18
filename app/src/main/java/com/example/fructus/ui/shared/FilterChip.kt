@@ -1,4 +1,4 @@
-package com.example.fructus.ui.notification.components
+package com.example.fructus.ui.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

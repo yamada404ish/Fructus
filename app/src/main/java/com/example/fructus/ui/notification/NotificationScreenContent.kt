@@ -40,7 +40,7 @@ import com.example.fructus.R
 import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
-import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.ui.shared.model.Filter
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince

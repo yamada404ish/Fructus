@@ -1,10 +1,5 @@
 package com.example.fructus.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseOutBounce
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,13 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -41,29 +30,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
 import com.example.fructus.ui.home.components.Dropdown
-import com.example.fructus.ui.home.components.FructusGuideStep
 import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FructusOnboardingOverlay
 import com.example.fructus.ui.home.components.FruitItem
@@ -84,6 +67,7 @@ fun HomeScreenContent(
     onNotificationClick: () -> Unit,
     onScanClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onUserGuideClick: () -> Unit,
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
     viewModel: HomeViewModel = viewModel(),
@@ -312,6 +296,19 @@ fun HomeScreenContent(
                     }
                 }
             }
+            Icon(
+                painter = painterResource(R.drawable.info),
+                contentDescription = "Quick Guide",
+                modifier = Modifier
+                    .size(38.dp)
+//                    .padding(bottom = 4.dp)
+                    .clickable(
+                        onClick = { onUserGuideClick() },
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ),
+                tint = Unspecified
+            )
         }
     }
     if (showOnboarding) {
@@ -335,7 +332,8 @@ private fun HomescreenPrev() {
             onSettingsClick = {},
             selectedFilter = "All",
             onFilterChange = {},
-            isDarkMode = false
+            isDarkMode = false,
+            onUserGuideClick = {}
         )
     }
 }

@@ -27,7 +27,8 @@ fun HomeScreen(
     navController: NavController,
     onFruitClick: (Int) -> Unit,
     onNavigateToScan: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onUserGuideClick: () -> Unit
 ) {
     var selectedFilter by remember { mutableStateOf("All") }
 
@@ -96,6 +97,7 @@ fun HomeScreen(
         selectedFilter = selectedFilter,
         onFilterChange = { selectedFilter = it },
         onSettingsClick = onSettingsClick,
+        onUserGuideClick = onUserGuideClick,
         onScanClick = {
             if (isCameraPermissionGranted(context)) {
                 onNavigateToScan()

@@ -1,0 +1,152 @@
+[
+  {
+    "type": "banana",
+    "fruitName": "Cavendish Banana",
+    "stages": [
+      {
+        "image": "cavendish_unripe",
+        "stage": "Unripe",
+        "shelfLifeNatural": "8-10 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "cavendish_ripe",
+        "stage": "Ripe",
+        "shelfLifeNatural": "4-6 days",
+        "shelfLifeArtificial": "3-5 days"
+      },
+      {
+        "image": "cavendish_overripe",
+        "stage": "Overripe",
+        "shelfLifeNatural": "2-3 days",
+        "shelfLifeArtificial": "1-2 days"
+      },
+      {
+        "image": "cavendish_spoiled",
+        "stage": "Spoiled",
+        "shelfLifeNatural": "dispose",
+        "shelfLifeArtificial": "dispose"
+      }
+    ]
+  },
+  {
+    "type": "banana",
+    "fruitName": "Lakatan Banana",
+    "stages": [
+      {
+        "image": "lakatan_unripe",
+        "stage": "Unripe",
+        "shelfLifeNatural": "8-10 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "lakatan_ripe",
+        "stage": "Ripe",
+        "shelfLifeNatural": "4-6 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "lakatan_overripe",
+        "stage": "Overripe",
+        "shelfLifeNatural": "2-3 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "lakatan_spoiled",
+        "stage": "Spoiled",
+        "shelfLifeNatural": "dispose",
+        "shelfLifeArtificial": "dispose"
+      }
+    ]
+  },
+  {
+    "type": "banana",
+    "fruitName": "Saba Banana",
+    "stages": [
+      {
+        "image": "saba_unripe",
+        "stage": "Unripe",
+        "shelfLifeNatural": "8-10 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "saba_ripe",
+        "stage": "Ripe",
+        "shelfLifeNatural": "4-6 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "saba_overripe",
+        "stage": "Overripe",
+        "shelfLifeNatural": "2-3 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "saba_spoiled",
+        "stage": "Spoiled",
+        "shelfLifeNatural": "dispose",
+        "shelfLifeArtificial": "dispose"
+      }
+    ]
+  },
+  {
+    "type": "tomato",
+    "fruitName": "Tomato",
+    "stages": [
+      {
+        "image": "tomato_unripe",
+        "stage": "Unripe",
+        "shelfLifeNatural": "8-10 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "tomato_ripe",
+        "stage": "Ripe",
+        "shelfLifeNatural": "4-6 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "tomato_overripe",
+        "stage": "Overripe",
+        "shelfLifeNatural": "2-3 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "tomato_spoiled",
+        "stage": "Spoiled",
+        "shelfLifeNatural": "dispose",
+        "shelfLifeArtificial": "dispose"
+      }
+    ]
+  },
+  {
+    "type": "mango",
+    "fruitName": "Carabao Mango",
+    "stages": [
+      {
+        "image": "carabao_unripe",
+        "stage": "Unripe",
+        "shelfLifeNatural": "8-10 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "carabao_ripe",
+        "stage": "Ripe",
+        "shelfLifeNatural": "4-6 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "carabao_overripe",
+        "stage": "Overripe",
+        "shelfLifeNatural": "2-3 days",
+        "shelfLifeArtificial": "6-8 days"
+      },
+      {
+        "image": "carabao_spoiled",
+        "stage": "Spoiled",
+        "shelfLifeNatural": "dispose",
+        "shelfLifeArtificial": "dispose"
+      }
+    ]
+  }
+]

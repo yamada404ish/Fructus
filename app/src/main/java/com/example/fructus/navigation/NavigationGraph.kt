@@ -23,6 +23,8 @@ import com.example.fructus.ui.archive.ArchiveScreen
 import com.example.fructus.ui.archive.ArchiveViewModel
 import com.example.fructus.ui.camera.Camera
 import com.example.fructus.ui.detail.DetailScreen
+import com.example.fructus.ui.guide.UserGuide
+import com.example.fructus.ui.guide.UserGuideViewModel
 import com.example.fructus.ui.home.HomeScreen
 import com.example.fructus.ui.notification.NotificationScreen
 import com.example.fructus.ui.notification.NotificationViewModel
@@ -134,7 +136,8 @@ private fun NavGraphBuilder.addCoreDestinations(
                         popUpTo(Home) { inclusive = false }
                     }
                 },
-                onSettingsClick = { navController.navigate(Settings) }
+                onSettingsClick = { navController.navigate(Settings) },
+                onUserGuideClick = {navController.navigate(Guide)}
             )
         }
     }
@@ -268,6 +271,18 @@ private fun NavGraphBuilder.addCoreDestinations(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+    }
+
+    composable<Guide> {
+        AppBackgroundScaffold {
+            val viewModel: UserGuideViewModel = viewModel()
+
+            UserGuide(
+                viewModel,
+                onNavigateUp = { navController.navigateUp() },
+
             )
         }
     }

@@ -12,6 +12,9 @@ object OnBoard
 object Home
 
 @Serializable
+object Guide
+
+@Serializable
 object Notification
 
 @Serializable

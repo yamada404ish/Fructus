@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fructus.data.local.dao.FruitDao
 import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.data.local.entity.NotificationEntity
-import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.ui.shared.model.Filter
 import com.example.fructus.util.NotificationScheduler
 import com.example.fructus.util.PushNotificationManager
 import com.example.fructus.util.getShelfLifeRange
