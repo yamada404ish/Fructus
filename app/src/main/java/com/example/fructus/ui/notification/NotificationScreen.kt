@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.example.fructus.ui.notification.model.Filter
+import com.example.fructus.ui.shared.model.Filter
 
 @Composable
 fun NotificationScreen(

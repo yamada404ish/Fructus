@@ -1,4 +1,4 @@
-package com.example.fructus.ui.notification.components
+package com.example.fructus.ui.guide.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
@@ -9,26 +9,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.fructus.ui.shared.FilterChip
-import com.example.fructus.ui.shared.model.Filter
+import com.example.fructus.ui.shared.model.Guide
 
 @Composable
-fun NotificationFilters(
+fun UserGuideFilter(
     modifier: Modifier = Modifier,
-    items: List<Filter>,
-    selectedFilter: Filter,
-    onSelectedFilter: (Filter) -> Unit
+    items: List<Guide>,
+    selectedGuide: Guide,
+    onSelectedGuide: (Guide) -> Unit
 ) {
-    LazyRow (
+    LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
-        items (items) { filter ->
+        items(items) { guide ->
             FilterChip(
-                text = filter.name,
-                isSelected = selectedFilter == filter,
-                onClick = { onSelectedFilter(filter) },
-
-                )
+                text = guide.name,
+                isSelected = selectedGuide == guide,
+                onClick = { onSelectedGuide(guide) }
+            )
             Spacer(modifier = Modifier.width(2.dp))
         }
     }
