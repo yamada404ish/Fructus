@@ -36,15 +36,12 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     )
 
     val model = Interpreter(loadModelFile(context, modelName))
-
     val cropped = bitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
         model.close()
         return ClassificationResult("No fruit detected", 0f)
     }
-
-
 
     val input = preprocessBitmap(cropped)
     val output = Array(1) { FloatArray(labels.size) }
@@ -97,7 +94,6 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
 
     val labels = listOf("Overripe", "Ripe", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
-
     val cropped = bitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
@@ -115,7 +111,6 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
     val ripenessThreshold = 0.45f
-
     return if (confidence >= ripenessThreshold) {
         ClassificationResult(predictedLabel, confidence)
     } else {
@@ -149,10 +144,8 @@ fun preprocessBitmap(bitmap: Bitmap): ByteBuffer {
     val resized = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, true)
     val byteBuffer = ByteBuffer.allocateDirect(4 * inputSize * inputSize * 3)
     byteBuffer.order(ByteOrder.nativeOrder())
-
     val pixels = IntArray(inputSize * inputSize)
     resized.getPixels(pixels, 0, inputSize, 0, 0, inputSize, inputSize)
-
     for (pixel in pixels) {
         val r = ((pixel shr 16) and 0xFF) / 255.0f
         val g = ((pixel shr 8) and 0xFF) / 255.0f
@@ -170,16 +163,13 @@ fun ImageProxy.toBitmap(): Bitmap? {
     val yBuffer = image.planes[0].buffer
     val uBuffer = image.planes[1].buffer
     val vBuffer = image.planes[2].buffer
-
     val ySize = yBuffer.remaining()
     val uSize = uBuffer.remaining()
     val vSize = vBuffer.remaining()
-
     val nv21 = ByteArray(ySize + uSize + vSize)
     yBuffer.get(nv21, 0, ySize)
     vBuffer.get(nv21, ySize, vSize)
     uBuffer.get(nv21, ySize + vSize, uSize)
-
     val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
     val out = ByteArrayOutputStream()
     yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
@@ -205,16 +195,12 @@ fun saveBitmapToFile(context: Context, bitmap: Bitmap, fileName: String = "fruit
 fun Bitmap.cropToScanBox(context: Context): Bitmap {
     val screenWidthPx = context.resources.displayMetrics.widthPixels
     val screenHeightPx = context.resources.displayMetrics.heightPixels
-
-    // Your overlay is 460.dp square
     val boxSizePx = (460 * context.resources.displayMetrics.density).toInt()
 
     val scaleX = this.width.toFloat() / screenWidthPx
     val scaleY = this.height.toFloat() / screenHeightPx
-
     val boxWidthOnBitmap = (boxSizePx * scaleX).toInt()
     val boxHeightOnBitmap = (boxSizePx * scaleY).toInt()
-
     val left = (this.width - boxWidthOnBitmap) / 2
     val top = (this.height - boxHeightOnBitmap) / 2
 
@@ -231,7 +217,6 @@ fun calculateHistogram(bitmap: Bitmap): IntArray {
     val histogram = IntArray(256)
     val pixels = IntArray(bitmap.width * bitmap.height)
     bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-
     for (pixel in pixels) {
         val r = (pixel shr 16) and 0xFF
         val g = (pixel shr 8) and 0xFF
@@ -256,9 +241,8 @@ fun compareHistograms(h1: IntArray?, h2: IntArray?): Float {
 
 // --------------------- 11-STEP SEGMENTATION ---------------------
 fun Bitmap.segmentFruit(): Bitmap {
-    // ✅ Step 0: Confirm fruit presence first
     if (this.isMostlyBackground()) {
-        return this // Skip segmentation entirely
+        return this
     }
 
     val src = Mat()
@@ -274,22 +258,20 @@ fun Bitmap.segmentFruit(): Bitmap {
 
     val contours = mutableListOf<MatOfPoint>()
     Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-    if (contours.isEmpty()) return this
 
+    if (contours.isEmpty()) return this
     val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return this
+
     val mask = Mat.zeros(src.size(), CvType.CV_8UC1)
     Imgproc.drawContours(mask, listOf(largest), -1, Scalar(255.0), -1)
 
     val result = Mat()
     src.copyTo(result, mask)
-
     val rect = Imgproc.boundingRect(largest)
     val cropped = Mat(result, rect)
-
     val output = Bitmap.createBitmap(cropped.width(), cropped.height(), Bitmap.Config.ARGB_8888)
     Utils.matToBitmap(cropped, output)
 
-    // ✅ Optional: skip tiny detections
     if (output.width < width * 0.2 || output.height < height * 0.2) {
         return this
     }
@@ -318,12 +300,32 @@ fun Bitmap.isMostlyBackground(
             backgroundCount++
         } else if (avg > whiteThreshold) {
             backgroundCount++
-        } else if (kotlin.math.abs(r - g) < grayTolerance &&
+        } else if (
+            kotlin.math.abs(r - g) < grayTolerance &&
             kotlin.math.abs(g - b) < grayTolerance &&
             kotlin.math.abs(r - b) < grayTolerance
         ) {
             backgroundCount++
         }
     }
+
     return backgroundCount > width * height * ratio
 }
+// --------------------- GALLERY IMAGE DETECTION ---------------------
+suspend fun analyzeBitmap(
+    bitmap: Bitmap,
+    context: Context
+): Pair<ClassificationResult, ClassificationResult> {
+    // First: detect the fruit type
+    val fruitResult = classifyFruit(bitmap, context)
+
+    // Then: detect ripeness if fruit is found
+    val ripenessResult = if (fruitResult.label != "No fruit detected") {
+        classifyRipeness(fruitResult.label, bitmap, context)
+    } else {
+        ClassificationResult("Unknown", 0f)
+    }
+
+    return Pair(fruitResult, ripenessResult)
+}
+
