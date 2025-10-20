@@ -96,7 +96,6 @@ fun CustomSwitchButton(
                     .clip(CircleShape)
                     .background(Color.White)
             )
-
         }
     }
 }
