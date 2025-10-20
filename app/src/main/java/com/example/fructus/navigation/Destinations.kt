@@ -36,5 +36,9 @@ data class Detail (
     val fromNotifications: Boolean = false
 )
 
-//@Serializable
-//object Test
+@Serializable
+data class RecipeInfo(
+    val name: String,
+    val imageResName: String,
+    val description: String,
+)

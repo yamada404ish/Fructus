@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,7 +50,6 @@ import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FructusOnboardingOverlay
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
-import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince
@@ -81,21 +79,6 @@ fun HomeScreenContent(
 
     Scaffold(
         containerColor = colors.bg,
-
-        topBar = {
-            Column(
-                modifier = Modifier
-                    .padding(top = 8.dp),
-            ) {
-                CenterAlignedTopAppBar(
-                    title = { FructusLogo() },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
-                    )
-                )
-            }
-        },
-
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onScanClick() },
@@ -130,7 +113,7 @@ fun HomeScreenContent(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(bottom = 55.dp, start = 24.dp, end = 24.dp)
+                .padding(top = 40.dp, bottom = 55.dp, start = 24.dp, end = 24.dp)
                 .fillMaxSize()
         ) {
             Text(
@@ -301,7 +284,6 @@ fun HomeScreenContent(
                 contentDescription = "Quick Guide",
                 modifier = Modifier
                     .size(38.dp)
-//                    .padding(bottom = 4.dp)
                     .clickable(
                         onClick = { onUserGuideClick() },
                         indication = null,
@@ -319,21 +301,3 @@ fun HomeScreenContent(
 }
 
 
-@Preview
-@Composable
-private fun HomescreenPrev() {
-    FructusTheme {
-        HomeScreenContent(
-            hasNewNotification = false,
-            state = HomeState(),
-            onFruitClick = {},
-            onNotificationClick = {},
-            onScanClick = {},
-            onSettingsClick = {},
-            selectedFilter = "All",
-            onFilterChange = {},
-            isDarkMode = false,
-            onUserGuideClick = {}
-        )
-    }
-}

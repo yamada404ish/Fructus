@@ -23,8 +23,8 @@ import com.example.fructus.ui.archive.ArchiveScreen
 import com.example.fructus.ui.archive.ArchiveViewModel
 import com.example.fructus.ui.camera.Camera
 import com.example.fructus.ui.detail.DetailScreen
+import com.example.fructus.ui.detail.components.RecipeInformation
 import com.example.fructus.ui.guide.UserGuide
-import com.example.fructus.ui.guide.UserGuideViewModel
 import com.example.fructus.ui.home.HomeScreen
 import com.example.fructus.ui.notification.NotificationScreen
 import com.example.fructus.ui.notification.NotificationViewModel
@@ -182,6 +182,9 @@ private fun NavGraphBuilder.addCoreDestinations(
                 } else {
                     navController.navigateUp()
                 }
+            },
+            onNavigateToRecipe = { name, imageResName, description ->
+                navController.navigate(RecipeInfo(name, imageResName, description))
             }
         )
     }
@@ -277,18 +280,14 @@ private fun NavGraphBuilder.addCoreDestinations(
 
     composable<Guide> {
         AppBackgroundScaffold {
-            val viewModel: UserGuideViewModel = viewModel()
-
             UserGuide(
-                viewModel,
-                onNavigateUp = { navController.navigateUp() },
-
+                onNavigateUp = { navController.navigateUp() }
             )
         }
     }
 
     composable<OnBoardPreview> {
-        val context = LocalContext.current
+        LocalContext.current
 
         BackHandler {
             navController.navigateUp() // Always go back to settings
@@ -324,4 +323,18 @@ private fun NavGraphBuilder.addCoreDestinations(
             }
         )
     }
+
+    composable<RecipeInfo> { backStackEntry ->
+        val args = backStackEntry.toRoute<RecipeInfo>()
+
+        AppBackgroundScaffold {
+            RecipeInformation(
+                name = args.name,
+                imageResName = args.imageResName,
+                description = args.description,
+                onNavigateUp = { navController.navigateUp() },
+            )
+        }
+    }
+
 }

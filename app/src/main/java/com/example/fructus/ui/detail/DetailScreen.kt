@@ -15,7 +15,8 @@ fun DetailScreen(
     fruitId: Int,
     notificationId: Int? = null, // 👈 add optional param
     shouldOpenNotifications: Boolean = false,
-    onNavigate: () -> Unit
+    onNavigate: () -> Unit,
+    onNavigateToRecipe: (String, String, String) -> Unit
 ) {
     val context = LocalContext.current
     val db = remember { FruitDatabase.getDatabase(context) }
@@ -52,7 +53,11 @@ fun DetailScreen(
 
     val fruit = viewModel.fruit.collectAsState().value
     fruit?.let {
-        DetailScreenContent(fruit = it, onNavigate = onNavigate)
+        DetailScreenContent(
+            fruit = it,
+            onNavigate = onNavigate,
+            onNavigateToRecipe = onNavigateToRecipe
+        )
     }
 }
 

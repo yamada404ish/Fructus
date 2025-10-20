@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.fructus.R
 import com.example.fructus.data.local.entity.FruitEntity
@@ -50,7 +53,6 @@ import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.getFruitDescription
-import com.example.fructus.util.getFruitDrawableId
 import com.example.fructus.util.loadRecipesFromJson
 import java.io.File
 
@@ -58,7 +60,8 @@ import java.io.File
 @Composable
 fun DetailScreenContent(
     fruit: FruitEntity,
-    onNavigate: () -> Unit
+    onNavigate: () -> Unit,
+    onNavigateToRecipe: (String, String, String) -> Unit
 ) {
 
     val shelfLifeDisplay = getDisplayShelfLife(fruit)
@@ -70,16 +73,14 @@ fun DetailScreenContent(
         containerColor = colors.bg
     ) { innerPadding ->
         Box(
-
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .clickable( // 👈 this absorbs touches so they don’t leak back to Home
+                .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) { }
         ) {
-            // 🍌 Background image
             Image(
                 painter = painterResource(backgroundRes),
                 contentDescription = "Background",
@@ -90,13 +91,12 @@ fun DetailScreenContent(
                     .align(Alignment.TopCenter)
             )
 
-            // ← Back arrow icon
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
                 tint = Color.White,
                 modifier = Modifier
-                    .padding(start = 16.dp, top = 40.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 40.dp)
                     .size(32.dp)
                     .clickable(
                         onClick = { onNavigate() },
@@ -107,11 +107,9 @@ fun DetailScreenContent(
 
             CustomBottomSheetDetail(
                 fruit = fruit,
-//                fruitName = fruit.name,
-//                ripeningStage = fruit.ripeningStage,
-//                ripeningProcess = fruit.ripeningProcess,
                 shelfLifeDisplay = shelfLifeDisplay,
-                confidence = fruit.confidence
+                confidence = fruit.confidence,
+                onNavigateToRecipe = onNavigateToRecipe
             )
 
         }
@@ -122,11 +120,9 @@ fun DetailScreenContent(
 @Composable
 fun CustomBottomSheetDetail(
     fruit: FruitEntity,
-//    fruitName: String,
-//    ripeningStage: String,
-//    ripeningProcess: Boolean,
     shelfLifeDisplay: String,
     confidence: Float,
+    onNavigateToRecipe: (String, String, String) -> Unit
 ) {
 
     val colors = MaterialTheme.appColors
@@ -136,7 +132,6 @@ fun CustomBottomSheetDetail(
     val displayName = getDisplayFruitName(fruit.name)
     val displayDescription = getFruitDescription(fruit.name)
 
-    // 🔎 Filter recipes based on detected fruit + ripeness
     val matchedRecipes = allRecipes.filter {
         it.fruitType.equals(fruit.name, ignoreCase = true) &&
                 it.stage.equals(fruit.ripeningStage, ignoreCase = true)
@@ -148,6 +143,7 @@ fun CustomBottomSheetDetail(
         R.drawable.unknown_fruit
     }
 
+    val isDialogOpen = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -175,13 +171,17 @@ fun CustomBottomSheetDetail(
                         .fillMaxWidth()
                 ) {
 
-
                     AsyncImage(
                         model = imageModel,
                         contentDescription = "Fruit Image",
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
-                            .size(100.dp),
+                            .size(100.dp)
+                            .clickable(
+                                onClick = { isDialogOpen.value = true },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ),
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(R.drawable.unknown_fruit),
                         error = painterResource(R.drawable.unknown_fruit)
@@ -248,22 +248,59 @@ fun CustomBottomSheetDetail(
                     )
 
 
-                        if (matchedRecipes.isEmpty()) {
-                            Text(
-                                text = "No recipes available for this stage.",
-                                color = colors.textSecondary,
-                                fontSize = 14.sp
+                    if (matchedRecipes.isEmpty()) {
+                        Text(
+                            text = "No recipes available for this stage.",
+                            color = colors.textSecondary,
+                            fontSize = 14.sp
+                        )
+                    } else {
+                        matchedRecipes.forEach { recipe ->
+                            SuggestedRecipe(
+                                title = recipe.name,
+                                description = recipe.description,
+                                imageRes = context.getDrawableIdByName(recipe.imageResName),
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                onClick = {
+                                    onNavigateToRecipe(recipe.name, recipe.imageResName, recipe.description)
+                                }
                             )
-                        } else {
-                            matchedRecipes.forEach { recipe ->
-                                SuggestedRecipe(
-                                    title = recipe.name,
-                                    description = recipe.description,
-                                    imageRes = context.getDrawableIdByName(recipe.imageResName),
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
-                            }
                         }
+                    }
+                }
+            }
+            if (isDialogOpen.value) {
+                Dialog(
+                    onDismissRequest = { isDialogOpen.value = false },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.6f))
+                            .clickable(
+                                onClick = { isDialogOpen.value = false },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = imageModel,
+                            contentDescription = "Full Image ${fruit.name}",
+                            modifier = Modifier
+                                .size(330.dp)
+                                .clickable(
+                                    onClick = { isDialogOpen.value = false },
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                )
+                                .clip(RoundedCornerShape(16.dp)),
+                            contentScale = ContentScale.Crop,
+                            placeholder = painterResource(R.drawable.unknown_fruit),
+                            error = painterResource(R.drawable.unknown_fruit)
+                        )
+                    }
                 }
             }
         }

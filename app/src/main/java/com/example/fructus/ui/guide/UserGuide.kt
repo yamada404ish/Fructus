@@ -8,16 +8,18 @@ import androidx.compose.runtime.setValue
 
 @Composable
 fun UserGuide(
-    viewModel: UserGuideViewModel,
     onNavigateUp: () -> Unit
 ) {
 
     var selectedGuide by remember { mutableStateOf("Banana") }
+    var selectedProcess by remember { mutableStateOf("Natural")}
 
     UserGuideScreenContent(
-        viewModel = viewModel,
         onNavigateUp = onNavigateUp,
         selectedGuide = selectedGuide,
-        onGuideChange = {selectedGuide = it}
+        onGuideChange = {selectedGuide = it},
+
+        selectedProcess = selectedProcess,
+        onProcessChange = {selectedProcess = it}
     )
 }

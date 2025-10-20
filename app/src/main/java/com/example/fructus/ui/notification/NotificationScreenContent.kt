@@ -1,46 +1,39 @@
 package com.example.fructus.ui.notification
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.data.local.entity.NotificationEntity
 import com.example.fructus.ui.notification.components.NotificationCard
 import com.example.fructus.ui.notification.components.NotificationFilters
+import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.shared.model.Filter
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.calculateDaysSince
@@ -65,84 +58,21 @@ fun NotificationScreenContent(
     Scaffold(
         containerColor = colors.bg,
         topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-                navigationIcon = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable(
-                                onClick = onNavigateUp,
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            )
-                    )
-                },
-                title = {
-                    Text(
-                        text = "Notifications",
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp,
-                        letterSpacing = 0.1.sp,
-                        color = colors.textPrimary
-                    )
-                },
-                actions = {
-                    Box {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_archive),
-                            contentDescription = "Archive",
-                            modifier = Modifier
-                                .size(30.dp)
-                                .clickable(
-                                    onClick = onArchiveClick,
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ),
-                            tint = colors.textTertiary
-                        )
-
-                        if (onArchiveCount > 0) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .offset(x = 0.dp, y = (-6).dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(Color(0xFFE74C3C), shape = RoundedCornerShape(50))
-                                        .padding(horizontal = 7.dp, vertical = 4.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = if (onArchiveCount > 99) "99+" else onArchiveCount.toString(),
-                                        color = Color.White,
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        fontFamily = poppinsFontFamily,
-                                        textAlign = TextAlign.Center,
-                                        lineHeight = 1.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+            ScreenTopBar(
+                title = "Notifications",
+                onNavigateUp = onNavigateUp,
+                showArchive = true,
+                archiveCount = onArchiveCount,
+                onArchiveClick = onArchiveClick,
+                colors = colors
             )
         }
+
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 24.dp)
+                .padding(start = 24.dp ,end = 24.dp, top = 20.dp)
                 .fillMaxSize()
         ) {
             // Filters row
@@ -249,6 +179,24 @@ fun NotificationScreenContent(
                 }
             }
         }
+    }
+}
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+private fun NotificationScreenContentPrev() {
+    FructusTheme {
+        // Fake notifications for preview
+
+        NotificationScreenContent(
+            notifications = listOf(),
+            onNotificationClick = { _, _ -> },
+            onMarkAllAsRead = {},
+            filter = Filter.All, // choose one of your enum filters
+            onArchiveCount = 3,
+            onSelectedFilter = {},
+            onNavigateUp = {},
+            onArchiveClick = {}
+        )
     }
 }
 

@@ -71,14 +71,13 @@ fun CustomBottomSheet(
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
-    val displayDescription = getFruitDescription(fruitName)
-
-
-    // 🔎 Filter recipes based on detected fruit + ripeness
-    val matchedRecipes = allRecipes.filter {
-        it.fruitType.equals(fruitName, ignoreCase = true) &&
-                it.stage.equals(ripeningStage, ignoreCase = true)
-    }
+//    val displayDescription = getFruitDescription(fruitName)
+//
+//
+//    val matchedRecipes = allRecipes.filter {
+//        it.fruitType.equals(fruitName, ignoreCase = true) &&
+//                it.stage.equals(ripeningStage, ignoreCase = true)
+//    }
 
     Box(
         modifier = Modifier
@@ -88,7 +87,7 @@ fun CustomBottomSheet(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(if (isSpoiled) 0.54f else 0.90f)
+                .fillMaxHeight(if (isSpoiled) 0.54f else 0.68f)
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
                 .background(colors.bg)
@@ -143,41 +142,42 @@ fun CustomBottomSheet(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        Text(
-                            text = "Try the following:",
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp,
-                            color = colors.textPrimary
-                        )
+//                        Text(
+//                            text = "Try the following:",
+//                            fontFamily = poppinsFontFamily,
+//                            fontWeight = FontWeight.Medium,
+//                            fontSize = 16.sp,
+//                            color = colors.textPrimary
+//                        )
 
                         // Scrollable content
-                            if (matchedRecipes.isEmpty()) {
-                                // shrink content
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "No recipes available for this stage.",
-                                        color = Color.Gray,
-                                        fontSize = 14.sp
-                                    )
-                                }
-                            } else {
-
-                                matchedRecipes.forEach { recipe ->
-                                    SuggestedRecipe(
-                                        title = recipe.name,
-                                        description = recipe.description,
-                                        imageRes = context.getDrawableIdByName(recipe.imageResName),
-                                        modifier = Modifier.padding(vertical = 6.dp)
-                                    )
-                                }
-
-                            }
+//                            if (matchedRecipes.isEmpty()) {
+//                                // shrink content
+//                                Box(
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .padding(vertical = 16.dp),
+//                                    contentAlignment = Alignment.Center
+//                                ) {
+//                                    Text(
+//                                        text = "No recipes available for this stage.",
+//                                        color = Color.Gray,
+//                                        fontSize = 14.sp
+//                                    )
+//                                }
+//                            } else {
+//
+//                                matchedRecipes.forEach { recipe ->
+//                                    SuggestedRecipe(
+//                                        title = recipe.name,
+//                                        description = recipe.description,
+//                                        imageRes = context.getDrawableIdByName(recipe.imageResName),
+//                                        modifier = Modifier.padding(vertical = 6.dp),
+//                                        onClick = {}
+//                                    )
+//                                }
+//
+//                            }
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
