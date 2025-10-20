@@ -30,9 +30,9 @@ import com.example.fructus.ui.theme.appColors
 
 @Composable
 fun CustomSwitchButton(
-    switchPadding: Dp = 3.dp,
-    buttonWidth: Dp = 42.dp,
-    buttonHeight: Dp = 22.dp,
+    switchPadding: Dp = 2.dp,
+    buttonWidth: Dp = 38.dp,
+    buttonHeight: Dp = 20.dp,
     isChecked: Boolean,
     onCheckedChange:(Boolean) ->Unit
 ) {

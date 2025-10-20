@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.fructus.ui.shared.model.Guide
 import com.example.fructus.ui.guide.model.FruitGuide
 import com.example.fructus.ui.guide.model.FruitStage
 import com.example.fructus.ui.theme.appColors
@@ -34,7 +33,7 @@ import com.example.fructus.util.loadFruitGuides
 fun UserGuideInformation(
     modifier: Modifier = Modifier,
     selectedFruit: String,
-    selectedGuide: Guide
+    selectedProcess: String,
 ) {
     val context = LocalContext.current
     val fruitGuides = loadFruitGuides(context)
@@ -52,15 +51,18 @@ fun UserGuideInformation(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         filteredGuides.forEach { guide ->
-            FruitGuideCard(guide = guide, bgColor = colors.card, selectedGuide = selectedGuide)
+            FruitGuideCard(guide = guide, bgColor = colors.card, selectedProcess = selectedProcess)
         }
     }
 }
 
 @Composable
 fun FruitGuideCard(
-    guide: FruitGuide, selectedGuide: Guide, bgColor: Color
+    guide: FruitGuide,
+    bgColor: Color,
+    selectedProcess: String
 ) {
+    val colors = MaterialTheme.appColors
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -69,7 +71,8 @@ fun FruitGuideCard(
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = colors.textPrimary
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -94,7 +97,8 @@ fun FruitGuideCard(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = colors.textPrimary
                     )
 
                     Text(
@@ -105,7 +109,8 @@ fun FruitGuideCard(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = colors.textPrimary
                     )
                     Text(
                         "Shelf life",
@@ -115,18 +120,16 @@ fun FruitGuideCard(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = colors.textPrimary
                     )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 guide.stages.forEach { stage ->
-                    FruitStageRow(stage = stage, selectedGuide = selectedGuide)
+                    FruitStageRow(stage = stage, selectedProcess = selectedProcess)
                 }
-
-
-
             }
         }
     }
@@ -134,13 +137,19 @@ fun FruitGuideCard(
 
 @SuppressLint("DiscouragedApi", "LocalContextResourcesRead")
 @Composable
-fun FruitStageRow(stage: FruitStage, selectedGuide: Guide) {
+fun FruitStageRow(
+    stage: FruitStage,
+    selectedProcess: String
+) {
+
+    val colors = MaterialTheme.appColors
+
     val context = LocalContext.current
     val imageResId = context.resources.getIdentifier(
         stage.image, "drawable", context.packageName
     )
 
-    var isDialogOpen = remember { mutableStateOf(false)}
+    val isDialogOpen = remember { mutableStateOf(false)}
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -169,14 +178,15 @@ fun FruitStageRow(stage: FruitStage, selectedGuide: Guide) {
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = colors.textPrimary
         )
 
         Text(
-            text = when (selectedGuide) {
-                Guide.Natural -> stage.shelfLifeNatural
-                Guide.Artificial -> stage.shelfLifeArtificial
-                else -> {stage.shelfLifeNatural}
+            text = if (selectedProcess == "Natural") {
+                stage.shelfLifeNatural
+            } else {
+                stage.shelfLifeArtificial
             },
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
@@ -184,8 +194,21 @@ fun FruitStageRow(stage: FruitStage, selectedGuide: Guide) {
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
-            textAlign = TextAlign.Center
-
+            textAlign = TextAlign.Center,
+            color = when (stage.stage) {
+                "Unripe" -> {
+                    colors.unripe
+                }
+                "Ripe" -> {
+                    colors.ripe
+                }
+                "Overripe" -> {
+                    colors.overripe
+                }
+                else -> {
+                    colors.spoiled
+                }
+            }
         )
 
     }

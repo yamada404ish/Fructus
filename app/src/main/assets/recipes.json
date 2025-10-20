@@ -4,14 +4,44 @@
     "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
     "imageResName": "recipe_banana_flour",
     "fruitType": "cavendish",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
     "imageResName": "recipe_banana_flour",
     "fruitType": "cavendish",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -19,7 +49,22 @@
     "description": "Tasty banana smoothies that double as nutritious meal replacements.",
     "imageResName": "recipe_banana_smoothie",
     "fruitType": "cavendish",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -27,7 +72,22 @@
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
     "imageResName": "recipe_pancake",
     "fruitType": "cavendish",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -35,7 +95,22 @@
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_smoothie",
     "fruitType": "cavendish",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -43,7 +118,22 @@
     "description": "Sweet bread or cake made from mashed bananas.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "cavendish",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
 
@@ -53,14 +143,44 @@
     "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
     "imageResName": "recipe_stew",
     "fruitType": "lakatan",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
     "imageResName": "recipe_fries",
     "fruitType": "lakatan",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -68,7 +188,22 @@
     "description": "Fried concoction made from ripe bananas or plantains.",
     "imageResName": "recipe_banana_maruya",
     "fruitType": "lakatan",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -76,7 +211,22 @@
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
     "imageResName": "recipe_banana_pudding",
     "fruitType": "lakatan",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -84,7 +234,22 @@
     "description": "Frozen bananas dipped in chocolate, topped with nuts or sprinkles.",
     "imageResName": "recipe_choco",
     "fruitType": "lakatan",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -92,7 +257,22 @@
     "description": " Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_buchi",
     "fruitType": "lakatan",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -100,7 +280,22 @@
     "description": "Mashed bananas mixed into batter, baked into a loaf.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "lakatan",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
 
@@ -110,14 +305,44 @@
     "description": "Mashed bananas with butter, sugar, and coconut, a sweet delicacy.",
     "imageResName": "recipe_nilupak",
     "fruitType": "saba",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   { "name": "Bananacue",
     "description": "A popular Filipino snack of caramelized fried saba bananas.",
     "imageResName": "recipe_banana_cue",
     "fruitType": "saba",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -125,7 +350,22 @@
     "description": "Crispy lumpia filled with banana and jackfruit, glazed in rich caramel.",
     "imageResName": "recipe_banana_turon",
     "fruitType": "saba",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -133,7 +373,22 @@
     "description": "Sweet bread or cake made from mashed bananas.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "saba",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -141,7 +396,22 @@
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "saba",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
 
@@ -150,7 +420,22 @@
     "description": "Tangy and salty snack made by soaking unripe mango slices in a vinegar-based brine.",
     "imageResName": "recipe_mango_pickled",
     "fruitType": "carabao",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -158,14 +443,44 @@
     "description": "Delicious and refreshing dessert made from mango juice, gelatin, sugar, and water.",
     "imageResName": "recipe_mango_jelly",
     "fruitType": "carabao",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   { "name": "Mango Salad",
     "description": "Concoction of ripe mangoes, tomatoes and white onions using sauteed bagoong.",
     "imageResName": "recipe_mango_salad",
     "fruitType": "carabao",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -173,7 +488,22 @@
     "description": "A luscious blend of ripe mangoes and silky pudding.",
     "imageResName": "recipe_mango_pudding",
     "fruitType": "carabao",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -181,7 +511,22 @@
     "description": "A twist on classic cheesecake, enhanced with mango jelly or tropical mango flavor.",
     "imageResName": "recipe_mango_cake",
     "fruitType": "carabao",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
 
@@ -190,7 +535,22 @@
     "description": "Tart green tomatoes coated w/ panko and fried perfectly.",
     "imageResName": "recipe_tomato_fried",
     "fruitType": "tomato",
-    "stage": "unripe"
+    "stage": "unripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -198,7 +558,22 @@
     "description": "A pinoy version of scrambled egg with tomatoes and onions.",
     "imageResName": "recipe_tomato_sauteed",
     "fruitType": "tomato",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -206,7 +581,22 @@
     "description": "A healthy beverage made from the juice of fresh tomatoes.",
     "imageResName": "recipe_tomato_juice",
     "fruitType": "tomato",
-    "stage": "ripe"
+    "stage": "ripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   {
@@ -214,13 +604,43 @@
     "description": "A thick sauce made with tomatoes, oil, and herbs, often served with pasta",
     "imageResName": "recipe_tomato_sauce",
     "fruitType": "tomato",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   },
 
   { "name": "Salsa",
     "description": "Homemade salsa with a hint of spice is the perfect condiment for snacking.",
     "imageResName": "recipe_tomato_salsa",
     "fruitType": "tomato",
-    "stage": "overripe"
+    "stage": "overripe",
+    "ingredients": [
+      "3 overripe bananas",
+      "2 cups flour",
+      "1/2 cup sugar",
+      "2 eggs",
+      "1/3 cup butter",
+      "1 teaspoon baking soda"
+    ],
+    "directions": [
+      "Mash bananas in a bowl.",
+      "Mix butter and sugar until creamy.",
+      "Add eggs and mashed bananas; mix well.",
+      "Stir in flour and baking soda.",
+      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+    ]
   }
 ]

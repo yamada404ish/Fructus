@@ -34,7 +34,7 @@ import com.example.fructus.ui.theme.poppinsFontFamily
 @Composable
 fun SettingsOptionCard(
     iconRes: Int? = null,
-    iconSize: Int = 44,
+    iconSize: Int = 40,
     title: String,
     showSwitch: Boolean = false,
     isChecked: Boolean = false,
@@ -47,7 +47,7 @@ fun SettingsOptionCard(
 ) {
     Card(
         modifier = modifier
-            .height(80.dp)
+            .height(60.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -56,7 +56,7 @@ fun SettingsOptionCard(
                 onClick?.invoke()
             },
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(30.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         if (centerText) {
             // 🔑 Centered layout
@@ -68,7 +68,7 @@ fun SettingsOptionCard(
                     text = title,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     color = contentColor,
                     lineHeight = 18.sp,
                 )

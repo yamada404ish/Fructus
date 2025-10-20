@@ -23,6 +23,13 @@ data class AppColors(
 
     val dropdown: Color,
 
+    val unripe: Color,
+    val ripe: Color,
+    val overripe: Color,
+    val spoiled: Color,
+
+    val ingr: Color
+
 
 )
 
@@ -46,6 +53,15 @@ val LightAppColors = AppColors(
     tip = Color(0xFFC9DABE),
 
     dropdown = Color(0xFFE8E6D5),
+
+    unripe = Color(0xFF75B148),
+    ripe = Color(0xFFC9C618),
+    overripe = Color(0xFFC59F13),
+    spoiled = Color(0xFFF55D5D),
+
+    ingr = Color(0xFFC9DABE)
+
+
 )
 
 val DarkAppColors = AppColors(
@@ -68,4 +84,12 @@ val DarkAppColors = AppColors(
     tip = Color(0xFF3E443E),
 
     dropdown = Color(0xFF1F201F),
+
+    unripe = Color(0xFF92E553),
+    ripe = Color(0xFFE6E31C),
+    overripe = Color(0xFFE97934),
+    spoiled = Color(0xFFF55D5D),
+
+    ingr = Color(0xFF8FBF7B)
+
 )
