@@ -132,6 +132,19 @@ fun FruitGuideCard(
                 }
             }
         }
+        Text(
+            text = if (selectedProcess == "Natural") {
+                "Environmental factors may affect shelf life."
+            } else {
+                "Shelf life may vary between different artificial ripening agents."
+            },
+            fontFamily = poppinsFontFamily,
+            fontSize = 10.sp,
+            textAlign = TextAlign.Center,
+            color = colors.textSecondary,
+            softWrap = true,
+            modifier = Modifier.width(250.dp)
+        )
     }
 }
 
@@ -244,8 +257,6 @@ fun FruitStageRow(
             }
         }
     }
-
-
 }
 
 
