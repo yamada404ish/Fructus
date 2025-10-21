@@ -109,6 +109,10 @@ fun CameraScreenContent(
                 showNoFruitDetected.value = false
 
                 try {
+                    val fileName = "fruit_gallery_${System.currentTimeMillis()}"
+                    val imagePath = saveBitmapToInternalStorage(context, selectedImage, fileName)
+                    capturedImagePath.value = imagePath
+
                     val fruitResult = classifyFruit(selectedImage, context)
                     val ripenessResult = classifyRipeness(fruitResult.label, selectedImage, context)
 
@@ -243,7 +247,6 @@ fun CameraScreenContent(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 🔝 Top Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -309,7 +312,7 @@ fun CameraScreenContent(
             }
         }
 
-        // 📸 Camera + 🖼️ Gallery buttons
+
         if (!detected && !isScanning.value) {
             Row(
                 modifier = Modifier
@@ -349,7 +352,7 @@ fun CameraScreenContent(
             }
         }
 
-        // 📦 Scan Box Overlay
+
         if (!isBottomSheetVisible.value && (isScanning.value || !detected)) {
             Icon(
                 painter = painterResource(R.drawable.camera_scan_box),
@@ -361,7 +364,7 @@ fun CameraScreenContent(
             )
         }
 
-        // 🧾 BottomSheet logic
+
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
                 isBottomSheetVisible.value =

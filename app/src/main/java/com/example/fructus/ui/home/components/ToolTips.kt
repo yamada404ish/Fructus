@@ -1,5 +1,6 @@
 package com.example.fructus.ui.home.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseOutBounce
 import androidx.compose.animation.core.animateFloatAsState
@@ -11,6 +12,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -128,19 +130,24 @@ fun FructusOnboardingOverlay(
         animationSpec = tween(400, easing = EaseOutBounce)
     )
 
+    BackHandler(enabled = true) {
+        isVisible = false
+        onDismiss()
+    }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-
             .fillMaxSize()
             .zIndex(1000f)
             .alpha(animatedAlpha)
             .background(Color.Black.copy(alpha = 0.85f))
-            .clickable { onDismiss() }
+            .clickable(
+                indication = null, // No ripple
+                interactionSource = remember { MutableInteractionSource() }
+            ) {}
 
     ) {
-
-
         AnimatedVisibility(
             visible = isVisible,
             enter = fadeIn(animationSpec = tween(200, delayMillis = 100)) +
@@ -168,9 +175,6 @@ fun FructusOnboardingOverlay(
                         .padding(28.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Header with fruit image
-
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
@@ -194,7 +198,6 @@ fun FructusOnboardingOverlay(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // Guide steps
                     FructusGuideStep(
                         painterResource(R.drawable.scan),
                         title = "Scan Your Fruits",
@@ -219,7 +222,7 @@ fun FructusOnboardingOverlay(
                         description = "Access settings to personalize your fruit tracking experience"
                     )
 
-                    Spacer(modifier = Modifier.height(28.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

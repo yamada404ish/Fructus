@@ -35,7 +35,7 @@ fun ScanAgain(
     val colors = MaterialTheme.appColors
 
     AlertDialog(
-        onDismissRequest = { onNo() },
+        onDismissRequest = {  },
         title = {
             Column(
                 modifier = Modifier.fillMaxWidth(),

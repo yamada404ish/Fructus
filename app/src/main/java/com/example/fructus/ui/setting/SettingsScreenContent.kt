@@ -135,6 +135,4 @@ fun SettingsScreenContent(
     if (showAbout) {
         AboutOverlay(onDismiss = { showAbout = false })
     }
-
-
 }

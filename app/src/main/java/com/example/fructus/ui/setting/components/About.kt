@@ -1,5 +1,6 @@
 package com.example.fructus.ui.setting.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseOutBounce
 import androidx.compose.animation.core.animateFloatAsState
@@ -130,7 +131,11 @@ fun AboutOverlay(
         isVisible = true
     }
 
-    // Background (appears immediately, no animation)
+    BackHandler(enabled = true) {
+        isVisible = false
+        onDismiss()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
