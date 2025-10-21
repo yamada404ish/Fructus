@@ -1,18 +1,11 @@
 package com.example.fructus.ui.setting.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -28,15 +22,26 @@ fun ClearNotificationsDialog(
     onDismiss: () -> Unit,
     onClearAll: () -> Unit
 ) {
-
     val colors = MaterialTheme.appColors
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Column (
+    // ✅ Custom Dialog: Not dismissable by tapping outside
+    Dialog(
+        onDismissRequest = {
+            // Prevent closing on outside tap
+        }
+    ) {
+        // ✅ Handle Back button manually
+        BackHandler(enabled = true) {
+            onDismiss()
+        }
+
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = colors.card
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 16.dp ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -52,55 +57,50 @@ fun ClearNotificationsDialog(
                     fontSize = 18.sp,
                     color = colors.textSecondary
                 )
-            }
-        },
-        confirmButton = {
-            // Custom Row for left/right button alignment
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp, top = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Cancel button (outlined)
-                OutlinedButton(
-                    onClick = onDismiss,
-                    border = BorderStroke(1.dp, Color.Red),
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFFF55D5D)
-                    )
-                ) {
-                    Text(
-                        text = "Cancel",
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
-                        color = Color(0xFFF55D5D)
-                    )
-                }
 
-                // Clear All button (filled red)
-                Button(
-                    onClick = onClearAll,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFF55D5D),
-                        contentColor = Color(0xFFFFFFFF)
-                    )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "Erase All",
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Normal,
-                    )
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        border = BorderStroke(1.dp, Color.Red),
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFFF55D5D)
+                        )
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            color = Color(0xFFF55D5D)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(22.dp))
+
+
+                    Button(
+                        onClick = onClearAll,
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF55D5D),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Erase All",
+                            fontSize = 18.sp,
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
                 }
             }
-        },
-        dismissButton = {},
-
-        containerColor = colors.card,
-        shape = RoundedCornerShape(16.dp)
-    )
+        }
+    }
 }

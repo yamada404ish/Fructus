@@ -1,7 +1,5 @@
 package com.example.fructus.ui.shared
 
-
-import android.R.attr.onClick
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -40,12 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.camera.components.Tips
 import com.example.fructus.ui.camera.model.ShelfLifeRange
-import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDisplayFruitName
-import com.example.fructus.util.getDrawableIdByName
-import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.loadRecipesFromJson
 import com.example.fructus.util.toRipenessStage
 
@@ -83,6 +76,7 @@ fun CustomBottomSheet(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent)
+
     ) {
         Box(
             modifier = Modifier
@@ -112,7 +106,6 @@ fun CustomBottomSheet(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .verticalScroll(rememberScrollState())
                         .padding(bottom = 16.dp)
                 ) {
                     FruitAnalysis(
@@ -194,7 +187,7 @@ fun CustomBottomSheet(
 
                             Button(
                                 onClick = onSave,
-                                enabled = !disableSave,
+                                enabled = false,
                                 modifier = Modifier
                                     .fillMaxWidth(),
                                 colors = ButtonDefaults.buttonColors(

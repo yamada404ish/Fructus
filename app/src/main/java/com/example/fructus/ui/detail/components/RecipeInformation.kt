@@ -65,7 +65,7 @@ fun RecipeInformation(
         containerColor = colors.bg,
         topBar = {
             ScreenTopBar(
-                title = "",
+                title = "Recipe Information",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
                 showArchive = false
@@ -166,7 +166,7 @@ fun RecipeInformation(
                             interactionSource = remember { MutableInteractionSource() }
                         )
                         .background(
-                            if (selectedTab == "Preparations") colors.ingr.copy(alpha = 0.2f) else Color.Transparent,
+                            if (selectedTab == "Preparations") colors.innerBox else Color.Transparent,
                             RoundedCornerShape(8.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 6.dp)
