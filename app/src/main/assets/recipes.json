@@ -29,7 +29,7 @@
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
     "imageResName": "recipe_fries",
-    "fruitType": "lakatan",
+    "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
       "6-8 green bananas",
@@ -40,11 +40,9 @@
       "1 can diced tomatoes"
     ],
     "directions": [
-      "Mash bananas in a bowl.",
-      "Mix butter and sugar until creamy.",
-      "Add eggs and mashed bananas; mix well.",
-      "Stir in flour and baking soda.",
-      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+      "Peel unripe bananas with a knife and slice into thin wedges or strips.",
+      "Fry in hot oil at 375°F (190°C) until golden brown.",
+      " Drain on paper towels, season with salt, and serve immediately."
     ]
   },
 
@@ -93,29 +91,6 @@
       "Flip and cook for 1 more minute. Serve warm with toppings."
     ]
   },
-
-  {
-    "name": " Maruya",
-    "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
-    "fruitType": "cavendish",
-    "stage": "overripe",
-    "ingredients": [
-      "Banana",
-      "All purpose flour",
-      "Baking powder",
-      "Salt",
-      "Spices (cinammon/nutmeg)",
-      "Cooking oil"
-    ],
-    "directions": [
-      "Mix flour, baking powder, salt, and cinnamon or nutmeg. Add water and stir until smooth.",
-      "Peel and slice saba bananas.",
-      "Dip in batter and fry in hot oil until golden brown.",
-      "Drain excess oil and serve warm."
-    ]
-  },
-
   {
     "name": "Banana Bread",
     "description": "Sweet bread or cake made from mashed bananas.",
@@ -141,40 +116,34 @@
       "Cool, slice and serve."
     ]
   },
-
-
-
   {
-    "name": "Green Banana Stew",
-    "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
-    "imageResName": "recipe_banana_flour",
+    "name": " Maruya",
+    "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
+    "imageResName": "recipe_banana_maruya",
     "fruitType": "cavendish",
-    "stage": "unripe",
+    "stage": "overripe",
     "ingredients": [
-      "6-8 green bananas",
-      "1 large chopped onion",
-      "2 cloves minced garlic",
-      "1 chopped bell pepper",
-      "2-3 cups vegetable broth",
-      "1 can diced tomatoes",
-      "1 teaspoon dried thyme",
-      "1/2 teaspoon smoked paprika",
-      "Salt and pepper to tase",
-      "2 tablespoon cooking oil"
+      "Banana",
+      "All purpose flour",
+      "Baking powder",
+      "Salt",
+      "Spices (cinammon/nutmeg)",
+      "Cooking oil"
     ],
     "directions": [
-      "Sauté onion, garlic, and bell pepper in olive oil..",
-      "Add green bananas and stir well.",
-      "Pour in broth, tomatoes, and seasonings.",
-      " Simmer for 30–45 minutes until tender.",
-      "Adjust taste, garnish, and serve hot."
+      "Mix flour, baking powder, salt, and cinnamon or nutmeg. Add water and stir until smooth.",
+      "Peel and slice bananas.",
+      "Dip in batter and fry in hot oil until golden brown.",
+      "Drain excess oil and serve warm."
     ]
   },
+
+
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
     "imageResName": "recipe_fries",
-    "fruitType": "lakatan",
+    "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
       "6-8 green bananas",
@@ -193,33 +162,12 @@
     ]
   },
 
-  {
-    "name": " Maruya",
-    "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
-    "fruitType": "cavendish",
-    "stage": "overripe",
-    "ingredients": [
-      "Banana",
-      "All purpose flour",
-      "Baking powder",
-      "Salt",
-      "Spices (cinammon/nutmeg)",
-      "Cooking oil"
-    ],
-    "directions": [
-      "Mix flour, baking powder, salt, and cinnamon or nutmeg. Add water and stir until smooth.",
-      "Peel and slice saba bananas.",
-      "Dip in batter and fry in hot oil until golden brown.",
-      "Drain excess oil and serve warm."
-    ]
-  },
 
   {
     "name": "Banana Oatmeal Pancake",
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
     "imageResName": "recipe_pancake",
-    "fruitType": "cavendish",
+    "fruitType": "lakatan",
     "stage": "ripe",
     "ingredients": [
       "1 1/2 cups rolled oats",
@@ -262,10 +210,10 @@
   },
 
   {
-    "name": "Maruya",
+    "name": " Maruya",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_maruya",
-    "fruitType": "cavendish",
+    "fruitType": "lakatan",
     "stage": "overripe",
     "ingredients": [
       "Banana",
@@ -277,7 +225,7 @@
     ],
     "directions": [
       "Mix flour, baking powder, salt, and cinnamon or nutmeg. Add water and stir until smooth.",
-      "Peel and slice saba bananas.",
+      "Peel and slice bananas.",
       "Dip in batter and fry in hot oil until golden brown.",
       "Drain excess oil and serve warm."
     ]
@@ -287,7 +235,7 @@
     "name": "Banana Bread",
     "description": "Sweet bread or cake made from mashed bananas.",
     "imageResName": "recipe_banana_bread",
-    "fruitType": "cavendish",
+    "fruitType": "lakatan",
     "stage": "overripe",
     "ingredients": [
       "1 cup mashed bananas",
@@ -404,7 +352,7 @@
     "name": "Banana Bread",
     "description": "Sweet bread or cake made from mashed bananas.",
     "imageResName": "recipe_banana_bread",
-    "fruitType": "cavendish",
+    "fruitType": "saba",
     "stage": "overripe",
     "ingredients": [
       "1 cup mashed bananas",
@@ -430,7 +378,7 @@
     "name": " Maruya",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
     "imageResName": "recipe_banana_maruya",
-    "fruitType": "cavendish",
+    "fruitType": "saba",
     "stage": "overripe",
     "ingredients": [
       "Banana",
