@@ -15,6 +15,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.theme.FructusTheme
+import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +38,8 @@ fun CameraPermissionModal(
 ) {
     val context = LocalContext.current
 
+    val colors = MaterialTheme.appColors
+
     BasicAlertDialog(
         onDismissRequest = onDismiss
     ) {
@@ -44,7 +48,7 @@ fun CameraPermissionModal(
                 .fillMaxWidth()
                 .padding(16.dp),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = colors.card)
         ) {
             Column(
                 modifier = Modifier.padding(top = 16.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
@@ -54,7 +58,7 @@ fun CameraPermissionModal(
                     text = "Camera Permission Required",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.Black,
+                    color = colors.textPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -65,7 +69,7 @@ fun CameraPermissionModal(
                 Text(
                     text = "To scan fruits, Fructus needs to access your camera. Please enable camera permissions in your device settings.",
                     fontSize = 14.sp,
-                    color = Color(0xFF968A8A),
+                    color = colors.textSecondary,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
                     lineHeight = 22.sp,
@@ -87,7 +91,7 @@ fun CameraPermissionModal(
                         .fillMaxWidth()
                         .height(38.dp),
                     shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC742))
+                    colors = ButtonDefaults.buttonColors(containerColor = colors.button)
                 ) {
                     Text(
                         text = "Okay",
@@ -107,7 +111,7 @@ fun CameraPermissionModal(
                         text = "Cancel",
                         fontFamily = poppinsFontFamily,
                         fontSize = 14.sp,
-                        color = Color(0xFF666666)
+                        color = colors.textSecondary
                     )
                 }
             }

@@ -48,17 +48,15 @@ fun About(
 ) {
 
     val colors = MaterialTheme.appColors
-    // Define your team structure
     val teamSections = listOf(
-        "Backend" to listOf("Adrian Miclat | Stephen Ortega", "Jenevieve Tonion"),
+        "Backend" to listOf("Adrian Miclat | Jenevieve Tonion"),
         "Frontend" to listOf("Jenevieve Tonion | Hannah Quinto"),
-        "Resources" to listOf("Missy Tanhueco | Michael Sazon")
+        "Resources" to listOf("Missy Tanhueco | Michael Sazon", "Stephen Ortega")
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-//            .background(Color.Black.copy(alpha = 0.15f)),
     ) {
         Card (
             modifier = Modifier
@@ -67,7 +65,7 @@ fun About(
                 .align(Alignment.Center)
                 .clickable (
                     onClick = { },
-                    indication = null, // 🔥 disables ripple
+                    indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ),
             shape = RoundedCornerShape(20.dp),
@@ -167,7 +165,7 @@ fun AboutOverlay(
                 modifier = Modifier
                     .scale(animatedScale)
                     .clickable(
-                        onClick = { /* block inside clicks */ },
+                        onClick = {},
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     )

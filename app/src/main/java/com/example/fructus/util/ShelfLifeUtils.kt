@@ -46,7 +46,7 @@ fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
 fun getDisplayShelfLife(fruit: FruitEntity): String {
     val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
 
-    if (shelfLifeRange.minDays == -1) return "---"
+    if (shelfLifeRange.minDays == -1 ) return "---"
 
     val estimatedShelfLife = shelfLifeRange.minDays
     val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
