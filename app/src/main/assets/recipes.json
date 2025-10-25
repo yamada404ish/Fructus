@@ -32,17 +32,14 @@
     "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
-      "6-8 green bananas",
-      "1 large chopped onion",
-      "2 cloves minced garlic",
-      "1 chopped bell pepper",
-      "2-3 cups vegetable broth",
-      "1 can diced tomatoes"
+      "5 unripe green bananas",
+      "Cooking oil",
+      "Salt"
     ],
     "directions": [
       "Peel unripe bananas with a knife and slice into thin wedges or strips.",
       "Fry in hot oil at 375°F (190°C) until golden brown.",
-      " Drain on paper towels, season with salt, and serve immediately."
+      "Drain on paper towels, season with salt, and serve immediately."
     ]
   },
 
@@ -93,7 +90,7 @@
   },
   {
     "name": "Banana Bread",
-    "description": "Sweet bread or cake made from mashed bananas.",
+    "description": "Mashed bananas mixed into batter, baked into a loaf.",
     "imageResName": "recipe_banana_bread",
     "fruitType": "cavendish",
     "stage": "overripe",
@@ -139,11 +136,13 @@
   },
 
 
+
+
   {
-    "name": "Green Banana Fries",
-    "description": "Fried unripe banana slices, a savory alternative to fries.",
-    "imageResName": "recipe_fries",
-    "fruitType": "cavendish",
+    "name": "Green Banana Stew",
+    "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
+    "imageResName": "recipe_banana_flour",
+    "fruitType": "lakatan",
     "stage": "unripe",
     "ingredients": [
       "6-8 green bananas",
@@ -151,17 +150,37 @@
       "2 cloves minced garlic",
       "1 chopped bell pepper",
       "2-3 cups vegetable broth",
-      "1 can diced tomatoes"
+      "1 can diced tomatoes",
+      "1 teaspoon dried thyme",
+      "1/2 teaspoon smoked paprika",
+      "Salt and pepper to taste",
+      "2 tablespoon cooking oil"
     ],
     "directions": [
-      "Mash bananas in a bowl.",
-      "Mix butter and sugar until creamy.",
-      "Add eggs and mashed bananas; mix well.",
-      "Stir in flour and baking soda.",
-      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+      "Sauté onion, garlic, and bell pepper in olive oil..",
+      "Add green bananas and stir well.",
+      "Pour in broth, tomatoes, and seasonings.",
+      " Simmer for 30–45 minutes until tender.",
+      "Adjust taste, garnish, and serve hot."
     ]
   },
-
+  {
+    "name": "Green Banana Fries",
+    "description": "Fried unripe banana slices, a savory alternative to fries.",
+    "imageResName": "recipe_fries",
+    "fruitType": "lakatan",
+    "stage": "unripe",
+    "ingredients": [
+      "5 unripe green bananas",
+      "Cooking oil",
+      "Salt"
+    ],
+    "directions": [
+      "Peel unripe bananas with a knife and slice into thin wedges or strips.",
+      "Fry in hot oil at 375°F (190°C) until golden brown.",
+      "Drain on paper towels, season with salt, and serve immediately."
+    ]
+  },
 
   {
     "name": "Banana Oatmeal Pancake",
@@ -216,7 +235,7 @@
     "fruitType": "lakatan",
     "stage": "overripe",
     "ingredients": [
-      "Banana",
+      "Lakatan Banana",
       "All purpose flour",
       "Baking powder",
       "Salt",
@@ -282,17 +301,16 @@
   },
   {
     "name": "Pinakro",
-    "description": "Mashed bananas with butter, sugar, and coconut, a sweet delicacy.",
+    "description": " Filipino snack dish that is made with saba bananas slowly cooked in coconut milk until tender then sweetened with sugar.",
     "imageResName": "recipe_pinakro",
     "fruitType": "saba",
     "stage": "unripe",
     "ingredients": [
-      "3 overripe bananas",
-      "2 cups flour",
-      "1/2 cup sugar",
-      "2 eggs",
-      "1/3 cup butter",
-      "1 teaspoon baking soda"
+      "1 kg saging na saba",
+      "2 cups coconut cream",
+      "3-4 cup coconut milk",
+      "1/8 teaspoon rock salt",
+      "1/8 cup of coconut sugar "
     ],
     "directions": [
       "Peel and slice the bananas into two inch pieces",
@@ -303,9 +321,9 @@
     ]
   },
 
-  { "name": "Bananacue",
-    "description": "A popular Filipino snack of caramelized fried saba bananas.",
-    "imageResName": "recipe_banana_cue",
+  { "name": "Fried Saba Banana",
+    "description": "Caramelized deep-fried bananas on skewers, a popular Filipino street snack.",
+    "imageResName": "fried_saba",
     "fruitType": "saba",
     "stage": "ripe",
     "ingredients": [
@@ -325,7 +343,7 @@
 
   {
     "name": "Turon",
-    "description": "Crispy lumpia filled with banana and jackfruit, glazed in rich caramel.",
+    "description": "Crispy fried spring roll filled with banana and caramelized sugar.",
     "imageResName": "recipe_banana_turon",
     "fruitType": "saba",
     "stage": "ripe",
@@ -342,6 +360,24 @@
       "Seal edge with water or cornstarch.",
       "Fry in hot oil until golden brown.",
       "Caramelize sugar and coat or drizzle over turon."
+    ]
+  },
+  {
+    "name": "Banana Cue",
+    "description": "Caramelized deep-fried bananas on skewers, a popular Filipino street snack.",
+    "imageResName": "recipe_banana_cue",
+    "fruitType": "saba",
+    "stage": "ripe",
+    "ingredients": [
+      "Saba banana",
+      "Brown Sugar",
+      "Cooking oil"
+    ],
+    "directions": [
+      "Heat oil and fry bananas for 2 minutes.",
+      "Add half the sugar and coat evenly.",
+      "Sprinkle remaining sugar and toss until caramelized.",
+      "Drain, cool slightly, and skewer."
     ]
   },
 
@@ -378,7 +414,7 @@
     "fruitType": "saba",
     "stage": "overripe",
     "ingredients": [
-      "Banana",
+      "Saba Banana",
       "All purpose flour",
       "Baking powder",
       "Salt",
@@ -417,16 +453,24 @@
     ]
   },
   {
-    "name": "Raw Mango",
-    "description": "",
-    "imageResName": "recipe_mango_raw",
+    "name": "Ensaladang Mangga",
+    "description": "A bright and flavorful mango salad tossed with a savory and citrusy dressing.",
+    "imageResName": "ensaladang_mangga",
     "fruitType": "carabao",
     "stage": "unripe",
     "ingredients": [
-      "1 unripe carabao mango"
+      "2 medium green mangoes peeled and sliced into cube",
+      "3 medium tomato cubed",
+      "1 medium white or red onion cubed",
+      "Juice from 1 lime or 2 pieces calamansi (optional)",
+      "4 to 5 tablespoons shrimp paste (bagoong alamang)"
     ],
     "directions": [
-      "Wash the fruit and consume by itself."
+      "Combine mango, onion, and tomato in a bowl.",
+      "Pour calamansi or lime juice and then add shrimp paste.",
+      "Toss until all the ingredients are well blended.",
+      "Top with more shrimp paste if desired.",
+      "Serve with your favorite fried or grilled food."
     ]
   },
 
@@ -513,18 +557,37 @@
     "ingredients": [
       "150 g plain sweet biscuits",
       "100 g melted unsalted butter",
-      "2 tbsp white sugar"
+      "2 tbsp white sugar",
+      "",
+      "2 large mangoes",
+      "4 1/2 gelatin powder",
+      "1/2 cup cold water",
+      "500 g softened cream cheese",
+      "150 g caster sugar",
+      "300 ml whipping cream",
+      "",
+      "3/4 teaspoon gelatin powder",
+      "1/4 cup cold water",
+      "1 tablespoon lemon juice",
+      "",
+      "300 ml whipping cream",
+      "1 tablespoon white sugar",
+      "1 tablespoon vanilla extract",
+      "1 large mango cut into cubes",
+      "2 passion fruit"
     ],
     "directions": [
       "Crush the biscuits into fine crumbs using food processors or by using plastic bag and rolling pan.",
       "Add melted butter and sugar, then mix well until crumbs look like wet sand.",
       "Press the mixture firmly into the bottom of a springform pan.",
       "Chill in the fridge.",
+      "",
       "Sprinkle gelatin over cold water in a small bowl and let sit for 5 minutes to thicken.",
       "Microwave for about 15 seconds at a time until gelatin fully melts and let it sit cool slightly.",
       "Blend the mangoes until smooth. Save ¾ cups of the puree for the topping later.",
       "In a large bowl, combine cream cheese, sugar, whipping cream, mango puree, and melted gelatin.",
       "Beat or blend until smooth and creamy, then pour the mixture into the crust, spread evenly, and chill for at least 3 hours or until firm.",
+      "",
       "In  a small bowl, sprinkle ¾ tsp gelatin over ¼ cup cold water and let it sit for 5 mins.",
       "Microwave until melted then let it cool for a few minutes.",
       "Mix the saved ¾ cups mango puree and lemon juice in a bowl.",
@@ -541,7 +604,7 @@
     "fruitType": "tomato",
     "stage": "unripe",
     "ingredients": [
-      "4 green tomatoes, cut into ¼-inch slices",
+      "4 green tomatoes, cut into 1/4-inch slices",
       "Salt and ground black pepper",
       "1 cup all-purpose flour ",
       "2 teaspoons salt, divided",
@@ -552,7 +615,7 @@
       "1/2 teaspoon dried paprika",
       "1/2 teaspoon cayenne pepper",
       "2 cups canola oil",
-      "Cajun Ranch Sauce (Optional)",
+      "",
       "1/2 cup ranch dressing",
       "1 tablespoon Cajun seasoning",
       "2 tablespoon hot pepper sauce"
@@ -598,19 +661,35 @@
     "fruitType": "tomato",
     "stage": "ripe",
     "ingredients": [
-      "3 overripe bananas",
-      "2 cups flour",
-      "1/2 cup sugar",
+      "5 tomatoes",
       "2 eggs",
-      "1/3 cup butter",
-      "1 teaspoon baking soda"
+      "Salt",
+      "Olive Oil"
     ],
     "directions": [
-      "Mash bananas in a bowl.",
-      "Mix butter and sugar until creamy.",
-      "Add eggs and mashed bananas; mix well.",
-      "Stir in flour and baking soda.",
-      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
+      "Roughly chop the tomatoes, season with salt, and sauté in olive oil over medium heat.",
+      "Cook until the tomatoes break down and become saucy.",
+      "Add the scrambled eggs and stir until fully incorporated.",
+      "Once eggs and tomatoes are well mixed and cooked, transfer to a plate and serve."
+    ]
+  },
+  {
+    "name": "Tomato Juice",
+    "description": "A healthy beverage made from the juice of fresh tomatoes",
+    "imageResName": "recipe_tomato_sauce",
+    "fruitType": "tomato",
+    "stage": "ripe",
+    "ingredients": [
+      "1 can Evaporated milk",
+      "5 large tomatoes",
+      "2/3 cups of water",
+      "1 teaspoon salt"
+    ],
+    "directions": [
+      "Boil ripe tomatoes in water until soft.",
+      "Blend the tomatoes, then strain to remove seeds and skin.",
+      "Add sugar, salt, and more water to taste.",
+      "Chill in the refrigerator before serving."
     ]
   },
 
@@ -639,34 +718,7 @@
     ]
   },
 
-  {
-    "name": "Tomato Juice",
-    "description": "A healthy beverage made from the juice of fresh tomatoes",
-    "imageResName": "recipe_tomato_sauce",
-    "fruitType": "tomato",
-    "stage": "overripe",
-    "ingredients": [
-      "1 can Evaporated milk",
-      "5 large tomatoes",
-      "2/3 cups of water",
-      "1 teaspoon salt",
-      "4 lb plum tomatoes (or two 28-oz cans whole peeled plum tomatoes) ",
-      "6 tablespoon unsalted butter",
-      "4 tablespoon olive oil",
-      "2 medium yellow onions, halved",
-      "4 cloves garlic, smashed",
-      "1 1/4 teaspoon salt",
-      " 1 teaspoon sugar",
-      "2 tablespoon fresh basil"
-    ],
-    "directions": [
-      "Mash bananas in a bowl.",
-      "Mix butter and sugar until creamy.",
-      "Add eggs and mashed bananas; mix well.",
-      "Stir in flour and baking soda.",
-      "Pour mixture into a greased loaf pan and bake at 180°C for 50–60 minutes."
-    ]
-  },
+
 
   { "name": "Salsa",
     "description": "Homemade salsa with a hint of spice is the perfect condiment for snacking.",
