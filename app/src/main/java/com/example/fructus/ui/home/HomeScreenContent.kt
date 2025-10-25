@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -28,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +44,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fructus.R
 import com.example.fructus.ui.home.components.BottomNavBar
 import com.example.fructus.ui.home.components.Dropdown
-import com.example.fructus.ui.home.components.FructusLogo
 import com.example.fructus.ui.home.components.FructusOnboardingOverlay
 import com.example.fructus.ui.home.components.FruitItem
 import com.example.fructus.ui.home.model.SortOrder
