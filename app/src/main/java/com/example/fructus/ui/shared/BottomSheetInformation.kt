@@ -323,8 +323,15 @@ fun  FruitAnalysis(
             ) {
                 InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f))
                 InfoCard(title = "Ripeness \nConfidence", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
-                InfoCard(title = "Ripening \nProcess", value = if (shelfLifeDisplay == "---") "---" else if
-                        (ripeningProcess) "Natural" else "Artificial", modifier = Modifier.weight(1f))
+                InfoCard(
+                    title = "Ripening \nProcess",
+                    value = when {
+                        shelfLifeDisplay == "---" -> "---"
+                        ripeningStage.equals("unripe", ignoreCase = true) -> "---"
+                        else -> if (ripeningProcess) "Natural" else "Artificial"
+                    },
+                    modifier = Modifier.weight(1f)
+                )
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(

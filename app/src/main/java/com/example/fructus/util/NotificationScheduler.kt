@@ -3,12 +3,14 @@ package com.example.fructus.util
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 
-class NotificationScheduler(context: Context) {
+class NotificationScheduler(private val context: Context) {
 
     companion object {
         private const val WORK_NAME = "fruit_check_work"
@@ -48,14 +50,19 @@ class NotificationScheduler(context: Context) {
     }
 
     fun scheduleOneTimeCheck() {
-        // For immediate check (useful after adding new fruits)
-        val oneTimeRequest = androidx.work.OneTimeWorkRequestBuilder<FruitCheckWorker>()
-            .setInitialDelay(5, TimeUnit.SECONDS) // Reduced delay for immediate check
+        // Cancel current ongoing work first
+        WorkManager.getInstance(context).cancelUniqueWork("fruit_check_work")
+
+        val oneTimeRequest = OneTimeWorkRequestBuilder<FruitCheckWorker>()
+            .setInitialDelay(2, TimeUnit.SECONDS)
             .build()
 
-        workManager.enqueue(oneTimeRequest)
-        android.util.Log.d("NotificationScheduler", "Scheduled immediate fruit check")
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork("fruit_check_work", ExistingWorkPolicy.REPLACE, oneTimeRequest)
+
+        android.util.Log.d("NotificationScheduler", "Scheduled one-time fruit check (unique)")
     }
+
 
     fun getWorkStatus() {
         // Debug method to check work status

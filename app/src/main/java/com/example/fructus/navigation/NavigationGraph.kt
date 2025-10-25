@@ -10,7 +10,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -61,7 +64,7 @@ fun FructusNav(
                     SplashScreen { onboardingCompleted ->
                         if (onboardingCompleted) {
                             navController.navigate(Home) {
-                                popUpTo(0) { inclusive = true }
+                                popUpTo(Splash) { inclusive = true }
                                 launchSingleTop = true
                             }
                         } else {
@@ -77,17 +80,26 @@ fun FructusNav(
 
             composable<OnBoard> {
                 val context = LocalContext.current
+                var lastBackPressTime by remember { mutableLongStateOf(0L) }
 
                 // ⬅️ Handle back button → exit app instead of going back to Splash
                 BackHandler {
                     // Check if we came from settings by looking at back stack
                     val previousEntry = navController.previousBackStackEntry
+                    val now = System.currentTimeMillis()
+
+
                     if (previousEntry?.destination?.route?.contains("Settings") == true) {
                         // Go back to settings instead of exiting app
                         navController.navigateUp()
                     } else {
                         // Original behavior - exit app
                         (context as? Activity)?.finish()
+                    }
+
+                    if (now - lastBackPressTime < 3000) {
+                        lastBackPressTime = now
+                        navController.popBackStack()
                     }
                 }
 
@@ -145,22 +157,31 @@ private fun NavGraphBuilder.addCoreDestinations(
     // Detail - ALWAYS available
     composable<Detail> { backStackEntry ->
         val args = backStackEntry.toRoute<Detail>()
+        var hasNavigated = remember { false }
 
         BackHandler {
-            if (args.fromNotifications) {
-                // ✅ Go back to Notifications screen
-                navController.navigate(Notification) {
-                    launchSingleTop = true
-                    popUpTo(Notification) { inclusive = false }
+            val route = navController.currentDestination?.route ?: ""
+            if (route.contains("Detail") && !hasNavigated) {
+                hasNavigated = true
+                when {
+                    args.fromNotifications -> {
+                        navController.navigate(Notification) {
+                            popUpTo(Notification) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+
+                    shouldOpenNotifications -> {
+                        navController.navigate(Home) {
+                            popUpTo(Home) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+
+                    else -> {
+                        navController.popBackStack()
+                    }
                 }
-            } else if (shouldOpenNotifications) {
-                // ✅ Case: app was launched from system notification
-                navController.navigate(Home) {
-                    popUpTo(0) { inclusive = true }
-                    launchSingleTop = true
-                }
-            } else {
-                navController.navigateUp()
             }
         }
 
@@ -169,18 +190,28 @@ private fun NavGraphBuilder.addCoreDestinations(
             notificationId = args.notificationId,
             shouldOpenNotifications = shouldOpenNotifications,
             onNavigate = {
-                if (args.fromNotifications) {
-                    navController.navigate(Notification) {
-                        launchSingleTop = true
-                        popUpTo(Notification) { inclusive = false }
+                val route = navController.currentDestination?.route ?: ""
+                if (route.contains("Detail") && !hasNavigated) {
+                    hasNavigated = true
+                    when {
+                        args.fromNotifications -> {
+                            navController.navigate(Notification) {
+                                popUpTo(Notification) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+
+                        shouldOpenNotifications -> {
+                            navController.navigate(Home) {
+                                popUpTo(Home) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+
+                        else -> {
+                            navController.popBackStack()
+                        }
                     }
-                } else if (shouldOpenNotifications) {
-                    navController.navigate(Home) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                } else {
-                    navController.navigateUp()
                 }
             },
             onNavigateToRecipe = { name, imageResName, description ->
@@ -188,6 +219,8 @@ private fun NavGraphBuilder.addCoreDestinations(
             }
         )
     }
+
+
 
 
     // Notifications
@@ -205,13 +238,16 @@ private fun NavGraphBuilder.addCoreDestinations(
             val viewModel: NotificationViewModel = viewModel(factory = factory)
 
             BackHandler {
-                if (shouldOpenNotifications) {
-                    navController.navigate(Home) {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
+                val route = navController.currentDestination?.route ?: ""
+                if (route.contains("Notification")) {
+                    if (shouldOpenNotifications) {
+                        navController.navigate(Home) {
+                            popUpTo(Home) { inclusive = false } // ✅ keep Home in stack
+                            launchSingleTop = true
+                        }
+                    } else {
+                        navController.popBackStack() // ✅ only pop once
                     }
-                } else {
-                    navController.navigateUp()
                 }
             }
 
@@ -219,19 +255,22 @@ private fun NavGraphBuilder.addCoreDestinations(
                 viewModel = viewModel,
                 onArchiveClick = { navController.navigate(Archive) },
                 onNavigateUp = {
-                    if (shouldOpenNotifications) {
-                        navController.navigate(Home) {
-                            popUpTo(0) { inclusive = true }
-                            launchSingleTop = true
+                    val route = navController.currentDestination?.route ?: ""
+                    if (route.contains("Notification")) {
+                        if (shouldOpenNotifications) {
+                            navController.navigate(Home) {
+                                popUpTo(Home) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.popBackStack()
                         }
-                    } else {
-                        navController.navigateUp()
                     }
                 },
-
                 onNotificationNavigate = { fruitId, notificationId ->
-                    navController.navigate(Detail(fruitId, notificationId, fromNotifications =
-                        true))
+                    navController.navigate(
+                        Detail(fruitId, notificationId, fromNotifications = true)
+                    )
                 }
             )
         }
@@ -251,7 +290,12 @@ private fun NavGraphBuilder.addCoreDestinations(
             ArchiveScreen(
                 archivedNotifications = archivedNotifications,
                 onRestoreNotification = archiveViewModel::restoreNotification,
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = {
+                    if (navController.currentDestination?.route?.contains("Archive") == true) {
+                        navController.popBackStack()
+                    }
+                }
+
             )
         }
     }
@@ -260,8 +304,12 @@ private fun NavGraphBuilder.addCoreDestinations(
     composable<Settings> {
         AppBackgroundScaffold {
             SettingsScreen(
-                onNavigateUp = { navController.navigateUp() },
-                // Preview onboarding - returns to settings
+                onNavigateUp = {
+                    if (navController.currentDestination?.route?.contains("Settings") == true) {
+                        navController.popBackStack()
+                    }
+                },
+                        // Preview onboarding - returns to settings
                 onNavigateToOnboardingPreview = {
                     navController.navigate(OnBoardPreview) {
                         launchSingleTop = true
@@ -281,25 +329,37 @@ private fun NavGraphBuilder.addCoreDestinations(
     composable<Guide> {
         AppBackgroundScaffold {
             UserGuide(
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = {
+                    if (navController.currentDestination?.route?.contains("Guide") == true) {
+                        navController.popBackStack()
+                    }
+                }
+
             )
         }
     }
 
     composable<OnBoardPreview> {
+        val hasNavigated = remember { mutableStateOf(false) }
         LocalContext.current
 
         BackHandler {
-            navController.navigateUp() // Always go back to settings
+            if (!hasNavigated.value) {
+                hasNavigated.value = true
+                navController.popBackStack()
+            }
         }
 
         AppBackgroundScaffold {
-            // Create a special onboarding screen for preview mode
             OnboardingPreviewScreen {
-                navController.navigateUp() // Go back to settings
+                if (!hasNavigated.value) {
+                    hasNavigated.value = true
+                    navController.popBackStack()
+                }
             }
         }
     }
+
 
     // Scan
     composable<Scan>(
@@ -332,9 +392,12 @@ private fun NavGraphBuilder.addCoreDestinations(
                 name = args.name,
                 imageResName = args.imageResName,
                 description = args.description,
-                onNavigateUp = { navController.navigateUp() },
+                onNavigateUp = {
+                    if (navController.currentDestination?.route?.contains("RecipeInfo") == true) {
+                        navController.popBackStack()
+                    }
+                },
             )
         }
     }
-
 }

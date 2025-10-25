@@ -81,7 +81,7 @@ fun HomeScreenContent(
         containerColor = colors.bg,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onScanClick() },
+                onClick = {  },
                 modifier = Modifier.offset(y = (60).dp),
                 elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 containerColor = Color.Transparent

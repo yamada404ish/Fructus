@@ -89,6 +89,14 @@ class FruitCheckWorker(
                     message,
                     fruit.scannedTime
                 )
+                val existingRecent = notificationDao.getLatestNotificationForFruit(fruit.name)
+                if (existingRecent != null) {
+                    val timeDiff = System.currentTimeMillis() - existingRecent.timestamp
+                    if (timeDiff < 5 * 60 * 1000) { // 5 minutes
+                        android.util.Log.d("FruitCheckWorker", "Skipping duplicate notification (sent recently)")
+                        return@forEach
+                    }
+                }
 
                 if (existing == null) {
                     android.util.Log.d("FruitCheckWorker", "Sending new notification: $message")

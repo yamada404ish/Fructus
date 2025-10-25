@@ -14,6 +14,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
@@ -21,16 +23,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -74,7 +70,6 @@ fun CameraScreenContent(
     detectedRipeness: String,
 
     dtProcess: Boolean = true,
-    dtConfidence: Int = 0,
 
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
@@ -277,20 +272,6 @@ fun CameraScreenContent(
             Spacer(modifier = Modifier.weight(1f))
 
             if (!isBottomSheetVisible.value) {
-                Button(
-                    onClick = { showHowTo.value = true },
-                    modifier = Modifier
-                        .height(45.dp)
-                        .defaultMinSize(minWidth = 130.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colors.button),
-                ) {
-                    Text("How To Use", fontFamily = poppinsFontFamily, color = Color.Black)
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            if (!isBottomSheetVisible.value) {
                 Icon(
                     painter = painterResource(
                         if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
@@ -321,6 +302,20 @@ fun CameraScreenContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
+                    painter = painterResource(R.drawable.gallery),
+                    contentDescription = "Gallery",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clickable(
+                            enabled = !showHowTo.value,
+                            onClick = { galleryLauncher.launch("image/*") },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ),
+                    tint = Color.Unspecified
+                )
+                Spacer(modifier = Modifier.size(20.dp))
+                Icon(
                     painter = painterResource(R.drawable.camera_scan_icon),
                     contentDescription = "camera icon",
                     modifier = Modifier
@@ -333,17 +328,16 @@ fun CameraScreenContent(
                         ),
                     tint = Color.Unspecified
                 )
-
-                Spacer(modifier = Modifier.size(40.dp))
+                Spacer(modifier = Modifier.size(20.dp))
 
                 Icon(
-                    imageVector = Icons.Filled.Photo,
+                    painter = painterResource(R.drawable.howtouse),
                     contentDescription = "Gallery",
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(50.dp)
                         .clickable(
                             enabled = !showHowTo.value,
-                            onClick = { galleryLauncher.launch("image/*") },
+                            onClick = { showHowTo.value = true },
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ),
@@ -365,6 +359,8 @@ fun CameraScreenContent(
         }
 
 
+
+
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
                 isBottomSheetVisible.value =
@@ -384,7 +380,7 @@ fun CameraScreenContent(
                         modifier = Modifier.align(Alignment.Center)
                     )
                     LaunchedEffect(detectedFruit) {
-                        delay(2000)
+                        delay(800)
                         detectedState.value = false
                         isScanning.value = false
                         showNoFruitDetected.value = false
