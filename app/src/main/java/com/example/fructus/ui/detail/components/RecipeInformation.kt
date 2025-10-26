@@ -29,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -87,8 +89,10 @@ fun RecipeInformation(
                 Image(
                     painter = painterResource(id = imageRes),
                     contentDescription = "Recipe Image",
+                    contentScale = ContentScale.Crop, // keeps proportions & fills rounded area
                     modifier = Modifier
-                        .size(150.dp),
+                        .size(150.dp)
+                        .clip(RoundedCornerShape(16.dp)) // 👈 adds corner radius
                 )
 
                 Spacer(modifier = Modifier.width(20.dp))
