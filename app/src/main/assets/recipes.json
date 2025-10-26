@@ -2,7 +2,7 @@
   {
     "name": "Green Banana Stew",
     "description": "Unripe bananas stewed with coconut milk, sugar, and spices.",
-    "imageResName": "recipe_banana_flour",
+    "imageResName": "recipe_banana_stew",
     "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
@@ -28,7 +28,7 @@
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
-    "imageResName": "recipe_fries",
+    "imageResName": "recipe_banana_fries",
     "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
@@ -49,7 +49,7 @@
   {
     "name": "Chocolate covered bananas",
     "description": "Frozen bananas dipped in chocolate, topped with nuts or sprinkles.",
-    "imageResName": "recipe_choco",
+    "imageResName": "recipe_banana_chocolate",
     "fruitType": "cavendish",
     "stage": "ripe",
     "ingredients": [
@@ -69,13 +69,13 @@
   {
     "name": "Banana Oatmeal Pancake",
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
-    "imageResName": "recipe_pancake",
+    "imageResName": "recipe_banana_pancake",
     "fruitType": "cavendish",
     "stage": "ripe",
     "ingredients": [
       "1 1/2 cups rolled oats",
       "2 teaspoon baking powder",
-      "12 teaspoon cinammon",
+      "12 teaspoon cinnamon",
       "2 large ripe bananas",
       "1 tablespoon maple syrup",
       "1 egg",
@@ -117,9 +117,9 @@
     ]
   },
   {
-    "name": " Maruya",
+    "name": "Banana Fritters",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
+    "imageResName": "recipe_banana_fritters",
     "fruitType": "cavendish",
     "stage": "overripe",
     "ingredients": [
@@ -127,7 +127,7 @@
       "All purpose flour",
       "Baking powder",
       "Salt",
-      "Spices (cinammon/nutmeg)",
+      "Spices (cinnamon/nutmeg)",
       "Cooking oil"
     ],
     "directions": [
@@ -142,7 +142,7 @@
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
-    "imageResName": "recipe_fries",
+    "imageResName": "recipe_banana_fries",
     "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
@@ -166,13 +166,13 @@
   {
     "name": "Banana Oatmeal Pancake",
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
-    "imageResName": "recipe_pancake",
+    "imageResName": "recipe_banana_pancake",
     "fruitType": "lakatan",
     "stage": "ripe",
     "ingredients": [
       "1 1/2 cups rolled oats",
       "2 teaspoon baking powder",
-      "12 teaspoon cinammon",
+      "12 teaspoon cinnamon",
       "2 large ripe bananas",
       "1 tablespoon maple syrup",
       "1 egg",
@@ -192,7 +192,7 @@
   {
     "name": "Chocolate covered bananas",
     "description": "Frozen bananas dipped in chocolate, topped with nuts or sprinkles.",
-    "imageResName": "recipe_choco",
+    "imageResName": "recipe_banana_chocolate",
     "fruitType": "lakatan",
     "stage": "ripe",
     "ingredients": [
@@ -210,9 +210,9 @@
   },
 
   {
-    "name": " Maruya",
+    "name": "Banana Fritters",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
+    "imageResName": "recipe_banana_fritters",
     "fruitType": "lakatan",
     "stage": "overripe",
     "ingredients": [
@@ -262,7 +262,7 @@
   {
     "name": "Nilupak",
     "description": "Mashed bananas with butter, sugar, and coconut, a sweet delicacy.",
-    "imageResName": "recipe_nilupak",
+    "imageResName": "recipe_banana_nilupak",
     "fruitType": "saba",
     "stage": "unripe",
     "ingredients": [
@@ -285,8 +285,8 @@
   },
   {
     "name": "Pinakro",
-    "description": "Mashed bananas with butter, sugar, and coconut, a sweet delicacy.",
-    "imageResName": "recipe_pinakro",
+    "description": "sweet and savory Filipino snack from the Bicol region.",
+    "imageResName": "recipe_banana_pinakro",
     "fruitType": "saba",
     "stage": "unripe",
     "ingredients": [
@@ -375,9 +375,9 @@
   },
 
   {
-    "name": " Maruya",
+    "name": "Banana Fritters",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
+    "imageResName": "recipe_banana_fritters",
     "fruitType": "saba",
     "stage": "overripe",
     "ingredients": [
@@ -420,16 +420,25 @@
     ]
   },
   {
-    "name": "Raw Mango",
-    "description": "",
-    "imageResName": "recipe_mango_raw",
+    "name": "Ensaladang Mangga",
+    "description": "Simple refreshing side dish served with grilled or fried meat and seafood.",
+    "imageResName": "recipe_mango_ensalada",
     "fruitType": "carabao",
     "stage": "unripe",
     "ingredients": [
-      "1 unripe carabao mango"
+      "2 medium green mangoes peeled and sliced into cube",
+      "3 medium tomato cubed",
+      "1 medium white or red onion cubed",
+      "Juice from 1 lime or 2 pieces calamansi optional",
+      "4 to 5 tablespoons shrimp paste (bagoong alamang)"
+
     ],
     "directions": [
-      "Wash the fruit and consume by itself."
+      "Combine mango, onion, and tomato in a bowl.",
+      "Pour calamansi or lime juice and then add shrimp paste.",
+      "Toss until all the ingredients are well blended.",
+      "Top with more shrimp paste if desired.",
+      "Serve with your favorite fried or grilled food."
     ]
   },
 

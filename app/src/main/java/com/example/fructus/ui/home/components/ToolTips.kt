@@ -74,7 +74,7 @@ fun FructusGuideStep(
         // Icon container
         Box(
             modifier = Modifier
-                .size(48.dp),
+                .size(30.dp),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -205,19 +205,19 @@ fun FructusOnboardingOverlay(
                     )
 
                     FructusGuideStep(
-                        iconRes = painterResource(R.drawable.sort_oldest),
+                        iconRes = painterResource(R.drawable.guide_filter),
                         title = "Filter & Sort",
                         description = "Use the filter on the top right to toggle to or sort by newest/oldest"
                     )
 
                     FructusGuideStep(
-                        painterResource(R.drawable.ic_bell),
+                        painterResource(R.drawable.guide_notif),
                         title = "Access Notifications",
                         description = "Tap the notification icon to see your notifications"
                     )
 
                     FructusGuideStep(
-                        painterResource(R.drawable.settings),
+                        painterResource(R.drawable.guide_setting),
                         title = "Settings",
                         description = "Access settings to personalize your fruit tracking experience"
                     )
