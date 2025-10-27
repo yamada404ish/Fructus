@@ -58,6 +58,8 @@ fun FruitItem(
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
+            .height(224.dp)
+            .width(148.dp)
             .clickable(
                 onClick = { onFruitClick(fruit) },
                 indication = null,
