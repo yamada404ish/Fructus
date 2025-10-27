@@ -31,6 +31,7 @@ fun UserGuideScreenContent(
     onProcessChange: (String) -> Unit
 ) {
     val colors = MaterialTheme.appColors
+    val isProcessEnabled = selectedGuide !in listOf("Banana", "Tomato")
 
     Scaffold(
         containerColor = colors.bg,
@@ -59,7 +60,8 @@ fun UserGuideScreenContent(
                 Dropdown(
                     selectedItem = selectedProcess,
                     items = listOf("Natural", "Artificial"),
-                    onItemSelected = { onProcessChange(it) }
+                    onItemSelected = { onProcessChange(it) },
+                    enabled = isProcessEnabled
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))

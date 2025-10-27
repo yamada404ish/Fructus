@@ -44,6 +44,7 @@ fun Dropdown(
     items: List<String>,
     onItemSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     val colors = MaterialTheme.appColors
     var expanded by remember { mutableStateOf(false) }
@@ -56,7 +57,9 @@ fun Dropdown(
                 .height(38.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(colors.dropdown)
-                .clickable { expanded = !expanded }
+                .clickable(enabled = enabled) {
+                    if (enabled) expanded = !expanded
+                }
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -66,7 +69,7 @@ fun Dropdown(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
-                color = colors.textPrimary,
+                color = if (enabled) colors.textPrimary else colors.textSecondary,
                 maxLines = 1
             )
             Icon(
@@ -75,46 +78,48 @@ fun Dropdown(
                 modifier = Modifier
                     .size(14.dp)
                     .graphicsLayer(rotationZ = if (expanded) 0f else 180f),
-                tint = Color(0xFF718860)
+                tint = if (enabled) Color(0xFF718860) else colors.textSecondary
             )
         }
 
         Spacer(Modifier.height(52.dp))
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .width(122.dp)
-                .background(
-                    color = colors.dropdown,
-                    shape = RoundedCornerShape(16.dp)
-                ),
-            containerColor = Color.Transparent,
-            shadowElevation = 0.dp,
-            tonalElevation = 0.dp
-        ) {
-            items.forEach { item ->
-                if (item != selectedItem) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = item,
-                                fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 12.sp,
-                                color = colors.textPrimary,
-                                modifier = Modifier.padding(vertical = 6.dp)
-                            )
-                        },
-                        onClick = {
-                            onItemSelected(item)
-                            expanded = false
-                        },
-                        modifier = Modifier
-                            .heightIn(min = 34.dp)
-                            .background(Color.Transparent)
-                    )
+        if (enabled) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .width(122.dp)
+                    .background(
+                        color = colors.dropdown,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                containerColor = Color.Transparent,
+                shadowElevation = 0.dp,
+                tonalElevation = 0.dp
+            ) {
+                items.forEach { item ->
+                    if (item != selectedItem) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = item,
+                                    fontFamily = poppinsFontFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 12.sp,
+                                    color = colors.textPrimary,
+                                    modifier = Modifier.padding(vertical = 6.dp)
+                                )
+                            },
+                            onClick = {
+                                onItemSelected(item)
+                                expanded = false
+                            },
+                            modifier = Modifier
+                                .heightIn(min = 34.dp)
+                                .background(Color.Transparent)
+                        )
+                    }
                 }
             }
         }
