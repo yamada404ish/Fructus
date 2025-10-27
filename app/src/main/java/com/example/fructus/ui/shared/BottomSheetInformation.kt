@@ -243,6 +243,18 @@ fun  FruitAnalysis(
 
     val lowerFruitName = fruitName.lowercase()
 
+    val bananaTypes = listOf("banana", "saba", "lakatan", "cavendish")
+    val cleanName = lowerFruitName.replace("_", " ").trim()
+
+    val ripeningProcessValue = when {
+        shelfLifeDisplay == "---" -> "---"
+        cleanName.contains("tomato") -> "---"
+        bananaTypes.any { cleanName.contains(it) } -> "---"
+        ripeningStage.equals("unripe", ignoreCase = true) -> "---"
+        else -> if (ripeningProcess) "Natural" else "Artificial"
+    }
+
+
 
     Card (
         modifier = Modifier
@@ -283,14 +295,6 @@ fun  FruitAnalysis(
             ) {
                 InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f))
                 InfoCard(title = "Ripeness \nConfidence", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
-
-                val ripeningProcessValue = when {
-                    shelfLifeDisplay == "---" -> "---"
-                    lowerFruitName.contains("tomato") || lowerFruitName.contains("banana") -> "---"
-                    ripeningStage.equals("unripe", ignoreCase = true) -> "---"
-                    else -> if (ripeningProcess) "Natural" else "Artificial"
-                }
-
                 InfoCard(
                     title = "Ripening \nProcess",
                     value = ripeningProcessValue,
