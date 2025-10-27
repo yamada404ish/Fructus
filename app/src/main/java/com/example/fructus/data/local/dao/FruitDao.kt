@@ -1,6 +1,7 @@
 package com.example.fructus.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,9 +18,11 @@ interface FruitDao {
     fun getFruitById(id: Int): Flow<FruitEntity?>
 
     @Query("DELETE FROM fruits")
-    suspend fun  clearAll()
+    suspend fun clearAll()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFruit(fruits: FruitEntity)
 
+    @Delete
+    suspend fun deleteFruit(fruit: FruitEntity)
 }

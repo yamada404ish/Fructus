@@ -27,7 +27,6 @@ class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
     // Public read-only version exposed to the UI
     val state: StateFlow<HomeState> get() = _state
 
-
     private var allFruits: List<FruitEntity> = emptyList()
 
     // When ViewModel is created
@@ -58,7 +57,11 @@ class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
         _state.value = _state.value.copy(fruits = sorted, isLoading = false)
     }
 
-
+    fun deleteFruit(fruit: FruitEntity) {
+        viewModelScope.launch {
+            fruitDao.deleteFruit(fruit)
+        }
+    }
 }
 
 // Factory used to create HomeViewModel and inject the FruitDao dependency
@@ -71,16 +74,3 @@ class HomeViewModelFactory(
         return HomeViewModel(fruitDao) as T // Safe cast to expected type
     }
 }
-
-
-
-
-
-
-/*
-HomeViewModel observes all fruits from Room using Flow.
-
-It stores the result in HomeState, which the UI collects using state.
-
-A HomeViewModelFactory is used to provide the FruitDao dependency when creating the ViewModel.
-*/
