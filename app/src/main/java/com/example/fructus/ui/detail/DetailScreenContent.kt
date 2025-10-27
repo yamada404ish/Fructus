@@ -216,6 +216,7 @@ fun CustomBottomSheetDetail(
                         .padding(bottom = 16.dp)
                 ) {
                     FruitAnalysis(
+                        fruitName = fruit.name,
                         ripeningStage = fruit.ripeningStage,
                         ripeningProcess = fruit.ripeningProcess,
                         shelfLifeDisplay = shelfLifeDisplay,

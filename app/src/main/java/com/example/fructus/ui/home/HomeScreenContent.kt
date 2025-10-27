@@ -276,20 +276,28 @@ fun HomeScreenContent(
                     }
                 }
             }
-            Icon(
-                painter = painterResource(R.drawable.info),
-                contentDescription = "Quick Guide",
-                modifier = Modifier
-                    .size(38.dp)
-                    .clickable(
-                        onClick = { onUserGuideClick() },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ),
-                tint = Unspecified
-            )
         }
     }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.info),
+            contentDescription = "Quick Guide",
+            modifier = Modifier
+                .padding(start = 20.dp, bottom = 90.dp)
+                .size(38.dp)
+                .clickable(
+                    onClick = { onUserGuideClick() },
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ),
+            tint = Unspecified
+        )
+    }
+
     if (showOnboarding) {
         FructusOnboardingOverlay(
             onDismiss = { showOnboarding = false }

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fructus.data.local.dao.FruitDao
 import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.data.local.entity.NotificationEntity
+import com.example.fructus.data.local.model.FruitWithNotification
 import com.example.fructus.ui.shared.model.Filter
 import com.example.fructus.util.NotificationScheduler
 import com.example.fructus.util.PushNotificationManager
@@ -16,6 +17,7 @@ import com.example.fructus.util.getShelfLifeRange
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -42,6 +44,8 @@ class NotificationViewModel(
     private val pushNotificationManager = PushNotificationManager(context)
     private val notificationScheduler = NotificationScheduler(context)
 
+    private val _notificationsWithFruit = MutableStateFlow<List<FruitWithNotification>>(emptyList())
+    val notificationsWithFruit: StateFlow<List<FruitWithNotification>> = _notificationsWithFruit
     init {
         // Schedule background notifications
         notificationScheduler.schedulePeriodicNotifications()
@@ -123,6 +127,20 @@ class NotificationViewModel(
         viewModelScope.launch {
             notificationDao.getActiveNotifications().collect { list ->
                 _notifications.value = list.map { enhanceMessage(it) }
+            }
+        }
+
+        viewModelScope.launch {
+            combine(
+                notificationDao.getActiveNotifications(),
+                fruitDao.getAllFruits()
+            ) { notifications, fruits ->
+                notifications.map { notif ->
+                    val matchingFruit = fruits.find { it.id == notif.fruitId }
+                    FruitWithNotification(notif, matchingFruit)
+                }
+            }.collect { combinedList ->
+                _notificationsWithFruit.value = combinedList
             }
         }
     }

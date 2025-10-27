@@ -18,6 +18,7 @@ fun NotificationScreen(
     val notifications by viewModel.notifications.collectAsState()
     val archivedCount by viewModel.archivedCount.collectAsState()
 
+
     LaunchedEffect(Unit) {
         viewModel.clearNewFlag()
     }

@@ -13,33 +13,29 @@ fun getShelfLifeRange(fruitName: String, ripeness: String): ShelfLifeRange {
 
     android.util.Log.d("ShelfLifeCheck", "Fruit=$name, Stage=$stage")
 
-
     return when (name) {
-        "lakatan", "cavendish" -> when (stage) {
-            "unripe" -> ShelfLifeRange(9, 11)
-            "ripe" -> ShelfLifeRange(4, 6)
-            "overripe" -> ShelfLifeRange(1, 2)
-            else -> ShelfLifeRange(3, 5)
+        "lakatan", "cavendish", "saba" -> when (stage) {
+            "unripe" -> ShelfLifeRange(18, 21)     // 3 weeks
+            "ripe" -> ShelfLifeRange(6, 8)         // ~1 week
+            "overripe" -> ShelfLifeRange(4, 6)     // <1 week
+            else -> ShelfLifeRange(6, 8)
         }
-        "saba" -> when (stage) {
-            "unripe" -> ShelfLifeRange(14, 20)
-            "ripe" -> ShelfLifeRange(5, 7)
-            "overripe" -> ShelfLifeRange(1, 3)
-            else -> ShelfLifeRange(4, 6)
-        }
-        "tomato" -> when (stage) {
-            "unripe" -> ShelfLifeRange(14, 21)
-            "ripe" -> ShelfLifeRange(9, 7)
-            "overripe" -> ShelfLifeRange(1, 2)
-            else -> ShelfLifeRange(3, 5)
-        }
+
         "carabao" -> when (stage) {
-            "unripe" -> ShelfLifeRange(11, 13)
-            "ripe" -> ShelfLifeRange(3, 7)
-            "overripe" -> ShelfLifeRange(1, 3)
-            else -> ShelfLifeRange(3, 5)
+            "unripe" -> ShelfLifeRange(18, 21)     // 3 weeks
+            "ripe" -> ShelfLifeRange(10, 14)       // 1.5–2 weeks
+            "overripe" -> ShelfLifeRange(6, 8)     // ~1 week
+            else -> ShelfLifeRange(6, 8)
         }
-        else -> ShelfLifeRange(3, 5)
+
+        "tomato" -> when (stage) {
+            "unripe" -> ShelfLifeRange(7, 10)      // 1–1.5 weeks
+            "ripe" -> ShelfLifeRange(6, 8)         // ~1 week
+            "overripe" -> ShelfLifeRange(2, 4)     // 2–4 days
+            else -> ShelfLifeRange(6, 8)
+        }
+
+        else -> ShelfLifeRange(6, 8) // Default range if unknown fruit
     }
 }
 
