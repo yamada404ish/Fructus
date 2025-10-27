@@ -676,7 +676,7 @@
   {
     "name": "Tomato Juice",
     "description": "A healthy beverage made from the juice of fresh tomatoes",
-    "imageResName": "recipe_tomato_sauce",
+    "imageResName": "recipe_tomato_juice",
     "fruitType": "tomato",
     "stage": "ripe",
     "ingredients": [
@@ -698,7 +698,7 @@
     "description": "A thick sauce made with tomatoes, oil, and herbs, often served with pasta",
     "imageResName": "recipe_tomato_sauce",
     "fruitType": "tomato",
-    "stage": "ripe",
+    "stage": "overripe",
     "ingredients": [
       "4 lb plum tomatoes (or two 28-oz cans whole peeled plum tomatoes)",
       "6 tablespoon unsalted butter",
