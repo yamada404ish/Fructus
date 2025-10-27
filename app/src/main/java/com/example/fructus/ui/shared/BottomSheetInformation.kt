@@ -64,13 +64,6 @@ fun CustomBottomSheet(
     val context = LocalContext.current
     val allRecipes = context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
-//    val displayDescription = getFruitDescription(fruitName)
-//
-//
-//    val matchedRecipes = allRecipes.filter {
-//        it.fruitType.equals(fruitName, ignoreCase = true) &&
-//                it.stage.equals(ripeningStage, ignoreCase = true)
-//    }
 
     Box(
         modifier = Modifier
@@ -109,10 +102,10 @@ fun CustomBottomSheet(
                         .padding(bottom = 16.dp)
                 ) {
                     FruitAnalysis(
+                        fruitName = fruitName,
                         ripeningStage = ripeningStage,
                         ripeningProcess = if (isSpoiled) false else ripeningProcess,
-                        shelfLifeDisplay = shelfLifeDisplay, // Use -1 to represent
-                        // "---"
+                        shelfLifeDisplay = shelfLifeDisplay,
                         confidence = confidence,
                     )
 
@@ -134,43 +127,6 @@ fun CustomBottomSheet(
                         Tips()
 
                         Spacer(modifier = Modifier.height(10.dp))
-
-//                        Text(
-//                            text = "Try the following:",
-//                            fontFamily = poppinsFontFamily,
-//                            fontWeight = FontWeight.Medium,
-//                            fontSize = 16.sp,
-//                            color = colors.textPrimary
-//                        )
-
-                        // Scrollable content
-//                            if (matchedRecipes.isEmpty()) {
-//                                // shrink content
-//                                Box(
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(vertical = 16.dp),
-//                                    contentAlignment = Alignment.Center
-//                                ) {
-//                                    Text(
-//                                        text = "No recipes available for this stage.",
-//                                        color = Color.Gray,
-//                                        fontSize = 14.sp
-//                                    )
-//                                }
-//                            } else {
-//
-//                                matchedRecipes.forEach { recipe ->
-//                                    SuggestedRecipe(
-//                                        title = recipe.name,
-//                                        description = recipe.description,
-//                                        imageRes = context.getDrawableIdByName(recipe.imageResName),
-//                                        modifier = Modifier.padding(vertical = 6.dp),
-//                                        onClick = {}
-//                                    )
-//                                }
-//
-//                            }
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
@@ -276,6 +232,7 @@ fun CustomBottomSheet(
 
 @Composable
 fun  FruitAnalysis(
+    fruitName: String,
     ripeningStage: String,
     ripeningProcess: Boolean,
     shelfLifeDisplay: String,
@@ -283,6 +240,9 @@ fun  FruitAnalysis(
 ) {
 
     val colors = MaterialTheme.appColors
+
+    val lowerFruitName = fruitName.lowercase()
+
 
     Card (
         modifier = Modifier
@@ -323,13 +283,17 @@ fun  FruitAnalysis(
             ) {
                 InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f))
                 InfoCard(title = "Ripeness \nConfidence", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
+
+                val ripeningProcessValue = when {
+                    shelfLifeDisplay == "---" -> "---"
+                    lowerFruitName.contains("tomato") || lowerFruitName.contains("banana") -> "---"
+                    ripeningStage.equals("unripe", ignoreCase = true) -> "---"
+                    else -> if (ripeningProcess) "Natural" else "Artificial"
+                }
+
                 InfoCard(
                     title = "Ripening \nProcess",
-                    value = when {
-                        shelfLifeDisplay == "---" -> "---"
-                        ripeningStage.equals("unripe", ignoreCase = true) -> "---"
-                        else -> if (ripeningProcess) "Natural" else "Artificial"
-                    },
+                    value = ripeningProcessValue,
                     modifier = Modifier.weight(1f)
                 )
             }

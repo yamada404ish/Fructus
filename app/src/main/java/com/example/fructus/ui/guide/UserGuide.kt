@@ -14,11 +14,21 @@ fun UserGuide(
     var selectedGuide by remember { mutableStateOf("Banana") }
     var selectedProcess by remember { mutableStateOf("Natural")}
 
+    if (selectedGuide == "Banana" || selectedGuide == "Tomato") {
+        if (selectedProcess != "Natural") {
+            selectedProcess = "Natural"
+        }
+    }
+
     UserGuideScreenContent(
         onNavigateUp = onNavigateUp,
         selectedGuide = selectedGuide,
-        onGuideChange = {selectedGuide = it},
-
+        onGuideChange = { newGuide ->
+            selectedGuide = newGuide
+            if (newGuide == "Banana" || newGuide == "Tomato") {
+                selectedProcess = "Natural"
+            }
+        },
         selectedProcess = selectedProcess,
         onProcessChange = {selectedProcess = it}
     )
