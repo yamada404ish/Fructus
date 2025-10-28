@@ -68,6 +68,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import com.example.fructus.ui.home.components.DeleteConfirmation
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,6 +90,9 @@ fun HomeScreenContent(
     var dragOffset by remember { mutableStateOf(Offset.Zero) }
     var showOnboarding by remember { mutableStateOf(false) }
     var trashIconPosition by remember { mutableStateOf(Offset.Zero) }
+
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var fruitToDelete by remember { mutableStateOf<FruitEntity?>(null) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -316,8 +320,15 @@ fun HomeScreenContent(
                                                         fruitTop <= trashBottom
 
                                                 if (isOverTrash) {
-                                                    viewModel.deleteFruit(droppedFruit)
+                                                    fruitToDelete = droppedFruit
+                                                    showDeleteDialog = true
+                                                } else {
+                                                    coroutineScope.launch {
+                                                        delay(100)
+                                                        draggedFruit = null
+                                                    }
                                                 }
+
                                             }
 
                                             coroutineScope.launch {
@@ -466,5 +477,30 @@ fun HomeScreenContent(
                 onDismiss = { showOnboarding = false }
             )
         }
+
+        if (showDeleteDialog && fruitToDelete != null) {
+            DeleteConfirmation(
+                onDismiss = {
+                    showDeleteDialog = false
+                    fruitToDelete = null
+                    coroutineScope.launch {
+                        delay(100)
+                        draggedFruit = null // Reset drag
+                    }
+                },
+                onClearAll = {
+                    fruitToDelete?.let {
+                        viewModel.deleteFruit(it)
+                    }
+                    showDeleteDialog = false
+                    fruitToDelete = null
+                    coroutineScope.launch {
+                        delay(100)
+                        draggedFruit = null // Reset drag
+                    }
+                }
+            )
+        }
+
     }
 }
