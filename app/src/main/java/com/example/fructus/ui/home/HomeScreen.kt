@@ -38,7 +38,7 @@ fun HomeScreen(
     val isDarkMode by dataStore.darkModeFlow.collectAsState(initial = false)
 
     val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(db.fruitDao())
+        factory = HomeViewModelFactory(db.fruitDao(), db.notificationDao())
     )
 
     // Update factory to include context

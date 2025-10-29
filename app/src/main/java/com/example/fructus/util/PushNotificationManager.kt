@@ -103,8 +103,10 @@ class PushNotificationManager(private val context: Context) {
         val (icon, title) = when {
             message.contains("spoiled", ignoreCase = true) ->
                 Pair(android.R.drawable.stat_notify_error, "Fruit Spoiled!")
+
             message.contains("1 day left", ignoreCase = true) ->
                 Pair(android.R.drawable.stat_sys_warning, "Fruit Alert!")
+
             else -> Pair(android.R.drawable.stat_notify_sync, "Fruit Update")
         }
 
@@ -156,13 +158,4 @@ class PushNotificationManager(private val context: Context) {
         notificationManager.cancelAll()
         android.util.Log.d("PushNotification", "Cancelled all notifications")
     }
-
-    /** Send test notification */
-//    fun sendTestNotification() {
-//
-//        sendFruitSpoilageNotification(
-//            message = "This is a test notification with sound + vibration",
-//            fruitId = 99999
-//        )
-//    }
 }
