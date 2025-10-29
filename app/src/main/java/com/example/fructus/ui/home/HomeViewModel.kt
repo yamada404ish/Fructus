@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.fructus.data.local.dao.FruitDao
+import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.home.model.SortOrder
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,10 @@ data class HomeState(
 )
 
 // ViewModel handles business logic and provides data to the Home screen
-class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
+class HomeViewModel(
+    private val fruitDao: FruitDao,
+    private val notificationDao: NotificationDao
+) : ViewModel() {
 
     // Private mutable state (can only be changed inside ViewModel)
     private val _state = MutableStateFlow(HomeState(isLoading = true))
@@ -59,18 +63,24 @@ class HomeViewModel(private val fruitDao: FruitDao) : ViewModel() {
 
     fun deleteFruit(fruit: FruitEntity) {
         viewModelScope.launch {
+            // Delete the fruit
             fruitDao.deleteFruit(fruit)
+
+            // Also delete its notifications
+            notificationDao.deleteNotificationsByFruitId(fruit.id)
         }
     }
+
 }
 
 // Factory used to create HomeViewModel and inject the FruitDao dependency
 class HomeViewModelFactory(
-    private val fruitDao: FruitDao // This comes from the Room database
+    private val fruitDao: FruitDao,
+    private val notificationDao: NotificationDao
 ) : ViewModelProvider.Factory {
 
     // Creates the ViewModel when it's needed in a Composable
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return HomeViewModel(fruitDao) as T // Safe cast to expected type
+        return HomeViewModel(fruitDao, notificationDao) as T // Safe cast to expected type
     }
 }
