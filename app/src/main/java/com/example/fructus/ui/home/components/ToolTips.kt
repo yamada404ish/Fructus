@@ -222,6 +222,13 @@ fun FructusOnboardingOverlay(
                         description = "Access settings to personalize your fruit tracking experience"
                     )
 
+                    FructusGuideStep(
+                        painterResource(R.drawable.info),
+                        title = "Ripeness Guide",
+                        description = "See how the fruit changes from unripe to spoiled, along with its corresponding shelf life."
+                    )
+
+
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Row(
@@ -249,3 +256,5 @@ fun FructusOnboardingOverlay(
         }
     }
 }
+
+
