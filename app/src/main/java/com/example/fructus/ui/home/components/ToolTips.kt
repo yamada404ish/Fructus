@@ -49,10 +49,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.fructus.R
+import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 
@@ -71,7 +73,6 @@ fun FructusGuideStep(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon container
         Box(
             modifier = Modifier
                 .size(30.dp),
@@ -157,26 +158,23 @@ fun FructusOnboardingOverlay(
         ) {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
+                    .fillMaxSize()
+                    .padding(start = 24.dp, end = 24.dp, top = 100.dp, bottom = 100.dp)
                     .scale(animatedScale)
-                    .align(Alignment.Center)
-                    .clickable { },
+                    .align(Alignment.Center),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = colors.surface
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
             ) {
+                Spacer(modifier = Modifier.height(14.dp))
 
-                Column(
+                Column (
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(28.dp),
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     Text(
                         text = "How to use",
                         fontSize = 28.sp,
@@ -186,7 +184,7 @@ fun FructusOnboardingOverlay(
                         textAlign = TextAlign.Center
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = "Scan and know about your fruits!",
@@ -195,8 +193,18 @@ fun FructusOnboardingOverlay(
                         color = colors.textSecondary,
                         textAlign = TextAlign.Center
                     )
+                }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 28.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
                     FructusGuideStep(
                         painterResource(R.drawable.scan),
@@ -228,33 +236,47 @@ fun FructusOnboardingOverlay(
                         description = "See how the fruit changes from unripe to spoiled, along with its corresponding shelf life."
                     )
 
+                    FructusGuideStep(
+                        painterResource(R.drawable.trash),
+                        title = "Delete Fruit",
+                        description = "Hold and drag a scanned fruit to the trash icon to delete it."
+                    )
+                }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 28.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.button
+                        )
                     ) {
-
-                        Button(
-                            onClick = onDismiss,
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.button
-                            )
-                        ) {
-                            Text(
-                                "Got It!",
-                                fontFamily = poppinsFontFamily,
-                                fontWeight = FontWeight.Medium,
-                                color = colors.textPrimary
-                            )
-                        }
+                        Text(
+                            "Got It!",
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.textPrimary
+                        )
                     }
                 }
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
 }
 
-
+@Preview
+@Composable
+private fun FructusOnboardingOverlayPrev() {
+    FructusTheme {
+        FructusOnboardingOverlay{}
+    }
+}
