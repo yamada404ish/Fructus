@@ -37,7 +37,7 @@ fun UserGuideScreenContent(
         containerColor = colors.bg,
         topBar = {
             ScreenTopBar(
-                title = "Food Guide",
+                title = "Ripeness Guide",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
                 showArchive = false
