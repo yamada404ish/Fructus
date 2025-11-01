@@ -159,6 +159,7 @@ fun FructusOnboardingOverlay(
             Card(
                 modifier = Modifier
                     .fillMaxSize()
+                    .height(300.dp)
                     .padding(start = 24.dp, end = 24.dp, top = 100.dp, bottom = 100.dp)
                     .scale(animatedScale)
                     .align(Alignment.Center),
