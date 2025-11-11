@@ -7,6 +7,7 @@ import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.YuvImage
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import org.tensorflow.lite.Interpreter
 import java.io.ByteArrayOutputStream
@@ -36,6 +37,9 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     )
 
     val model = Interpreter(loadModelFile(context, modelName))
+    // ✅ Apply segmentation first
+    //change "bitmap" to "segmented" if you i want to try segmented version and uncomment the line below
+  //  val segmented = bitmap.segmentFruit()
     val cropped = bitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
@@ -52,13 +56,12 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    // 🔹 Fruit-specific thresholds
     val thresholds = mapOf(
         "Tomato" to 0.9f,
-        "Lakatan" to 0.95f,
-        "Saba" to 0.55f,
-        "Cavendish" to 0.8f,
-        "Carabao" to 0.65f,
+        "Lakatan" to 0.90f,
+        "Saba" to 0.6f,
+        "Cavendish" to 0.6f,
+        "Carabao" to 0.80f,
         "Spoiled Banana" to 0.6f,
         "Spoiled Mango" to 0.6f,
         "Spoiled Tomato" to 0.6f
@@ -94,6 +97,9 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
 
     val labels = listOf("Overripe", "Ripe", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
+    //change "bitmap" to "segmented" if you i want to try segmented version and uncomment the line below
+    //val segmented = bitmap.segmentFruit()
+
     val cropped = bitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
@@ -116,6 +122,53 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     } else {
         ClassificationResult("Unknown", confidence)
     }
+}
+
+// --------------------- MANGO RIPENING METHOD CLASSIFIER ---------------------
+fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Context): ClassificationResult {
+    val modelName = when (ripenessLabel.lowercase()) {
+        "ripe" -> "mango_ripe_model.tflite"
+        "overripe" -> "mango_overripe_model.tflite"
+        else -> return ClassificationResult("Unknown", 0f)
+    }
+
+    val labels = listOf("Natural", "Artificial")
+    val model = Interpreter(loadModelFile(context, modelName))
+
+    // ✅ Apply segmentation ONLY here
+    val segmented = bitmap.segmentFruit()
+    val cropped = segmented.cropToScanBox(context)
+
+    if (cropped.isMostlyBackground()) {
+        model.close()
+        return ClassificationResult("No fruit detected", 0f)
+    }
+
+    val input = preprocessBitmap(cropped)
+    val output = Array(1) { FloatArray(labels.size) }
+    model.run(input, output)
+    model.close()
+
+    val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
+    var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+    var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
+
+    // ✅ Compute spot score
+    val spotScore = cropped.computeSpotScore()
+    Log.d("FRUCTUS_LOG", "Spot Score: $spotScore")
+
+    // ✅ Apply threshold logic (0.7)
+    val spotThreshold = 0.7f
+    if (predictedLabel == "Natural" && spotScore < spotThreshold) {
+        predictedLabel = "Artificial"
+    } else if (predictedLabel == "Artificial" && spotScore >= spotThreshold) {
+        predictedLabel = "Natural"
+    }
+
+    // Optional: mix confidence with spot score
+    confidence = (confidence + spotScore) / 2
+
+    return ClassificationResult(predictedLabel, confidence)
 }
 
 // --------------------- RIPENING STAGE MAPPER ---------------------
@@ -212,31 +265,63 @@ fun Bitmap.cropToScanBox(context: Context): Bitmap {
     return Bitmap.createBitmap(this, safeLeft, safeTop, safeWidth, safeHeight)
 }
 
-// --------------------- HISTOGRAM UTILS ---------------------
-fun calculateHistogram(bitmap: Bitmap): IntArray {
-    val histogram = IntArray(256)
-    val pixels = IntArray(bitmap.width * bitmap.height)
-    bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-    for (pixel in pixels) {
-        val r = (pixel shr 16) and 0xFF
-        val g = (pixel shr 8) and 0xFF
-        val b = pixel and 0xFF
-        val gray = (r + g + b) / 3
-        histogram[gray]++
+// --------------------- BACKGROUND CHECK ---------------------
+fun Bitmap.isMostlyBackground(
+    blackThreshold: Int = 30,
+    whiteThreshold: Int = 220,
+    grayTolerance: Int = 15,
+    ratio: Double = 0.9
+): Boolean {
+    val pixels = IntArray(width * height)
+    getPixels(pixels, 0, width, 0, 0, width, height)
+    var backgroundCount = 0
+
+    for (p in pixels) {
+        val r = (p shr 16) and 0xFF
+        val g = (p shr 8) and 0xFF
+        val b = p and 0xFF
+        val avg = (r + g + b) / 3
+
+        if (avg < blackThreshold) {
+            backgroundCount++
+        } else if (avg > whiteThreshold) {
+            backgroundCount++
+        } else if (
+            kotlin.math.abs(r - g) < grayTolerance &&
+            kotlin.math.abs(g - b) < grayTolerance &&
+            kotlin.math.abs(r - b) < grayTolerance
+        ) {
+            backgroundCount++
+        }
     }
-    return histogram
+
+    return backgroundCount > width * height * ratio
 }
 
-fun compareHistograms(h1: IntArray?, h2: IntArray?): Float {
-    if (h1 == null || h2 == null) return 0f
-    val minLen = minOf(h1.size, h2.size)
-    var diff = 0L
-    var total = 0L
-    for (i in 0 until minLen) {
-        diff += kotlin.math.abs(h1[i] - h2[i])
-        total += h1[i] + h2[i]
-    }
-    return if (total == 0L) 0f else 1f - (diff.toFloat() / total.toFloat())
+// --------------------- SPOT SCORE DETECTION ---------------------
+fun Bitmap.computeSpotScore(): Float {
+    val src = Mat()
+    Utils.bitmapToMat(this, src)
+
+    val gray = Mat()
+    Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
+
+    val blurred = Mat()
+    Imgproc.GaussianBlur(gray, blurred, Size(5.0, 5.0), 0.0)
+
+    val thresh = Mat()
+    Imgproc.threshold(blurred, thresh, 60.0, 255.0, Imgproc.THRESH_BINARY_INV)
+
+    val darkPixels = Core.countNonZero(thresh)
+    val totalPixels = this.width * this.height
+    val spotRatio = darkPixels.toFloat() / totalPixels.toFloat()
+
+    gray.release()
+    blurred.release()
+    thresh.release()
+    src.release()
+
+    return spotRatio.coerceIn(0f, 1f)
 }
 
 // --------------------- 11-STEP SEGMENTATION ---------------------
@@ -279,53 +364,37 @@ fun Bitmap.segmentFruit(): Bitmap {
     return output
 }
 
-// --------------------- BACKGROUND CHECK ---------------------
-fun Bitmap.isMostlyBackground(
-    blackThreshold: Int = 30,
-    whiteThreshold: Int = 220,
-    grayTolerance: Int = 15,
-    ratio: Double = 0.9
-): Boolean {
-    val pixels = IntArray(width * height)
-    getPixels(pixels, 0, width, 0, 0, width, height)
-    var backgroundCount = 0
-
-    for (p in pixels) {
-        val r = (p shr 16) and 0xFF
-        val g = (p shr 8) and 0xFF
-        val b = p and 0xFF
-        val avg = (r + g + b) / 3
-
-        if (avg < blackThreshold) {
-            backgroundCount++
-        } else if (avg > whiteThreshold) {
-            backgroundCount++
-        } else if (
-            kotlin.math.abs(r - g) < grayTolerance &&
-            kotlin.math.abs(g - b) < grayTolerance &&
-            kotlin.math.abs(r - b) < grayTolerance
-        ) {
-            backgroundCount++
-        }
-    }
-
-    return backgroundCount > width * height * ratio
-}
 // --------------------- GALLERY IMAGE DETECTION ---------------------
 suspend fun analyzeBitmap(
     bitmap: Bitmap,
     context: Context
-): Pair<ClassificationResult, ClassificationResult> {
-    // First: detect the fruit type
+): Triple<ClassificationResult, ClassificationResult?, ClassificationResult?> {
     val fruitResult = classifyFruit(bitmap, context)
+    var ripenessResult: ClassificationResult? = null
+    var ripeningMethodResult: ClassificationResult? = null
 
-    // Then: detect ripeness if fruit is found
-    val ripenessResult = if (fruitResult.label != "No fruit detected") {
-        classifyRipeness(fruitResult.label, bitmap, context)
-    } else {
-        ClassificationResult("Unknown", 0f)
+    if (fruitResult.label != "No fruit detected") {
+        if (fruitResult.label.equals("Carabao", true)) {
+            // Step 2a: mango ripeness
+            ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
+
+            // Step 2b: only classify ripening method if ripe or overripe
+            if (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true)) {
+                ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, bitmap, context)
+            }
+        } else {
+            ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
+        }
     }
 
-    return Pair(fruitResult, ripenessResult)
-}
+    // ✅ Logging all results
+    Log.d("FRUCTUS_LOG", "Fruit Type: ${fruitResult.label} (Conf: ${fruitResult.confidence})")
+    ripenessResult?.let {
+        Log.d("FRUCTUS_LOG", "Ripeness: ${it.label} (Conf: ${it.confidence})")
+    }
+    ripeningMethodResult?.let {
+        Log.d("FRUCTUS_LOG", "Ripening Method: ${it.label} (Conf: ${it.confidence})")
+    }
 
+    return Triple(fruitResult, ripenessResult, ripeningMethodResult)
+}

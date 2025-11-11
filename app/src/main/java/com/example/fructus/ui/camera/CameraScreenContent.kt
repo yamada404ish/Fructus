@@ -117,7 +117,6 @@ fun CameraScreenContent(
                     if (fruitResult.label != "No fruit detected" && ripenessResult.label != "Unknown") {
                         isBottomSheetVisible.value = true
                     } else {
-                        // Show centered text instead of toast
                         isBottomSheetVisible.value = false
                         showNoFruitDetected.value = true
                     }
@@ -185,20 +184,22 @@ fun CameraScreenContent(
                                     imageProxy.close()
                                     return@setAnalyzer
                                 }
-                                val rotatedBitmap =
-                                    bitmap.rotate(imageProxy.imageInfo.rotationDegrees)
+
                                 try {
-                                    val croppedForBox = rotatedBitmap.cropToScanBox(it)
-                                    val fruitResult = classifyFruit(croppedForBox, it)
+                                    // ✅ FIX: Crop first, then rotate
+                                    val croppedForBox = bitmap.cropToScanBox(it)
+                                    val rotatedBitmap = croppedForBox.rotate(imageProxy.imageInfo.rotationDegrees)
+
+                                    val fruitResult = classifyFruit(rotatedBitmap, it)
                                     val ripenessResult =
-                                        classifyRipeness(fruitResult.label, croppedForBox, it)
+                                        classifyRipeness(fruitResult.label, rotatedBitmap, it)
 
                                     isSaved.value = false
 
                                     val fileName = "fruit_${System.currentTimeMillis()}"
                                     val imagePath = saveBitmapToInternalStorage(
                                         it,
-                                        croppedForBox,
+                                        rotatedBitmap,
                                         fileName
                                     )
                                     capturedImagePath.value = imagePath
@@ -240,6 +241,7 @@ fun CameraScreenContent(
             modifier = Modifier.fillMaxSize()
         )
 
+        // 🔦 Top bar (Back + Flash)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -291,7 +293,7 @@ fun CameraScreenContent(
             }
         }
 
-
+        // 📸 Bottom buttons
         if (!detected && !isScanning.value) {
             Row(
                 modifier = Modifier
@@ -327,10 +329,9 @@ fun CameraScreenContent(
                     tint = Color.Unspecified
                 )
                 Spacer(modifier = Modifier.size(20.dp))
-
                 Icon(
                     painter = painterResource(R.drawable.howtouse),
-                    contentDescription = "Gallery",
+                    contentDescription = "How to use",
                     modifier = Modifier
                         .size(50.dp)
                         .clickable(
@@ -344,7 +345,7 @@ fun CameraScreenContent(
             }
         }
 
-
+        // 📦 Scan box overlay
         if (!isBottomSheetVisible.value && (isScanning.value || !detected)) {
             Icon(
                 painter = painterResource(R.drawable.camera_scan_box),
@@ -356,9 +357,7 @@ fun CameraScreenContent(
             )
         }
 
-
-
-
+        // 🧠 Result handling and overlay logic
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
                 isBottomSheetVisible.value =
@@ -438,6 +437,7 @@ fun CameraScreenContent(
         }
     }
 
+    // 🔁 Scan again dialog
     if (showScanAgainDialog.value) {
         ScanAgain(
             onYes = {
@@ -458,8 +458,8 @@ fun CameraScreenContent(
         )
     }
 
+    // 🧾 How to use overlay
     if (showHowTo.value) {
         HowToOverlay(onDismiss = { showHowTo.value = false })
     }
 }
-
