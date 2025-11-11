@@ -373,7 +373,7 @@ fun CameraScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 20.sp,
-                        color = Color.Gray,
+                        color = Color.Red,
                         modifier = Modifier.align(Alignment.Center)
                     )
                     LaunchedEffect(detectedFruit) {
