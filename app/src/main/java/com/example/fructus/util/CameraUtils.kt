@@ -37,9 +37,6 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     )
 
     val model = Interpreter(loadModelFile(context, modelName))
-    // ✅ Apply segmentation first
-    //change "bitmap" to "segmented" if you i want to try segmented version and uncomment the line below
-  //  val segmented = bitmap.segmentFruit()
     val cropped = bitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
@@ -63,7 +60,7 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
         "Cavendish" to 0.1f,
         "Carabao" to 0.80f,
         "Spoiled Banana" to 0.8f,
-        "Spoiled Mango" to 0.8f,
+        "Spoiled Mango" to 0.7f,
         "Spoiled Tomato" to 0.8f
     )
 
@@ -97,9 +94,6 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
 
     val labels = listOf("Overripe", "Ripe", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
-    //change "bitmap" to "segmented" if you i want to try segmented version and uncomment the line below
-    //val segmented = bitmap.segmentFruit()
-
     val cropped = bitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
@@ -132,10 +126,9 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
         else -> return ClassificationResult("Unknown", 0f)
     }
 
-    val labels = listOf("Artificial", "Natural")
     val model = Interpreter(loadModelFile(context, modelName))
+    val labels = listOf("Artificial", "Natural")
 
-    // ✅ Apply segmentation ONLY here
     val segmented = bitmap.segmentFruit()
     val cropped = segmented.cropToScanBox(context)
 
@@ -153,20 +146,12 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
     var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    // Compute spot score
-    val spotScore = cropped.computeSpotScore()
-    Log.d("FRUCTUS_LOG", "Spot Score: $spotScore")
+    // 🟢 Spot factor based on research paper
+    val spotFactor = cropped.computeSpotFactor()
+    Log.d("FRUCTUS_LOG", "Spot Factor: $spotFactor")
 
-    // Apply threshold  logic (0.)
-    val spotThreshold = 0.75f
-    if (predictedLabel == "Natural" && spotScore < spotThreshold) {
-        predictedLabel = "Artificial"
-    } else if (predictedLabel == "Artificial" && spotScore >= spotThreshold) {
-        predictedLabel = "Natural"
-    }
-
-    // Optional: mix confidence with spot score
-    confidence = (confidence + spotScore) / 2
+    predictedLabel = if (spotFactor >= 3.8f) "Natural" else "Artificial"
+    confidence = (spotFactor / 10f).coerceIn(0f, 1f)
 
     return ClassificationResult(predictedLabel, confidence)
 }
@@ -298,30 +283,48 @@ fun Bitmap.isMostlyBackground(
     return backgroundCount > width * height * ratio
 }
 
-// --------------------- SPOT SCORE DETECTION ---------------------
-fun Bitmap.computeSpotScore(): Float {
+// --------------------- SPOT FACTOR DETECTION (Research Accurate) ---------------------
+fun Bitmap.computeSpotFactor(): Float {
     val src = Mat()
     Utils.bitmapToMat(this, src)
 
     val gray = Mat()
     Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
+    Imgproc.medianBlur(gray, gray, 5)
 
-    val blurred = Mat()
-    Imgproc.GaussianBlur(gray, blurred, Size(5.0, 5.0), 0.0)
+    val edges = Mat()
+    Imgproc.Canny(gray, edges, 10.0, 100.0)
+    Imgproc.dilate(edges, edges, Mat(), Point(-1.0, -1.0), 1)
+
+    val contours = mutableListOf<MatOfPoint>()
+    Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+    if (contours.isEmpty()) {
+        src.release(); gray.release(); edges.release()
+        return 0f
+    }
+
+    val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return 0f
+    val mask = Mat.zeros(src.size(), CvType.CV_8UC1)
+    Imgproc.drawContours(mask, listOf(largest), -1, Scalar(255.0), -1)
 
     val thresh = Mat()
-    Imgproc.threshold(blurred, thresh, 60.0, 255.0, Imgproc.THRESH_BINARY_INV)
+    Imgproc.adaptiveThreshold(
+        gray, thresh, 255.0,
+        Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+        Imgproc.THRESH_BINARY_INV, 11, 2.0
+    )
 
-    val darkPixels = Core.countNonZero(thresh)
-    val totalPixels = this.width * this.height
-    val spotRatio = darkPixels.toFloat() / totalPixels.toFloat()
+    val spotPixelsMat = Mat()
+    Core.bitwise_and(thresh, mask, spotPixelsMat)
+    val totalBlackPixels = Core.countNonZero(spotPixelsMat)
+    val mangoArea = Core.countNonZero(mask)
+    val adjustedSpots = totalBlackPixels * 0.955f
+    val spotFactor = if (mangoArea > 0) (adjustedSpots / mangoArea) * 100f else 0f
 
-    gray.release()
-    blurred.release()
-    thresh.release()
-    src.release()
+    src.release(); gray.release(); edges.release(); mask.release()
+    thresh.release(); spotPixelsMat.release()
 
-    return spotRatio.coerceIn(0f, 1f)
+    return spotFactor
 }
 
 // --------------------- 11-STEP SEGMENTATION ---------------------
@@ -375,10 +378,7 @@ suspend fun analyzeBitmap(
 
     if (fruitResult.label != "No fruit detected") {
         if (fruitResult.label.equals("Carabao", true)) {
-            // Step 2a: classify mango ripeness
             ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
-
-            // Step 2b: only classify ripening method if ripe or overripe
             if (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true)) {
                 val segmented = bitmap.segmentFruit()
                 ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, segmented, context)
@@ -388,7 +388,6 @@ suspend fun analyzeBitmap(
         }
     }
 
-    // ✅ Logging all results
     Log.d("FRUCTUS_LOG", "Fruit Type: ${fruitResult.label} (Conf: ${fruitResult.confidence})")
     ripenessResult?.let {
         Log.d("FRUCTUS_LOG", "Ripeness: ${it.label} (Conf: ${it.confidence})")
