@@ -156,4 +156,10 @@ dependencies {
 
     // Core notification support
     implementation("androidx.core:core-ktx:1.12.0")
+
+    // SQLCipher for Room encryption
+    implementation("net.zetetic:android-database-sqlcipher:4.5.4")
+    implementation("androidx.sqlite:sqlite:2.3.1")
+    // Security for Keystore encryption
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 }
