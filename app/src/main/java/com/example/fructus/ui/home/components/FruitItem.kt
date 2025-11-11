@@ -58,7 +58,7 @@ fun FruitItem(
     Card(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .height(224.dp)
+//            .height(224.dp)
             .width(148.dp)
             .clickable(
                 onClick = { onFruitClick(fruit) },
@@ -108,7 +108,7 @@ fun FruitItem(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
+                        fontSize = 13.sp,
                         color = colors.textPrimary
                     )
 
