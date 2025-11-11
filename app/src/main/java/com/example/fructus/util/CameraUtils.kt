@@ -132,7 +132,7 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
         else -> return ClassificationResult("Unknown", 0f)
     }
 
-    val labels = listOf("Natural", "Artificial")
+    val labels = listOf("Artificial", "Natural")
     val model = Interpreter(loadModelFile(context, modelName))
 
     // ✅ Apply segmentation ONLY here
