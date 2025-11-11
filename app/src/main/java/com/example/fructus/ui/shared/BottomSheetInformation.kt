@@ -297,7 +297,7 @@ fun  FruitAnalysis(
                 verticalAlignment = Alignment.Top
             ) {
                 InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f))
-                InfoCard(title = "Ripeness \nConfidence", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
+                InfoCard(title = "Ripeness \nAccuracy", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
                 InfoCard(
                     title = "Ripening \nProcess",
                     value = ripeningProcessValue,
