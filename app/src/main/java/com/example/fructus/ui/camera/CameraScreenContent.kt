@@ -18,22 +18,9 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,13 +38,7 @@ import com.example.fructus.ui.camera.components.ScanAgain
 import com.example.fructus.ui.shared.CustomBottomSheet
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
-import com.example.fructus.util.classifyFruit
-import com.example.fructus.util.classifyRipeness
-import com.example.fructus.util.cropToScanBox
-import com.example.fructus.util.formatShelfLifeRange
-import com.example.fructus.util.getShelfLifeRange
-import com.example.fructus.util.rotate
-import com.example.fructus.util.saveBitmapToInternalStorage
+import com.example.fructus.util.*
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,9 +47,6 @@ fun CameraScreenContent(
     detected: Boolean,
     detectedFruit: String,
     detectedRipeness: String,
-
-    dtProcess: Boolean = true,
-
     lifecycleOwner: LifecycleOwner,
     detectedState: MutableState<Boolean>,
     detectedFruitState: MutableState<String>,
@@ -78,24 +56,40 @@ fun CameraScreenContent(
     isDarkMode: Boolean,
     onHome: () -> Unit
 ) {
-    val detectedConfidence = remember { mutableStateOf(0f) }
-
     val context = LocalContext.current
+
+    // 🔧 Core states
+    val detectedConfidence = remember { mutableStateOf(0f) }
     val isSaved = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
     val cameraRef = remember { mutableStateOf<Camera?>(null) }
     val isScanning = remember { mutableStateOf(false) }
     val isBottomSheetVisible = remember { mutableStateOf(false) }
     val capturedImagePath = remember { mutableStateOf<String?>(null) }
-
     val showNoFruitDetected = remember { mutableStateOf(false) }
+    val isNaturalRipening = remember { mutableStateOf(true) }
 
+    // Helper function to safely parse ripening method
+    fun parseRipeningMethod(label: String?): Boolean {
+        val ripeningLabel = label?.trim()?.lowercase() ?: "unknown"
+        return when (ripeningLabel) {
+            "natural" -> true
+            "artificial" -> false
+            else -> {
+                Log.w("RipeningMethod", "Unexpected label: $label")
+                false
+            }
+        }
+    }
+
+    // 🖼️ Gallery launcher
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
             val inputStream = context.contentResolver.openInputStream(it)
             val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
 
             bitmap?.let { selectedImage ->
                 isScanning.value = true
@@ -108,6 +102,13 @@ fun CameraScreenContent(
 
                     val fruitResult = classifyFruit(selectedImage, context)
                     val ripenessResult = classifyRipeness(fruitResult.label, selectedImage, context)
+                    val ripeningMethodResult = classifyRipeningMethod(
+                        ripenessResult.label,
+                        selectedImage,
+                        context
+                    )
+
+                    isNaturalRipening.value = parseRipeningMethod(ripeningMethodResult.label)
 
                     detectedFruitState.value = fruitResult.label
                     detectedRipenessState.value = ripenessResult.label
@@ -135,14 +136,14 @@ fun CameraScreenContent(
         }
     }
 
-    // Shelf life info
+    // 🍌 Shelf life info
     val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
     val shelfLifeDisplay =
         if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
 
     val showScanAgainDialog = remember { mutableStateOf(false) }
     val showHowTo = remember { mutableStateOf(false) }
-    val colors = MaterialTheme.appColors
+    MaterialTheme.appColors
 
     val handleCancel: () -> Unit = {
         isBottomSheetVisible.value = false
@@ -150,14 +151,11 @@ fun CameraScreenContent(
         isSaved.value = false
     }
 
+    // 🪟 Back button behavior
     BackHandler {
         when {
             showHowTo.value -> showHowTo.value = false
-            isBottomSheetVisible.value -> {
-                isBottomSheetVisible.value = false
-                detectedState.value = false
-                isSaved.value = false
-            }
+            isBottomSheetVisible.value -> handleCancel()
             else -> {
                 cameraRef.value?.cameraControl?.enableTorch(false)
                 flashEnabled.value = false
@@ -168,7 +166,7 @@ fun CameraScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // 📷 CAMERA PREVIEW
+        // 📷 Camera Preview
         AndroidView(
             factory = {
                 val previewView = PreviewView(it)
@@ -186,13 +184,17 @@ fun CameraScreenContent(
                                 }
 
                                 try {
-                                    // ✅ FIX: Crop first, then rotate
                                     val croppedForBox = bitmap.cropToScanBox(it)
-                                    val rotatedBitmap = croppedForBox.rotate(imageProxy.imageInfo.rotationDegrees)
+                                    val rotatedBitmap =
+                                        croppedForBox.rotate(imageProxy.imageInfo.rotationDegrees)
 
                                     val fruitResult = classifyFruit(rotatedBitmap, it)
                                     val ripenessResult =
                                         classifyRipeness(fruitResult.label, rotatedBitmap, it)
+                                    val ripeningMethodResult =
+                                        classifyRipeningMethod(ripenessResult.label, rotatedBitmap, it)
+
+                                    isNaturalRipening.value = parseRipeningMethod(ripeningMethodResult.label)
 
                                     isSaved.value = false
 
@@ -357,7 +359,7 @@ fun CameraScreenContent(
             )
         }
 
-        // 🧠 Result handling and overlay logic
+        // 🧠 Detection handling
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
                 isBottomSheetVisible.value =
@@ -393,7 +395,7 @@ fun CameraScreenContent(
                         CustomBottomSheet(
                             fruitName = detectedFruit,
                             ripeningStage = detectedRipeness,
-                            ripeningProcess = dtProcess,
+                            ripeningProcess = isNaturalRipening.value,
                             confidence = detectedConfidence.value,
                             shelfLifeRange = shelfLifeRange,
                             shelfLifeDisplay = shelfLifeDisplay,
@@ -403,7 +405,7 @@ fun CameraScreenContent(
                                     onSaveFruit(
                                         detectedFruit,
                                         detectedRipeness,
-                                        dtProcess,
+                                        isNaturalRipening.value,
                                         detectedConfidence.value,
                                         capturedImagePath.value
                                     )
