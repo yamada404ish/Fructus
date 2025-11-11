@@ -57,17 +57,17 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
     val thresholds = mapOf(
-        "Tomato" to 0.9f,
-        "Lakatan" to 0.90f,
-        "Saba" to 0.6f,
-        "Cavendish" to 0.6f,
+        "Tomato" to 0.8f,
+        "Lakatan" to 0.9f,
+        "Saba" to 0.8f,
+        "Cavendish" to 0.1f,
         "Carabao" to 0.80f,
-        "Spoiled Banana" to 0.6f,
-        "Spoiled Mango" to 0.6f,
-        "Spoiled Tomato" to 0.6f
+        "Spoiled Banana" to 0.8f,
+        "Spoiled Mango" to 0.8f,
+        "Spoiled Tomato" to 0.8f
     )
 
-    val threshold = thresholds[predictedLabel] ?: 0.8f
+    val threshold = thresholds[predictedLabel] ?: 0.5f
 
     return if (confidence >= threshold) {
         ClassificationResult(predictedLabel, confidence)
@@ -116,7 +116,7 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    val ripenessThreshold = 0.45f
+    val ripenessThreshold = 0.7f
     return if (confidence >= ripenessThreshold) {
         ClassificationResult(predictedLabel, confidence)
     } else {
@@ -153,12 +153,12 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
     var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    // ✅ Compute spot score
+    // Compute spot score
     val spotScore = cropped.computeSpotScore()
     Log.d("FRUCTUS_LOG", "Spot Score: $spotScore")
 
-    // ✅ Apply threshold logic (0.7)
-    val spotThreshold = 0.7f
+    // Apply threshold  logic (0.)
+    val spotThreshold = 0.75f
     if (predictedLabel == "Natural" && spotScore < spotThreshold) {
         predictedLabel = "Artificial"
     } else if (predictedLabel == "Artificial" && spotScore >= spotThreshold) {
@@ -375,12 +375,13 @@ suspend fun analyzeBitmap(
 
     if (fruitResult.label != "No fruit detected") {
         if (fruitResult.label.equals("Carabao", true)) {
-            // Step 2a: mango ripeness
+            // Step 2a: classify mango ripeness
             ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
 
             // Step 2b: only classify ripening method if ripe or overripe
             if (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true)) {
-                ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, bitmap, context)
+                val segmented = bitmap.segmentFruit()
+                ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, segmented, context)
             }
         } else {
             ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
