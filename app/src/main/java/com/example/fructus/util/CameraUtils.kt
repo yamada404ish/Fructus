@@ -59,8 +59,8 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
         "Saba" to 0.95f,
         "Cavendish" to 0.8f,
         "Carabao" to 0.75f,
-        "Spoiled Banana" to 0.8f,
-        "Spoiled Mango" to 0.8f,
+        "Spoiled Banana" to 0.55f,
+        "Spoiled Mango" to 0.7f,
         "Spoiled Tomato" to 0.8f
     )
 
