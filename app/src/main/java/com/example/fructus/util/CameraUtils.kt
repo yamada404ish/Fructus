@@ -64,7 +64,7 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
         "Spoiled Tomato" to 0.8f
     )
 
-    val threshold = thresholds[predictedLabel] ?: 0.5f
+    val threshold = thresholds[predictedLabel] ?: 0.6f
 
     return if (confidence >= threshold) {
         ClassificationResult(predictedLabel, confidence)
