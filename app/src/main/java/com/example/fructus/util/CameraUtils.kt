@@ -55,12 +55,12 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
 
     val thresholds = mapOf(
         "Tomato" to 0.8f,
-        "Lakatan" to 0.9f,
-        "Saba" to 0.8f,
-        "Cavendish" to 0.1f,
-        "Carabao" to 0.80f,
+        "Lakatan" to 0.8f,
+        "Saba" to 0.95f,
+        "Cavendish" to 0.8f,
+        "Carabao" to 0.75f,
         "Spoiled Banana" to 0.8f,
-        "Spoiled Mango" to 0.7f,
+        "Spoiled Mango" to 0.8f,
         "Spoiled Tomato" to 0.8f
     )
 
@@ -73,8 +73,8 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     }
 }
 
-// --------------------- RIPENESS CLASSIFIER ---------------------
 fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): ClassificationResult {
+    // --- 🟡 Handle pre-labeled spoiled fruits ---
     if (
         fruitType.equals("Spoiled Banana", true) ||
         fruitType.equals("Spoiled Tomato", true) ||
@@ -83,6 +83,7 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
         return ClassificationResult("Spoiled", 1f)
     }
 
+    // --- 🍌 Select proper model based on fruit type ---
     val modelName = when (fruitType.lowercase()) {
         "cavendish" -> "banana_cavendish_model.tflite"
         "lakatan" -> "banana_lakatan_model.tflite"
@@ -107,16 +108,64 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     model.close()
 
     val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
-    val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
-    val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
+    var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+    var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    val ripenessThreshold = 0.7f
+    // --- 🟤 SPOT FACTOR CHECK (applies to all fruits except tomato) ---
+    if (!fruitType.equals("tomato", ignoreCase = true)) {
+        val spotFactor = cropped.computeSpotFactor()
+        Log.d("FRUCTUS_LOG", "Spot Factor (ripeness): $spotFactor")
+
+        // 🔹 Individual thresholds per fruit type
+        val thresholds = when (fruitType.lowercase()) {
+            "cavendish" -> Pair(50f, 40f)   // (Spoiled ≥40, Overripe 30–39)
+            "lakatan" -> Pair(50f, 40f)
+            "saba" -> Pair(60f, 50f)
+            "carabao" -> Pair(45f, 22f)     // Mango slightly higher due to texture
+            else -> Pair(42f, 30f)
+        }
+
+        val spoiledThreshold = thresholds.first
+        val overripeThreshold = thresholds.second
+
+        when {
+            spotFactor >= spoiledThreshold && (predictedLabel == "Ripe" || predictedLabel == "Overripe") -> {
+                predictedLabel = "Spoiled"
+                confidence = 0.95f
+            }
+            spotFactor in overripeThreshold..(spoiledThreshold - 1) && predictedLabel == "Ripe" -> {
+                predictedLabel = "Overripe"
+                confidence = (confidence + 0.1f).coerceAtMost(1f)
+            }
+        }
+    } else {
+        Log.d("FRUCTUS_LOG", "Spot factor skipped for tomato ripeness classification.")
+    }
+    // --- 🎨 COLOR ASSIST (FAST) ---
+    if (!fruitType.equals("tomato", ignoreCase = true)) {
+        val colorAssist = cropped.computeColorAssist()
+        Log.d("FRUCTUS_LOG", "Color Assist Ratio: $colorAssist")
+
+        when {
+            colorAssist > 0.6f && predictedLabel == "Unripe" -> {
+                predictedLabel = "Ripe"
+                confidence = (confidence + 0.15f).coerceAtMost(1f)
+            }
+            colorAssist < 0.3f && predictedLabel == "Ripe" -> {
+                predictedLabel = "Unripe"
+                confidence = (confidence + 0.15f).coerceAtMost(1f)
+            }
+        }
+    }
+
+    val ripenessThreshold = 0.6f
     return if (confidence >= ripenessThreshold) {
         ClassificationResult(predictedLabel, confidence)
     } else {
         ClassificationResult("Unknown", confidence)
     }
 }
+
 
 // --------------------- MANGO RIPENING METHOD CLASSIFIER ---------------------
 fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Context): ClassificationResult {
@@ -150,7 +199,7 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
     val spotFactor = cropped.computeSpotFactor()
     Log.d("FRUCTUS_LOG", "Spot Factor: $spotFactor")
 
-    predictedLabel = if (spotFactor >= 3.8f) "Natural" else "Artificial"
+    predictedLabel = if (spotFactor >= 7f) "Natural" else "Artificial"
     confidence = (spotFactor / 10f).coerceIn(0f, 1f)
 
     return ClassificationResult(predictedLabel, confidence)
@@ -372,22 +421,35 @@ suspend fun analyzeBitmap(
     bitmap: Bitmap,
     context: Context
 ): Triple<ClassificationResult, ClassificationResult?, ClassificationResult?> {
-    val fruitResult = classifyFruit(bitmap, context)
+
+    // 🔹 Preprocess image just like camera
+    val processedBitmap = bitmap.prepareForModel()  // optional helper if you use normalization, rotation, etc.
+
+    // 🔹 Step 1: Fruit classification
+    val fruitResult = classifyFruit(processedBitmap, context)
     var ripenessResult: ClassificationResult? = null
     var ripeningMethodResult: ClassificationResult? = null
 
+    // 🔹 Step 2: Continue only if fruit is detected
     if (fruitResult.label != "No fruit detected") {
-        if (fruitResult.label.equals("Carabao", true)) {
-            ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
-            if (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true)) {
-                val segmented = bitmap.segmentFruit()
-                ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, segmented, context)
-            }
-        } else {
-            ripenessResult = classifyRipeness(fruitResult.label, bitmap, context)
+
+        // --- Cavendish or Carabao banana or mango get their own rules ---
+        ripenessResult = classifyRipeness(fruitResult.label, processedBitmap, context)
+
+        // --- Spot factor, color assist, etc. already happen inside classifyRipeness() ---
+        // So you don't need to manually call those here.
+
+        // 🔹 Step 3: If it's a Carabao mango and is ripe/overripe → check ripening method
+        if (fruitResult.label.equals("Carabao", true) &&
+            (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true))
+        ) {
+            val segmented = processedBitmap.segmentFruit()
+            ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, segmented, context)
         }
     }
 
+    // 🔹 Logging
+    Log.d("FRUCTUS_LOG", "📸 [GALLERY DETECTION]")
     Log.d("FRUCTUS_LOG", "Fruit Type: ${fruitResult.label} (Conf: ${fruitResult.confidence})")
     ripenessResult?.let {
         Log.d("FRUCTUS_LOG", "Ripeness: ${it.label} (Conf: ${it.confidence})")
@@ -397,4 +459,33 @@ suspend fun analyzeBitmap(
     }
 
     return Triple(fruitResult, ripenessResult, ripeningMethodResult)
+}
+
+fun Bitmap.computeColorAssist(): Float {
+    val small = Bitmap.createScaledBitmap(this, 64, 64, true)
+    val pixels = IntArray(small.width * small.height)
+    small.getPixels(pixels, 0, small.width, 0, 0, small.width, small.height)
+
+    var yellowish = 0
+    var greenish = 0
+
+    for (p in pixels) {
+        val r = (p shr 16) and 0xFF
+        val g = (p shr 8) and 0xFF
+        val b = p and 0xFF
+
+        // Hue-like logic but faster (no color conversion)
+        if (r > 150 && g > 100 && b < 100) yellowish++
+        else if (g > r && g > b) greenish++
+    }
+
+    small.recycle()
+    val total = yellowish + greenish
+    return if (total == 0) 0f else yellowish.toFloat() / total
+}
+fun Bitmap.prepareForModel(): Bitmap {
+    // Ensure same input size and orientation as camera
+    val targetSize = 224
+    val scaled = Bitmap.createScaledBitmap(this, targetSize, targetSize, true)
+    return scaled
 }
