@@ -8,32 +8,43 @@ import com.example.fructus.data.local.dao.FruitDao
 import com.example.fructus.data.local.dao.NotificationDao
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.data.local.entity.NotificationEntity
+import com.example.fructus.util.SecureDatabaseKeyManager
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 
-@Database(entities = [ FruitEntity::class, NotificationEntity::class ], version = 2, exportSchema = false) // ⬅️ bumped
-// version
+@Database(
+    entities = [FruitEntity::class, NotificationEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class FruitDatabase : RoomDatabase() {
     abstract fun fruitDao(): FruitDao
     abstract fun notificationDao(): NotificationDao
 
     companion object {
-        const val DATABASE_NAME = "fructus_db"
-
+        private const val DATABASE_NAME = "fructus_db"
         @Volatile
         private var INSTANCE: FruitDatabase? = null
 
         fun getDatabase(context: Context): FruitDatabase {
             return INSTANCE ?: synchronized(this) {
+                // 🔐 Get the encrypted passphrase
+                val passphrase = SecureDatabaseKeyManager.getOrCreatePassphrase(context)
+                val factory = SupportFactory(passphrase)
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     FruitDatabase::class.java,
                     DATABASE_NAME
                 )
-                    // Development only: wipes DB when schema changes
-                    .fallbackToDestructiveMigration()
+                    // Use encrypted DB
+                    .openHelperFactory(factory)
 
-                    // For production later:
-                    // .addMigrations(MIGRATION_1_2, MIGRATION_2_3, ...)
+                    // ❌ No fallback destruction — define migrations properly later
+                    // .fallbackToDestructiveMigration()
+
                     .build()
+
                 INSTANCE = instance
                 instance
             }

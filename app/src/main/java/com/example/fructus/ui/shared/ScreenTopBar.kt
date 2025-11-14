@@ -83,15 +83,15 @@ fun ScreenTopBar(
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .offset(x = 0.dp, y = (-6).dp)
+                            .offset(x = 4.dp, y = (-10).dp)
                             .background(Color(0xFFE74C3C), shape = RoundedCornerShape(50))
-                            .padding(horizontal = 7.dp, vertical = 4.dp),
+                            .padding(horizontal = 8.dp, ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = if (archiveCount > 99) "99+" else archiveCount.toString(),
+                            text = if (archiveCount > 9) "9+" else archiveCount.toString(),
                             color = Color.White,
-                            fontSize = 10.sp,
+                            fontSize = 8.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = poppinsFontFamily
                         )

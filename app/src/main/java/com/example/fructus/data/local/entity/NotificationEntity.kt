@@ -21,4 +21,5 @@ data class NotificationEntity(
     val timestamp: Long,
 
     val imagePath: String? = null
+
 )

@@ -31,12 +31,13 @@ fun UserGuideScreenContent(
     onProcessChange: (String) -> Unit
 ) {
     val colors = MaterialTheme.appColors
+    val isProcessEnabled = selectedGuide !in listOf("Banana", "Tomato")
 
     Scaffold(
         containerColor = colors.bg,
         topBar = {
             ScreenTopBar(
-                title = "Food Guide",
+                title = "Ripeness Guide",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
                 showArchive = false
@@ -59,7 +60,8 @@ fun UserGuideScreenContent(
                 Dropdown(
                     selectedItem = selectedProcess,
                     items = listOf("Natural", "Artificial"),
-                    onItemSelected = { onProcessChange(it) }
+                    onItemSelected = { onProcessChange(it) },
+                    enabled = isProcessEnabled
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))

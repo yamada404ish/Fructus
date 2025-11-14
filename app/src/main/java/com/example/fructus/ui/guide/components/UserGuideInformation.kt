@@ -93,7 +93,7 @@ fun FruitGuideCard(
                         "Color",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
@@ -105,7 +105,7 @@ fun FruitGuideCard(
                         "Stage",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
@@ -116,7 +116,7 @@ fun FruitGuideCard(
                         "Shelf life",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
@@ -174,7 +174,7 @@ fun FruitStageRow(
             contentDescription = stage.stage,
             modifier = Modifier
                 .weight(1f)
-                .size(55.dp)
+                .size(60.dp)
                 .align(Alignment.CenterVertically)
                 .clickable(
                     onClick = { isDialogOpen.value = true },
@@ -187,7 +187,7 @@ fun FruitStageRow(
         Text(
             text = stage.stage,
             fontFamily = poppinsFontFamily,
-            fontSize = 14.sp,
+            fontSize = 16.sp,
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
@@ -203,7 +203,7 @@ fun FruitStageRow(
             },
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
+            fontSize = 15.sp,
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
@@ -234,7 +234,7 @@ fun FruitStageRow(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.6f)) // 👈 dim background
+                    .background(Color.Black.copy(alpha = 0.6f))
                     .clickable(
                         onClick = { isDialogOpen.value = false },
                         indication = null,

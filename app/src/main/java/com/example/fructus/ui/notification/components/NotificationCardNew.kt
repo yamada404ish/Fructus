@@ -49,11 +49,6 @@ fun NotificationCard(
     val clicked = remember { mutableStateOf(false) }
     val backgroundColor = if (notification.isRead) colors.bg else colors.accent
 
-//    val imageModel: Any = if (!notification.imagePath.isNullOrEmpty()) {
-//        File(notification.imagePath)
-//    } else {
-//        getFruitDrawableId(notification.fruitName) // fallback to fruit drawable
-//    }
 
     Card(
         modifier = Modifier
@@ -81,25 +76,24 @@ fun NotificationCard(
                 .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-//            AsyncImage(
-//                model = imageModel,
-//                contentDescription = "Fruit Image",
-//                modifier = Modifier
-//                    .clip(RoundedCornerShape(16.dp))
-//                    .aspectRatio(1f),
-//                contentScale = ContentScale.Crop,
-//                placeholder = painterResource(R.drawable.unknown_fruit),
-//                error = painterResource(R.drawable.unknown_fruit)
-//            )
 
-            Image(
-                painter = painterResource(getFruitDrawableId(notification.fruitName)),
-                contentDescription = "Item Image",
+            val imageModel: Any = if (!notification.imagePath.isNullOrEmpty()) {
+                File(notification.imagePath)
+            } else {
+                R.drawable.unknown_fruit
+            }
+
+            AsyncImage(
+                model = imageModel,
+                contentDescription = "Fruit Image",
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .aspectRatio(1f),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.unknown_fruit),
+                error = painterResource(R.drawable.unknown_fruit)
             )
+
 
             Spacer(modifier = Modifier.size(12.dp))
             Column(

@@ -28,7 +28,7 @@
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
-    "imageResName": "recipe_fries",
+    "imageResName": "recipe_banana_fries",
     "fruitType": "cavendish",
     "stage": "unripe",
     "ingredients": [
@@ -46,7 +46,7 @@
   {
     "name": "Chocolate covered bananas",
     "description": "Frozen bananas dipped in chocolate, topped with nuts or sprinkles.",
-    "imageResName": "recipe_choco",
+    "imageResName": "recipe_banana_chocolate",
     "fruitType": "cavendish",
     "stage": "ripe",
     "ingredients": [
@@ -66,7 +66,7 @@
   {
     "name": "Banana Oatmeal Pancake",
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
-    "imageResName": "recipe_pancake",
+    "imageResName": "recipe_banana_pancake",
     "fruitType": "cavendish",
     "stage": "ripe",
     "ingredients": [
@@ -114,9 +114,9 @@
     ]
   },
   {
-    "name": " Maruya",
+    "name": "Maruya",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
+    "imageResName": "recipe_banana_fritters",
     "fruitType": "cavendish",
     "stage": "overripe",
     "ingredients": [
@@ -167,7 +167,7 @@
   {
     "name": "Green Banana Fries",
     "description": "Fried unripe banana slices, a savory alternative to fries.",
-    "imageResName": "recipe_fries",
+    "imageResName": "recipe_banana_fries",
     "fruitType": "lakatan",
     "stage": "unripe",
     "ingredients": [
@@ -185,7 +185,7 @@
   {
     "name": "Banana Oatmeal Pancake",
     "description": "Mashed bananas mixed with oats, cooked into flat round pancakes.",
-    "imageResName": "recipe_pancake",
+    "imageResName": "recipe_banana_pancake",
     "fruitType": "lakatan",
     "stage": "ripe",
     "ingredients": [
@@ -211,7 +211,7 @@
   {
     "name": "Chocolate covered bananas",
     "description": "Frozen bananas dipped in chocolate, topped with nuts or sprinkles.",
-    "imageResName": "recipe_choco",
+    "imageResName": "recipe_banana_chocolate",
     "fruitType": "lakatan",
     "stage": "ripe",
     "ingredients": [
@@ -231,11 +231,11 @@
   {
     "name": " Maruya",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
+    "imageResName": "recipe_banana_fritters",
     "fruitType": "lakatan",
     "stage": "overripe",
     "ingredients": [
-      "Lakatan Banana",
+      "Banana",
       "All purpose flour",
       "Baking powder",
       "Salt",
@@ -278,7 +278,7 @@
   {
     "name": "Nilupak",
     "description": "Mashed bananas with butter, sugar, and coconut, a sweet delicacy.",
-    "imageResName": "recipe_nilupak",
+    "imageResName": "recipe_banana_nilupak",
     "fruitType": "saba",
     "stage": "unripe",
     "ingredients": [
@@ -302,7 +302,7 @@
   {
     "name": "Pinakro",
     "description": " Filipino snack dish that is made with saba bananas slowly cooked in coconut milk until tender then sweetened with sugar.",
-    "imageResName": "recipe_pinakro",
+    "imageResName": "recipe_banana_pinakro",
     "fruitType": "saba",
     "stage": "unripe",
     "ingredients": [
@@ -323,7 +323,7 @@
 
   { "name": "Fried Saba Banana",
     "description": "Caramelized deep-fried bananas on skewers, a popular Filipino street snack.",
-    "imageResName": "fried_saba",
+    "imageResName": "recipe_banana_fried_saba",
     "fruitType": "saba",
     "stage": "ripe",
     "ingredients": [
@@ -410,11 +410,11 @@
   {
     "name": " Maruya",
     "description": "Sliced bananas coated in batter, deep-fried until golden brown.",
-    "imageResName": "recipe_banana_maruya",
+    "imageResName": "recipe_banana_fritters",
     "fruitType": "saba",
     "stage": "overripe",
     "ingredients": [
-      "Saba Banana",
+      "Banana",
       "All purpose flour",
       "Baking powder",
       "Salt",
@@ -455,7 +455,7 @@
   {
     "name": "Ensaladang Mangga",
     "description": "A bright and flavorful mango salad tossed with a savory and citrusy dressing.",
-    "imageResName": "ensaladang_mangga",
+    "imageResName": "recipe_mango_ensaladang_mangga",
     "fruitType": "carabao",
     "stage": "unripe",
     "ingredients": [
@@ -676,7 +676,7 @@
   {
     "name": "Tomato Juice",
     "description": "A healthy beverage made from the juice of fresh tomatoes",
-    "imageResName": "recipe_tomato_sauce",
+    "imageResName": "recipe_tomato_juice",
     "fruitType": "tomato",
     "stage": "ripe",
     "ingredients": [
@@ -698,7 +698,7 @@
     "description": "A thick sauce made with tomatoes, oil, and herbs, often served with pasta",
     "imageResName": "recipe_tomato_sauce",
     "fruitType": "tomato",
-    "stage": "ripe",
+    "stage": "overripe",
     "ingredients": [
       "4 lb plum tomatoes (or two 28-oz cans whole peeled plum tomatoes)",
       "6 tablespoon unsalted butter",
