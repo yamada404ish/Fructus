@@ -190,7 +190,9 @@ fun RecipeInformation(
                                 fontSize = 14.sp,
                                 color = colors.textPrimary
                             )
-                            HorizontalLine()
+                            HorizontalLine(
+                                color = Color(0xFFD1CEBA)
+                            )
                             Spacer(modifier = Modifier.height(10.dp))
                         }
                     }

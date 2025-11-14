@@ -6,9 +6,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HorizontalLine() {
+fun HorizontalLine(
+    color: Color
+) {
     HorizontalDivider(
         thickness = 2.dp,
-        color = Color(0xFFD1CEBA)
+        color = color
     )
 }
