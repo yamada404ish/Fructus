@@ -48,12 +48,12 @@ fun Tips(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         InfoCard(icon = R.drawable.ic_temp, title = "Keep Cool", subtitle = "Store fruit in cool " +
-                "conditions", subtext = "Most fresh fruits last longer if stored in a cool place")
+                "conditions", subtext = "Most fresh fruits last longer if stored in a cool place", sourceText = "Source: unlockfood.ca")
         InfoCard(icon = R.drawable.ic_sun, title = "Avoid Sunlight", subtitle = "Keep fruits away" +
-                " from the sunlight", subtext = "Heat causes fruits to lose their moisture, so it is best to keep your fruits away from sunlight.")
+                " from the sunlight", subtext = "Heat causes fruits to lose their moisture, so it is best to keep your fruits away from sunlight.", sourceText = "Source: purdue.edu")
         InfoCard(icon = R.drawable.ic_faucet,title = "Wash and Dry", subtitle = "To prevent " +
                 "bacteria growth", subtext = "Fruits may arrive contaminated with bacteria, it is" +
-                " best to wash them before storing or consuming.")
+                " best to wash them before storing or consuming.", sourceText = "Source: fda.gov")
     }
 }
 
@@ -64,6 +64,7 @@ fun InfoCard(
     title: String,
     subtitle: String,
     subtext: String,
+    sourceText:String,
     modifier: Modifier = Modifier
 ) {
 
@@ -154,7 +155,7 @@ fun InfoCard(
             Spacer(modifier = Modifier.height(2.dp))
 
             Text(
-                text = "Source: unlockfood.ca",
+                text = sourceText,
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
                 fontSize = 10.sp,
