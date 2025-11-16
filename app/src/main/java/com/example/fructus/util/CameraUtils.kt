@@ -57,11 +57,11 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
 
     val thresholds = mapOf(
         "Tomato" to 0.9f,
-        "Lakatan" to 0.8f,
-        "Saba" to 0.95f,
-        "Cavendish" to 0.6f,
+        "Lakatan" to 0.85f,
+        "Saba" to 0.85f,
+        "Cavendish" to 0.85f,
         "Carabao" to 0.95f,
-        "Spoiled Banana" to 0.7f,
+        "Spoiled Banana" to 0.9f,
         "Spoiled Mango" to 0.7f,
         "Spoiled Tomato" to 0.8f
     )
@@ -582,7 +582,7 @@ fun Bitmap.computeColorAssist(): Float {
 
         // Hue-like logic but faster (no color conversion)
         if (r > 150 && g > 100 && b < 100) yellowish++
-        else if (g > r + 10 && g > b + 10) greenish++   // much less sensitive
+        else if (g > r + 15 && g > b + 15) greenish++   // much less sensitive
     }
 
     small.recycle()

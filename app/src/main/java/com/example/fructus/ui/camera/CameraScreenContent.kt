@@ -523,7 +523,7 @@ fun CameraScreenContent(
             isDarkMode = isDarkMode
         )
     }
-
+//
     // 🧾 How to use overlay
     if (showHowTo.value) {
         HowToOverlay(onDismiss = { showHowTo.value = false })
