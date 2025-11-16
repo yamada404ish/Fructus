@@ -1,7 +1,7 @@
 package com.example.fructus.util
 
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.*
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.Matrix
@@ -15,7 +15,9 @@ import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
-
+import org.opencv.core.Point
+import kotlin.math.min
+import kotlin.math.max
 // 🔹 OpenCV imports
 import org.opencv.android.Utils
 import org.opencv.core.*
@@ -49,22 +51,41 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     model.run(input, output)
     model.close()
 
-    val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
-    val confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
-    val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
+    var maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
+    var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
+    var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
     val thresholds = mapOf(
-        "Tomato" to 0.8f,
+        "Tomato" to 0.9f,
         "Lakatan" to 0.8f,
         "Saba" to 0.95f,
-        "Cavendish" to 0.8f,
-        "Carabao" to 0.75f,
-        "Spoiled Banana" to 0.55f,
+        "Cavendish" to 0.6f,
+        "Carabao" to 0.95f,
+        "Spoiled Banana" to 0.7f,
         "Spoiled Mango" to 0.7f,
         "Spoiled Tomato" to 0.8f
     )
-
     val threshold = thresholds[predictedLabel] ?: 0.6f
+
+    // 🟢 --- Cavendish vs. Lakatan Heuristic Enhancement ---
+    if (predictedLabel == "Cavendish" || predictedLabel == "Lakatan") {
+        val curvature = cropped.computeCurvatureFactor()
+        val hue = cropped.computeHueBalance()
+        Log.d("FRUCTUS_LOG", "Curvature: $curvature, Hue: $hue")
+
+        // Cavendish: More curved, lighter hue (yellow)
+        // Lakatan: Straighter, more orange hue
+        when {
+            curvature > 0.3f && hue > 22f -> {
+                predictedLabel = "Cavendish"
+                confidence = (confidence + 0.1f).coerceAtMost(1f)
+            }
+            curvature < 0.25f && hue < 22f -> {
+                predictedLabel = "Lakatan"
+                confidence = (confidence + 0.1f).coerceAtMost(1f)
+            }
+        }
+    }
 
     return if (confidence >= threshold) {
         ClassificationResult(predictedLabel, confidence)
@@ -73,8 +94,88 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     }
 }
 
+// --------------------- CURVATURE FACTOR ---------------------
+fun Bitmap.computeCurvatureFactor(): Float {
+    val src = Mat()
+    Utils.bitmapToMat(this, src)
+    Imgproc.cvtColor(src, src, Imgproc.COLOR_RGBA2GRAY)
+    Imgproc.GaussianBlur(src, src, Size(7.0, 7.0), 0.0)
+
+    // Edge detection
+    val edges = Mat()
+    Imgproc.Canny(src, edges, 40.0, 120.0)
+
+    // Find contours
+    val contours = mutableListOf<MatOfPoint>()
+    Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+    if (contours.isEmpty()) {
+        src.release(); edges.release()
+        return 0f
+    }
+
+    // Largest contour = fruit
+    val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return 0f
+
+    // Smooth the contour → reduces sensitivity
+    val approx = MatOfPoint2f()
+    val contour2f = MatOfPoint2f(*largest.toArray())
+    Imgproc.approxPolyDP(contour2f, approx, 0.01 * Imgproc.arcLength(contour2f, true), true)
+
+    // Fit ellipse → gives major/minor axis → curvature measure
+    if (approx.rows() < 5) {
+        src.release(); edges.release()
+        return 0f
+    }
+
+    val ellipse = Imgproc.fitEllipse(approx)
+
+    val major = max(ellipse.size.width, ellipse.size.height)
+    val minor = min(ellipse.size.width, ellipse.size.height)
+
+    // Curvature ratio (0 = straight, higher = more curve)
+    val curvature = 1f - (minor / major).toFloat()
+
+    src.release(); edges.release()
+    return curvature.coerceIn(0f, 1f)
+}
+
+
+// --------------------- HUE BALANCE (Improved Median-Based) ---------------------
+fun Bitmap.computeHueBalance(): Float {
+    val mat = Mat()
+    Utils.bitmapToMat(this, mat)
+    Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV)
+
+    val hsvChannels = mutableListOf<Mat>()
+    Core.split(mat, hsvChannels)
+    val h = hsvChannels[0]
+    val s = hsvChannels[1]
+    val v = hsvChannels[2]
+
+    val mask = Mat()
+    Core.inRange(v, Scalar(50.0), Scalar(230.0), mask)
+
+    val hueValues = Mat()
+    h.copyTo(hueValues, mask)
+    val hueList = mutableListOf<Double>()
+
+    for (row in 0 until hueValues.rows()) {
+        for (col in 0 until hueValues.cols()) {
+            val hueVal = hueValues.get(row, col)?.firstOrNull()?.toDouble() ?: continue
+            if (hueVal > 0) hueList.add(hueVal)
+        }
+    }
+
+    mat.release(); h.release(); s.release(); v.release(); mask.release(); hueValues.release()
+    if (hueList.isEmpty()) return 0f
+
+    hueList.sort()
+    val medianHue = hueList[hueList.size / 2]
+    return medianHue.toFloat()
+}
+
+// --------------------- RIPENESS CLASSIFICATION ---------------------
 fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): ClassificationResult {
-    // --- 🟡 Handle pre-labeled spoiled fruits ---
     if (
         fruitType.equals("Spoiled Banana", true) ||
         fruitType.equals("Spoiled Tomato", true) ||
@@ -83,7 +184,6 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
         return ClassificationResult("Spoiled", 1f)
     }
 
-    // --- 🍌 Select proper model based on fruit type ---
     val modelName = when (fruitType.lowercase()) {
         "cavendish" -> "banana_cavendish_model.tflite"
         "lakatan" -> "banana_lakatan_model.tflite"
@@ -95,53 +195,20 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
 
     val labels = listOf("Overripe", "Ripe", "Unripe")
     val model = Interpreter(loadModelFile(context, modelName))
-    val cropped = bitmap.cropToScanBox(context)
+    val segmented = bitmap.segmentFruit()
+    val cropped = segmented.cropToScanBox(context)
 
-    if (cropped.isMostlyBackground()) {
-        model.close()
-        return ClassificationResult("No fruit detected", 0f)
-    }
 
     val input = preprocessBitmap(cropped)
     val output = Array(1) { FloatArray(labels.size) }
     model.run(input, output)
     model.close()
 
-    val maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
+    var maxIndex = output[0].indices.maxByOrNull { output[0][it] } ?: -1
     var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    // --- 🟤 SPOT FACTOR CHECK (applies to all fruits except tomato) ---
-    if (!fruitType.equals("tomato", ignoreCase = true)) {
-        val spotFactor = cropped.computeSpotFactor()
-        Log.d("FRUCTUS_LOG", "Spot Factor (ripeness): $spotFactor")
 
-        // 🔹 Individual thresholds per fruit type
-        val thresholds = when (fruitType.lowercase()) {
-            "cavendish" -> Pair(50f, 40f)   // (Spoiled ≥40, Overripe 30–39)
-            "lakatan" -> Pair(50f, 40f)
-            "saba" -> Pair(60f, 50f)
-            "carabao" -> Pair(45f, 22f)     // Mango slightly higher due to texture
-            else -> Pair(42f, 30f)
-        }
-
-        val spoiledThreshold = thresholds.first
-        val overripeThreshold = thresholds.second
-
-        when {
-            spotFactor >= spoiledThreshold && (predictedLabel == "Ripe" || predictedLabel == "Overripe") -> {
-                predictedLabel = "Spoiled"
-                confidence = 0.95f
-            }
-            spotFactor in overripeThreshold..(spoiledThreshold - 1) && predictedLabel == "Ripe" -> {
-                predictedLabel = "Overripe"
-                confidence = (confidence + 0.1f).coerceAtMost(1f)
-            }
-        }
-    } else {
-        Log.d("FRUCTUS_LOG", "Spot factor skipped for tomato ripeness classification.")
-    }
-    // --- 🎨 COLOR ASSIST (FAST) ---
     if (!fruitType.equals("tomato", ignoreCase = true)) {
         val colorAssist = cropped.computeColorAssist()
         Log.d("FRUCTUS_LOG", "Color Assist Ratio: $colorAssist")
@@ -158,6 +225,44 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
         }
     }
 
+    // Exempt ONLY Unripe Saba from spot logic
+    val skipSpotLogic = fruitType.equals("saba", ignoreCase = true) &&
+            predictedLabel.equals("Unripe", ignoreCase = true)
+
+    if (!fruitType.equals("tomato", ignoreCase = true) && !skipSpotLogic) {
+
+        val spotFactor = cropped.computeSpotFactor()
+        Log.d("FRUCTUS_LOG", "Spot Factor (ripeness): $spotFactor")
+
+        val thresholds = when (fruitType.lowercase()) {
+            "cavendish" -> Pair(60f, 50f)
+            "lakatan" -> Pair(50f, 40f)
+            "saba" -> Pair(50f, 40f)
+            "carabao" -> Pair(50f, 40f)
+            else -> Pair(42f, 30f)
+        }
+
+        val spoiledThreshold = thresholds.first
+        val overripeThreshold = thresholds.second
+
+        when {
+            spotFactor >= spoiledThreshold &&
+                    (predictedLabel == "Ripe" || predictedLabel == "Overripe") -> {
+                predictedLabel = "Spoiled"
+                confidence = 0.95f
+            }
+
+            spotFactor in overripeThreshold..(spoiledThreshold - 1) &&
+                    predictedLabel == "Ripe" -> {
+                predictedLabel = "Overripe"
+                confidence = (confidence + 0.1f).coerceAtMost(1f)
+            }
+        }
+    } else {
+        Log.d("FRUCTUS_LOG", "Spot factor skipped for this case.")
+    }
+
+
     val ripenessThreshold = 0.6f
     return if (confidence >= ripenessThreshold) {
         ClassificationResult(predictedLabel, confidence)
@@ -165,6 +270,7 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
         ClassificationResult("Unknown", confidence)
     }
 }
+
 
 
 // --------------------- MANGO RIPENING METHOD CLASSIFIER ---------------------
@@ -476,7 +582,7 @@ fun Bitmap.computeColorAssist(): Float {
 
         // Hue-like logic but faster (no color conversion)
         if (r > 150 && g > 100 && b < 100) yellowish++
-        else if (g > r && g > b) greenish++
+        else if (g > r + 10 && g > b + 10) greenish++   // much less sensitive
     }
 
     small.recycle()

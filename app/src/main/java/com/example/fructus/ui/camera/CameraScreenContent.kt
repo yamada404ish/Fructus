@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -40,6 +41,8 @@ import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.*
 import kotlinx.coroutines.delay
+import java.util.concurrent.TimeUnit
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +72,14 @@ fun CameraScreenContent(
     val showNoFruitDetected = remember { mutableStateOf(false) }
     val isNaturalRipening = remember { mutableStateOf(true) }
 
+    // 🔧 PreviewView ref (required for metering point factory)
+    val previewViewRef = remember { mutableStateOf<PreviewView?>(null) }
+
+    // 🔍 Auto-focus helpers
+    var lastAutoFocusTime by remember { mutableStateOf(0L) }
+    val autoFocusCooldownMs = 1500L
+    val scanBoxDp = 460f
+
     // Helper function to safely parse ripening method
     fun parseRipeningMethod(label: String?): Boolean {
         val ripeningLabel = label?.trim()?.lowercase() ?: "unknown"
@@ -79,6 +90,51 @@ fun CameraScreenContent(
                 Log.w("RipeningMethod", "Unexpected label: $label")
                 false
             }
+        }
+    }
+
+    // 🔎 Trigger autofocus (center of the scan box)
+    fun triggerAutoFocus(camera: Camera?) {
+        try {
+            camera ?: return
+            val cameraControl = camera.cameraControl
+
+            val previewView = previewViewRef.value ?: return
+
+            // Use SurfaceOrientedMeteringPointFactory so coordinates account for surface orientation
+            val factory = SurfaceOrientedMeteringPointFactory(
+                previewView.width.toFloat(),
+                previewView.height.toFloat()
+            )
+
+            // Compute scan box size in pixels and center of the scan box
+            val density = context.resources.displayMetrics.density
+            val boxPx = scanBoxDp * density
+
+            val left = (previewView.width - boxPx) / 2f
+            val top = (previewView.height - boxPx) / 2f
+            val centerX = left + (boxPx / 2f)
+            val centerY = top + (boxPx / 2f)
+
+            val point = factory.createPoint(centerX, centerY)
+
+            val action = FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
+                .setAutoCancelDuration(2, TimeUnit.SECONDS)
+                .build()
+
+            cameraControl.startFocusAndMetering(action)
+            Log.d("AutoFocus", "Triggered AF at scan-box center: x=$centerX y=$centerY")
+        } catch (e: Exception) {
+            Log.e("AutoFocus", "Error triggering autofocus", e)
+        }
+    }
+
+    // ⏱ Only autofocus every autoFocusCooldownMs (prevents lag)
+    fun maybeAutoFocus(camera: Camera?) {
+        val now = System.currentTimeMillis()
+        if (now - lastAutoFocusTime > autoFocusCooldownMs) {
+            triggerAutoFocus(camera)
+            lastAutoFocusTime = now
         }
     }
 
@@ -171,6 +227,9 @@ fun CameraScreenContent(
             factory = {
                 val previewView = PreviewView(it)
 
+                // store previewView reference for autofocus
+                previewViewRef.value = previewView
+
                 val analyzer = ImageAnalysis.Builder()
                     .setTargetResolution(Size(224, 224))
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -193,6 +252,11 @@ fun CameraScreenContent(
                                         classifyRipeness(fruitResult.label, rotatedBitmap, it)
                                     val ripeningMethodResult =
                                         classifyRipeningMethod(ripenessResult.label, rotatedBitmap, it)
+
+                                    // 🎯 Auto-focus when fruit is detected (uses scan-box center)
+                                    if (fruitResult.label != "No fruit detected") {
+                                        maybeAutoFocus(cameraRef.value)
+                                    }
 
                                     isNaturalRipening.value = parseRipeningMethod(ripeningMethodResult.label)
 
