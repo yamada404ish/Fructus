@@ -44,18 +44,34 @@ import com.example.fructus.ui.theme.poppinsFontFamily
 
 @Composable
 fun Tips(modifier: Modifier = Modifier) {
-    Column (
+
+    var expandedIndex by remember { mutableStateOf<Int?>(null) }
+
+    Column(
         verticalArrangement = Arrangement.Center
     ) {
-        InfoCard(icon = R.drawable.ic_temp, title = "Keep Cool", subtitle = "Store fruit in cool " +
-                "conditions", subtext = "Most fresh fruits last longer if stored in a cool place", sourceText = "Source: unlockfood.ca")
-        InfoCard(icon = R.drawable.ic_sun, title = "Avoid Sunlight", subtitle = "Keep fruits away" +
-                " from the sunlight", subtext = "Heat causes fruits to lose their moisture, so it is best to keep your fruits away from sunlight.", sourceText = "Source: purdue.edu")
-        InfoCard(icon = R.drawable.ic_faucet,title = "Wash and Dry", subtitle = "To prevent " +
-                "bacteria growth", subtext = "Fruits may arrive contaminated with bacteria, it is" +
-                " best to wash them before storing or consuming.", sourceText = "Source: fda.gov")
+        val items = listOf(
+            Triple(R.drawable.ic_temp, "Keep Cool", Pair("Store fruit in cool conditions", "Most fresh fruits last longer if stored in a cool place.") to "Source: unlockfood.ca"),
+            Triple(R.drawable.ic_sun, "Avoid Sunlight", Pair("Keep fruits away from the sunlight", "Heat causes fruits to lose moisture...") to "Source: purdue.edu"),
+            Triple(R.drawable.ic_faucet, "Wash and Dry", Pair("To prevent bacteria growth", "Wash fruits before storing or consuming.") to "Source: fda.gov")
+        )
+
+        items.forEachIndexed { index, item ->
+            InfoCard(
+                icon = item.first,
+                title = item.second,
+                subtitle = item.third.first.first,
+                subtext = item.third.first.second,
+                sourceText = item.third.second,
+                isExpanded = expandedIndex == index,
+                onToggle = {
+                    expandedIndex = if (expandedIndex == index) null else index
+                }
+            )
+        }
     }
 }
+
 
 
 @Composable
@@ -64,22 +80,22 @@ fun InfoCard(
     title: String,
     subtitle: String,
     subtext: String,
-    sourceText:String,
+    sourceText: String,
+    isExpanded: Boolean,
+    onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val colors = MaterialTheme.appColors
-    var expandedState by remember { mutableStateOf(false) }
-    val rotationState by animateFloatAsState (
-        targetValue = if (expandedState) 180f else 0f
+    val rotationState by animateFloatAsState(
+        targetValue = if (isExpanded) 180f else 0f
     )
 
     Card(
         modifier = modifier
-//            .height(110.dp)
             .fillMaxWidth()
             .animateContentSize(
-                animationSpec = tween (
+                animationSpec = tween(
                     durationMillis = 300,
                     easing = LinearOutSlowInEasing
                 )
@@ -88,11 +104,11 @@ fun InfoCard(
             .shadow(8.dp, RoundedCornerShape(2.dp)),
         colors = CardDefaults.cardColors(containerColor = colors.tip),
         elevation = CardDefaults.cardElevation(8.dp),
-        onClick = {
-            expandedState = !expandedState
-        }
+        onClick = { onToggle() }
     ) {
-        Row (
+
+        // Header
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -102,14 +118,11 @@ fun InfoCard(
             Icon(
                 painter = painterResource(icon),
                 contentDescription = "Tips icon",
-                modifier = Modifier
-                    .size(32.dp)
-
+                modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+
+            Column(Modifier.weight(1f)) {
                 Text(
                     text = title,
                     fontSize = 14.sp,
@@ -122,37 +135,33 @@ fun InfoCard(
                     text = subtitle,
                     fontSize = 10.sp,
                     fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Normal,
                     color = colors.textPrimary,
                     textAlign = TextAlign.Center,
                     lineHeight = 10.sp
                 )
             }
+
             Icon(
                 painter = painterResource(R.drawable.downdown),
-                contentDescription = "down icon",
+                contentDescription = "arrow icon",
                 modifier = Modifier
                     .rotate(rotationState)
                     .size(16.dp),
                 tint = colors.textTertiary
             )
         }
-        if (expandedState) {
-            HorizontalLine(
-                color = colors.bg
-            )
-            Text (
+
+        // Expanded content
+        if (isExpanded) {
+            HorizontalLine(color = colors.bg)
+
+            Text(
                 text = subtext,
                 fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
                 color = colors.textPrimary,
-                modifier =  (
-                Modifier
-                    .padding(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 10.dp)
-                )
+                modifier = Modifier.padding(16.dp)
             )
-            Spacer(modifier = Modifier.height(2.dp))
 
             Text(
                 text = sourceText,
@@ -160,15 +169,14 @@ fun InfoCard(
                 fontStyle = FontStyle.Italic,
                 fontSize = 10.sp,
                 color = colors.textPrimary,
-                modifier =  (
-                Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
-                )
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
             )
         }
     }
+
     Spacer(modifier = Modifier.height(8.dp))
 }
+
 
 
 @Preview
