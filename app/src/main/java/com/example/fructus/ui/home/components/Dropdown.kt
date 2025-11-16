@@ -1,5 +1,8 @@
 package com.example.fructus.ui.home.components
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -48,6 +52,11 @@ fun Dropdown(
 ) {
     val colors = MaterialTheme.appColors
     var expanded by remember { mutableStateOf(false) }
+    val rotationState by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)
+    )
+
 
     Box(modifier = modifier) {
         // Anchor (dropdown button)
@@ -77,7 +86,7 @@ fun Dropdown(
                 contentDescription = "Dropdown",
                 modifier = Modifier
                     .size(14.dp)
-                    .graphicsLayer(rotationZ = if (expanded) 0f else 180f),
+                    .rotate(rotationState),
                 tint = if (enabled) Color(0xFF718860) else colors.textSecondary
             )
         }
@@ -89,7 +98,7 @@ fun Dropdown(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
-                    .width(122.dp)
+                    .width(110.dp)
                     .background(
                         color = colors.dropdown,
                         shape = RoundedCornerShape(16.dp)
