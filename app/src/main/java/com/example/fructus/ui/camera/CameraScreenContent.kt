@@ -58,7 +58,7 @@ fun CameraScreenContent(
 ) {
     val context = LocalContext.current
 
-    // 🔧 Core states
+    // Core states
     val detectedConfidence = remember { mutableStateOf(0f) }
     val isSaved = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
@@ -82,7 +82,7 @@ fun CameraScreenContent(
         }
     }
 
-    // 🖼️ Gallery launcher
+    // Gallery launcher
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -136,7 +136,7 @@ fun CameraScreenContent(
         }
     }
 
-    // 🍌 Shelf life info
+    // Shelf life info
     val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
     val shelfLifeDisplay =
         if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
@@ -151,7 +151,7 @@ fun CameraScreenContent(
         isSaved.value = false
     }
 
-    // 🪟 Back button behavior
+    // Back button behavior
     BackHandler {
         when {
             showHowTo.value -> showHowTo.value = false
@@ -166,7 +166,7 @@ fun CameraScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // 📷 Camera Preview
+        // Camera Preview
         AndroidView(
             factory = {
                 val previewView = PreviewView(it)
@@ -243,7 +243,7 @@ fun CameraScreenContent(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 🔦 Top bar (Back + Flash)
+        // Top bar (Back + Flash)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -295,7 +295,7 @@ fun CameraScreenContent(
             }
         }
 
-        // 📸 Bottom buttons
+        // Bottom buttons
         if (!detected && !isScanning.value) {
             Row(
                 modifier = Modifier
@@ -347,7 +347,7 @@ fun CameraScreenContent(
             }
         }
 
-        // 📦 Scan box overlay
+        // Scan box overlay
         if (!isBottomSheetVisible.value && (isScanning.value || !detected)) {
             Icon(
                 painter = painterResource(R.drawable.camera_scan_box),
@@ -359,7 +359,7 @@ fun CameraScreenContent(
             )
         }
 
-        // 🧠 Detection handling
+        // Detection handling
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
                 isBottomSheetVisible.value =
@@ -439,7 +439,7 @@ fun CameraScreenContent(
         }
     }
 
-    // 🔁 Scan again dialog
+    // Scan again dialog
     if (showScanAgainDialog.value) {
         ScanAgain(
             onYes = {
@@ -453,6 +453,10 @@ fun CameraScreenContent(
                 showScanAgainDialog.value = false
             },
             onNo = {
+
+                cameraRef.value?.cameraControl?.enableTorch(false)
+                flashEnabled.value = false
+
                 showScanAgainDialog.value = false
                 onHome()
             },
@@ -460,7 +464,7 @@ fun CameraScreenContent(
         )
     }
 
-    // 🧾 How to use overlay
+    // How to use overlay
     if (showHowTo.value) {
         HowToOverlay(onDismiss = { showHowTo.value = false })
     }
