@@ -69,6 +69,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import com.example.fructus.ui.home.components.DeleteConfirmation
+import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.safeClickable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,6 +101,9 @@ fun HomeScreenContent(
     val colors = MaterialTheme.appColors
     val isDragging = draggedFruit != null
 
+    val clickGuard = remember { ClickGuard() }
+
+
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = colors.bg,
@@ -116,11 +121,9 @@ fun HomeScreenContent(
                         contentDescription = if (isDragging) "Delete Fruit" else "Scan Fruits",
                         modifier = Modifier
                             .size(88.dp)
-                            .clickable(
-                                onClick = { onScanClick() },
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ),
+                            .safeClickable(clickGuard, coroutineScope){
+                                onScanClick()
+                            },
                     )
                 }
             },
@@ -130,7 +133,8 @@ fun HomeScreenContent(
                     hasNewNotification = hasNewNotification,
                     onNotificationClick = onNotificationClick,
                     onSettingsClick = onSettingsClick,
-                    isDarkMode = isDarkMode
+                    isDarkMode = isDarkMode,
+                    clickGuard = clickGuard
                 )
             }
         ) { innerPadding ->
@@ -156,7 +160,10 @@ fun HomeScreenContent(
                     Dropdown(
                         selectedItem = selectedFilter,
                         items = listOf("All", "Unripe", "Ripe", "Overripe", "Spoiling", "Spoiled"),
-                        onItemSelected = { onFilterChange(it) }
+                        onItemSelected = { onFilterChange(it) },
+                        clickGuard = clickGuard,
+                        coroutineScope = coroutineScope
+
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -168,11 +175,9 @@ fun HomeScreenContent(
                             modifier = Modifier
                                 .size(34.dp)
                                 .padding(bottom = 4.dp)
-                                .clickable(
-                                    onClick = { showOnboarding = true },
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ),
+                                .safeClickable(clickGuard, coroutineScope) {
+                                    showOnboarding = true
+                                },
                             tint = colors.textTertiary
                         )
 
@@ -183,11 +188,9 @@ fun HomeScreenContent(
                             contentDescription = "Sort Fruits",
                             modifier = Modifier
                                 .size(30.dp)
-                                .clickable(
-                                    onClick = { viewModel.toggleSortOrder() },
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ),
+                                .safeClickable(clickGuard, coroutineScope) {
+                                    viewModel.toggleSortOrder()
+                                },
                             tint = colors.textTertiary
                         )
                     }
@@ -341,7 +344,9 @@ fun HomeScreenContent(
                                         if (draggedFruit?.id != fruit.id) {
                                             FruitItem(
                                                 fruit = fruit,
-                                                onFruitClick = { onFruitClick(fruit.id) }
+                                                onFruitClick = { onFruitClick(fruit.id) },
+                                                clickGuard = clickGuard,
+                                                coroutineScope = coroutineScope
                                             )
                                         }
                                     }
@@ -452,7 +457,9 @@ fun HomeScreenContent(
             ) {
                 FruitItem(
                     fruit = fruit,
-                    onFruitClick = { }
+                    onFruitClick = { },
+                    clickGuard = clickGuard,
+                    coroutineScope = coroutineScope
                 )
             }
         }
@@ -464,11 +471,9 @@ fun HomeScreenContent(
                 .align(Alignment.BottomStart)
                 .padding(start = 20.dp, bottom = 90.dp)
                 .size(38.dp)
-                .clickable(
-                    onClick = { onUserGuideClick() },
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
+                .safeClickable(clickGuard, coroutineScope) {
+                    onUserGuideClick()
+                },
             tint = Unspecified
         )
 

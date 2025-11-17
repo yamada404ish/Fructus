@@ -21,6 +21,9 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.ui.theme.AppColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.safeClickable
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ScreenTopBar(
@@ -30,8 +33,10 @@ fun ScreenTopBar(
     modifier: Modifier = Modifier,
     showArchive: Boolean = false,
     archiveCount: Int = 0,
-    onArchiveClick: (() -> Unit)? = null
-) {
+    onArchiveClick: (() -> Unit)? = null,
+    clickGuard: ClickGuard,
+    coroutineScope: CoroutineScope,
+    ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -46,11 +51,9 @@ fun ScreenTopBar(
             tint = colors.textPrimary,
             modifier = Modifier
                 .size(30.dp)
-                .clickable(
-                    onClick = onNavigateUp,
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                )
+                .safeClickable(clickGuard, coroutineScope) {
+                    onNavigateUp()
+                }
         )
 
         // Title
@@ -72,11 +75,9 @@ fun ScreenTopBar(
                     tint = colors.textTertiary,
                     modifier = Modifier
                         .size(30.dp)
-                        .clickable(
-                            onClick = onArchiveClick,
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        )
+                        .safeClickable(clickGuard, coroutineScope) {
+                            onArchiveClick()
+                        }
                 )
 
                 if (archiveCount > 0) {

@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,7 +37,10 @@ import com.example.fructus.ui.shared.model.Filter
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
 import com.example.fructus.util.calculateDaysSince
+import com.example.fructus.util.safeClickable
+import kotlinx.coroutines.coroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +58,8 @@ fun NotificationScreenContent(
     val earlier = notifications.filter { calculateDaysSince(it.timestamp) > 1 }
 
     val colors = MaterialTheme.appColors
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = colors.bg,
@@ -64,7 +70,9 @@ fun NotificationScreenContent(
                 showArchive = true,
                 archiveCount = onArchiveCount,
                 onArchiveClick = onArchiveClick,
-                colors = colors
+                colors = colors,
+                clickGuard = clickGuard,
+                coroutineScope = coroutineScope
             )
         }
 
@@ -94,12 +102,10 @@ fun NotificationScreenContent(
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
                         color = colors.textTertiary,
-                        modifier = Modifier.clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) {
-                            onMarkAllAsRead()
-                        }
+                        modifier = Modifier
+                            .safeClickable(clickGuard, coroutineScope) {
+                                onMarkAllAsRead()
+                            }
                     )
                 }
             }
