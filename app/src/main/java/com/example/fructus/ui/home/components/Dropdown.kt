@@ -40,6 +40,10 @@ import com.example.fructus.R
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.safeClickable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -47,6 +51,8 @@ fun Dropdown(
     selectedItem: String,
     items: List<String>,
     onItemSelected: (String) -> Unit,
+    clickGuard: ClickGuard,
+    coroutineScope: CoroutineScope,
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
@@ -66,9 +72,12 @@ fun Dropdown(
                 .height(38.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(colors.dropdown)
-                .clickable(enabled = enabled) {
-                    if (enabled) expanded = !expanded
+                .safeClickable(clickGuard, coroutineScope, enabled) {
+                    expanded = !expanded
                 }
+//                .clickable(enabled = enabled) {
+//                    if (enabled) expanded = !expanded
+//                }
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -121,8 +130,10 @@ fun Dropdown(
                                 )
                             },
                             onClick = {
-                                onItemSelected(item)
-                                expanded = false
+                                clickGuard.tryLock(coroutineScope) {
+                                    onItemSelected(item)
+                                    expanded = false
+                                }
                             },
                             modifier = Modifier
                                 .heightIn(min = 34.dp)
@@ -135,14 +146,14 @@ fun Dropdown(
     }
 }
 
-@Preview
-@Composable
-private fun DropdownPrev() {
-    FructusTheme {
-        Dropdown(
-            selectedItem = "Overripe",
-            items = listOf("All", "Unripe", "Ripe", "Overripe", "Spoiled"),
-            onItemSelected = {}
-        )
-    }
-}
+//@Preview
+//@Composable
+//private fun DropdownPrev() {
+//    FructusTheme {
+//        Dropdown(
+//            selectedItem = "Overripe",
+//            items = listOf("All", "Unripe", "Ripe", "Overripe", "Spoiled"),
+//            onItemSelected = {}
+//        )
+//    }
+//}

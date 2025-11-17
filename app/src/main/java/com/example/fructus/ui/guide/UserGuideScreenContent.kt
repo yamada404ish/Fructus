@@ -13,6 +13,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,8 @@ import com.example.fructus.ui.guide.components.UserGuideInformation
 import com.example.fructus.ui.home.components.Dropdown
 import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.theme.appColors
+import com.example.fructus.util.ClickGuard
+import kotlinx.coroutines.coroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +36,8 @@ fun UserGuideScreenContent(
 ) {
     val colors = MaterialTheme.appColors
     val isProcessEnabled = selectedGuide !in listOf("Banana", "Tomato")
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = colors.bg,
@@ -40,7 +46,9 @@ fun UserGuideScreenContent(
                 title = "Ripeness Guide",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
-                showArchive = false
+                showArchive = false,
+                clickGuard = clickGuard,
+                coroutineScope = coroutineScope
             )
         }
     ) { innerPadding ->
@@ -61,7 +69,10 @@ fun UserGuideScreenContent(
                     selectedItem = selectedProcess,
                     items = listOf("Natural", "Artificial"),
                     onItemSelected = { onProcessChange(it) },
-                    enabled = isProcessEnabled
+                    enabled = isProcessEnabled,
+                    clickGuard = clickGuard,
+                    coroutineScope = coroutineScope
+
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -69,7 +80,9 @@ fun UserGuideScreenContent(
                 Dropdown(
                     selectedItem = selectedGuide,
                     items = listOf("Banana", "Mango", "Tomato"),
-                    onItemSelected = { onGuideChange(it) }
+                    onItemSelected = { onGuideChange(it) },
+                    clickGuard = clickGuard,
+                    coroutineScope = coroutineScope
                 )
             }
             Column(

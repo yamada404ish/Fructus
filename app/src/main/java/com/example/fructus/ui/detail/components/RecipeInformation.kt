@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.loadRecipesFromJson
 
@@ -61,6 +63,8 @@ fun RecipeInformation(
     }
 
     var selectedTab by remember { mutableStateOf("Ingredients") }
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
 
 
     Scaffold(
@@ -70,7 +74,9 @@ fun RecipeInformation(
                 title = "Recipe Information",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
-                showArchive = false
+                showArchive = false,
+                clickGuard = clickGuard,
+                coroutineScope = coroutineScope
             )
         }
     ) { innerPadding ->

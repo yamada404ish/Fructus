@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,6 +39,7 @@ import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -50,6 +53,8 @@ fun ArchiveScreen(
 ) {
 
     val colors = MaterialTheme.appColors
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = colors.bg,
@@ -58,7 +63,9 @@ fun ArchiveScreen(
                 title = "Archived",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
-                showArchive = false
+                showArchive = false,
+                clickGuard = clickGuard,
+                coroutineScope = coroutineScope
             )
         }
     ) { innerPadding ->

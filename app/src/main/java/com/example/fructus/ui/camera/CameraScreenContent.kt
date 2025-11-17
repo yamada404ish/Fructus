@@ -93,6 +93,9 @@ fun CameraScreenContent(
         }
     }
 
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
+
     // 🔎 Trigger autofocus (center of the scan box)
     fun triggerAutoFocus(camera: Camera?) {
         try {
@@ -321,16 +324,11 @@ fun CameraScreenContent(
                     contentDescription = "Back",
                     modifier = Modifier
                         .size(50.dp)
-                        .clickable(
-                            enabled = !showHowTo.value,
-                            onClick = {
-                                cameraRef.value?.cameraControl?.enableTorch(false)
-                                flashEnabled.value = false
-                                onNavigateUp()
-                            },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
+                        .safeClickable(clickGuard, coroutineScope) {
+                            cameraRef.value?.cameraControl?.enableTorch(false)
+                            flashEnabled.value = false
+                            onNavigateUp()
+                        },
                     tint = Color.Unspecified
                 )
             }
@@ -345,15 +343,15 @@ fun CameraScreenContent(
                     contentDescription = "Flashlight",
                     modifier = Modifier
                         .size(50.dp)
-                        .clickable(
-                            enabled = !showHowTo.value,
-                            onClick = {
-                                cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
-                                flashEnabled.value = !flashEnabled.value
-                            },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
+                            flashEnabled.value = !flashEnabled.value
+                        },
+
                     tint = Color.Unspecified
                 )
             }
@@ -372,12 +370,14 @@ fun CameraScreenContent(
                     contentDescription = "Gallery",
                     modifier = Modifier
                         .size(50.dp)
-                        .clickable(
-                            enabled = !showHowTo.value,
-                            onClick = { galleryLauncher.launch("image/*") },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            showHowTo.value = false
+                            galleryLauncher.launch("image/*")
+                        },
                     tint = Color.Unspecified
                 )
                 Spacer(modifier = Modifier.size(20.dp))
@@ -386,12 +386,13 @@ fun CameraScreenContent(
                     contentDescription = "camera icon",
                     modifier = Modifier
                         .size(100.dp)
-                        .clickable(
-                            enabled = !showHowTo.value,
-                            onClick = { isScanning.value = true },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            isScanning.value = true
+                        },
                     tint = Color.Unspecified
                 )
                 Spacer(modifier = Modifier.size(20.dp))
@@ -400,12 +401,13 @@ fun CameraScreenContent(
                     contentDescription = "How to use",
                     modifier = Modifier
                         .size(50.dp)
-                        .clickable(
-                            enabled = !showHowTo.value,
-                            onClick = { showHowTo.value = true },
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ),
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            showHowTo.value = true
+                        },
                     tint = Color.Unspecified
                 )
             }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +27,8 @@ import com.example.fructus.ui.setting.components.ClearNotificationsDialog
 import com.example.fructus.ui.setting.components.SettingsOptionCard
 import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.theme.appColors
+import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.safeClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +45,8 @@ fun SettingsScreenContent(
     onShowOnboarding: () -> Unit
 ) {
     var showAbout by remember { mutableStateOf(false) }
-
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
 
     val colors = MaterialTheme.appColors
 
@@ -53,7 +57,9 @@ fun SettingsScreenContent(
                 title = "Settings",
                 onNavigateUp = onNavigateUp,
                 colors = colors,
-                showArchive = false
+                showArchive = false,
+                clickGuard = clickGuard,
+                coroutineScope = coroutineScope
             )
         }
     ) { innerPadding ->
@@ -86,7 +92,9 @@ fun SettingsScreenContent(
             SettingsOptionCard(
                 iconRes = R.drawable.onboard,
                 title = "Onboarding",
-                onClick = onShowOnboarding
+                modifier = Modifier.safeClickable(clickGuard, coroutineScope) {
+                    onShowOnboarding()
+                }
             )
 
             Row(
@@ -99,17 +107,25 @@ fun SettingsScreenContent(
                     iconRes = R.drawable.ic_about,
                     iconSize = 34,
                     title = "About",
-                    onClick = { showAbout = true },
-                    modifier = Modifier.weight(1f)
+//                    onClick = { showAbout = true },
+                    modifier = Modifier
+                        .weight(1f)
+                        .safeClickable(clickGuard, coroutineScope) {
+                            showAbout = true
+                        }
                 )
 
                 SettingsOptionCard(
                     title = "Erase All Data",
-                    onClick = onShowClearDialog,
-                    modifier = Modifier.weight(1f),
                     containerColor = Color(0xFFF55D5D),
                     contentColor = Color.White,
-                    centerText = true
+                    centerText = true,
+                    modifier = Modifier
+                        .safeClickable(clickGuard, coroutineScope) {
+                            onShowClearDialog()
+                        }
+                        .weight(1f),
+
                 )
             }
         }

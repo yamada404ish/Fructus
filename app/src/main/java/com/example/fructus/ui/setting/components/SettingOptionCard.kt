@@ -39,7 +39,6 @@ fun SettingsOptionCard(
     showSwitch: Boolean = false,
     isChecked: Boolean = false,
     onCheckedChange: ((Boolean) -> Unit)? = null,
-    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.appColors.card,
     contentColor: Color = MaterialTheme.appColors.textPrimary,
@@ -47,14 +46,7 @@ fun SettingsOptionCard(
 ) {
     Card(
         modifier = modifier
-            .height(60.dp)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                enabled = onClick != null
-            ) {
-                onClick?.invoke()
-            },
+            .height(60.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
         shape = RoundedCornerShape(20.dp)
     ) {

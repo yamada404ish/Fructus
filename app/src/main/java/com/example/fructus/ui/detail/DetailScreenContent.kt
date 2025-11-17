@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,12 +49,15 @@ import com.example.fructus.ui.detail.components.SuggestedRecipe
 import com.example.fructus.ui.shared.FruitAnalysis
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
 import com.example.fructus.util.getDetailBackgroundRes
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.loadRecipesFromJson
+import com.example.fructus.util.safeClickable
+import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,6 +72,8 @@ fun DetailScreenContent(
     val backgroundRes = getDetailBackgroundRes(fruit.name)
 
     val colors = MaterialTheme.appColors
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = colors.bg
@@ -98,18 +104,18 @@ fun DetailScreenContent(
                 modifier = Modifier
                     .padding(start = 24.dp, end = 24.dp, top = 40.dp)
                     .size(32.dp)
-                    .clickable(
-                        onClick = { onNavigate() },
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
+                    .safeClickable(clickGuard, coroutineScope) {
+                        onNavigate()
+                    }
             )
 
             CustomBottomSheetDetail(
                 fruit = fruit,
                 shelfLifeDisplay = shelfLifeDisplay,
                 confidence = fruit.confidence,
-                onNavigateToRecipe = onNavigateToRecipe
+                onNavigateToRecipe = onNavigateToRecipe,
+                clickGuard = clickGuard,
+                coroutineScope = coroutineScope
             )
 
         }
@@ -122,7 +128,9 @@ fun CustomBottomSheetDetail(
     fruit: FruitEntity,
     shelfLifeDisplay: String,
     confidence: Float,
-    onNavigateToRecipe: (String, String, String) -> Unit
+    onNavigateToRecipe: (String, String, String) -> Unit,
+    clickGuard: ClickGuard,
+    coroutineScope: CoroutineScope,
 ) {
 
     val colors = MaterialTheme.appColors
@@ -177,11 +185,7 @@ fun CustomBottomSheetDetail(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .size(100.dp)
-                            .clickable(
-                                onClick = { isDialogOpen.value = true },
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ),
+                            .clickable { isDialogOpen.value = false },
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(R.drawable.unknown_fruit),
                         error = painterResource(R.drawable.unknown_fruit)
@@ -290,11 +294,9 @@ fun CustomBottomSheetDetail(
                             contentDescription = "Full Image ${fruit.name}",
                             modifier = Modifier
                                 .size(330.dp)
-                                .clickable(
-                                    onClick = { isDialogOpen.value = false },
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                )
+                                .safeClickable(clickGuard, coroutineScope) {
+                                    isDialogOpen.value = false
+                                }
                                 .clip(RoundedCornerShape(16.dp)),
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(R.drawable.unknown_fruit),

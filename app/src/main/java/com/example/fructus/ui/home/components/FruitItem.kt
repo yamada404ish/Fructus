@@ -26,17 +26,22 @@ import com.example.fructus.R
 import com.example.fructus.data.local.entity.FruitEntity
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
 import com.example.fructus.util.calculateDaysSince
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getShelfLifeRange
+import com.example.fructus.util.safeClickable
+import kotlinx.coroutines.CoroutineScope
 import java.io.File
 
 @Composable
 fun FruitItem(
     modifier: Modifier = Modifier,
     fruit: FruitEntity,
-    onFruitClick: (FruitEntity) -> Unit
+    onFruitClick: (FruitEntity) -> Unit,
+    clickGuard: ClickGuard,
+    coroutineScope: CoroutineScope
 ) {
 
     val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
@@ -60,11 +65,9 @@ fun FruitItem(
             .clip(RoundedCornerShape(16.dp))
 //            .height(224.dp)
             .width(148.dp)
-            .clickable(
-                onClick = { onFruitClick(fruit) },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
+            .safeClickable(clickGuard, coroutineScope) {
+                onFruitClick(fruit)
+            }
             .shadow(8.dp, RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         elevation = CardDefaults.cardElevation(12.dp)

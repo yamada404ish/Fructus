@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,15 +37,20 @@ import com.example.fructus.R
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.safeClickable
 
 @Composable
 fun BottomNavBar(
     onNotificationClick: () -> Unit,
     onSettingsClick: () -> Unit,
     hasNewNotification: Boolean,
-    isDarkMode: Boolean
+    isDarkMode: Boolean,
+    clickGuard: ClickGuard,
+
 ) {
     val colors = MaterialTheme.appColors
+    val coroutineScope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -154,10 +160,10 @@ fun BottomNavBar(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onNotificationClick() }
+                modifier = Modifier
+                    .safeClickable(clickGuard, coroutineScope) {
+                        onNotificationClick()
+                    }
             ) {
                 Box(
                     modifier = Modifier.size(34.dp),
@@ -193,10 +199,10 @@ fun BottomNavBar(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { onSettingsClick() }
+                modifier = Modifier
+                    .safeClickable(clickGuard, coroutineScope) {
+                        onSettingsClick()
+                    }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.settings),
@@ -216,17 +222,17 @@ fun BottomNavBar(
     }
 }
 
-@Preview
-@Composable
-private fun NavbarPrev() {
-    FructusTheme {
-        BottomNavBar(
-            onNotificationClick = {},
-            onSettingsClick = {},
-            hasNewNotification = false,
-            isDarkMode = false
-        )
-
-    }
-    
-}
+//@Preview
+//@Composable
+//private fun NavbarPrev() {
+//    FructusTheme {
+//        BottomNavBar(
+//            onNotificationClick = {},
+//            onSettingsClick = {},
+//            hasNewNotification = false,
+//            isDarkMode = false
+//        )
+//
+//    }
+//
+//}
