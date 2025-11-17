@@ -517,6 +517,9 @@ fun CameraScreenContent(
                 showScanAgainDialog.value = false
             },
             onNo = {
+                cameraRef.value?.cameraControl?.enableTorch(false)
+                flashEnabled.value = false
+
                 showScanAgainDialog.value = false
                 onHome()
             },
