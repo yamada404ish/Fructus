@@ -375,6 +375,9 @@ fun CameraScreenContent(
                             coroutineScope,
                             enabled = !showHowTo.value
                         ) {
+                            cameraRef.value?.cameraControl?.enableTorch(false)
+                            flashEnabled.value = false
+
                             showHowTo.value = false
                             galleryLauncher.launch("image/*")
                         },
