@@ -40,8 +40,6 @@ abstract class FruitDatabase : RoomDatabase() {
                     // Use encrypted DB
                     .openHelperFactory(factory)
 
-                    // ❌ No fallback destruction — define migrations properly later
-                    // .fallbackToDestructiveMigration()
 
                     .build()
 

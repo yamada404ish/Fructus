@@ -7,8 +7,11 @@ import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.YuvImage
+import android.os.Build
 import android.util.Log
 import androidx.camera.core.ImageProxy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.tensorflow.lite.Interpreter
 import java.io.ByteArrayOutputStream
 import java.io.FileInputStream
@@ -18,6 +21,7 @@ import java.nio.channels.FileChannel
 import org.opencv.core.Point
 import kotlin.math.min
 import kotlin.math.max
+import kotlin.math.abs
 // 🔹 OpenCV imports
 import org.opencv.android.Utils
 import org.opencv.core.*
@@ -30,6 +34,63 @@ data class ClassificationResult(
     val confidence: Float
 )
 
+// --------------------- GALLERY IMAGE DETECTION (Suspending / Background) ---------------------
+/**
+ * Main entry point for analyzing Gallery images.
+ * Runs on Background Thread to prevent ANR (Freezing).
+ */
+suspend fun analyzeBitmap(
+    bitmap: Bitmap,
+    context: Context
+): Triple<ClassificationResult, ClassificationResult?, ClassificationResult?> = withContext(Dispatchers.Default) {
+
+    // 1. DOWNSCALE LARGE IMAGES FIRST
+    val targetWidth = 800
+    val workingBitmap = if (bitmap.width > targetWidth) {
+        val scale = targetWidth.toFloat() / bitmap.width
+        val newHeight = (bitmap.height * scale).toInt()
+        Bitmap.createScaledBitmap(bitmap, targetWidth, newHeight, true)
+    } else {
+        // Safe Check for Hardware Bitmap
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bitmap.config == Bitmap.Config.HARDWARE) {
+            bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        } else {
+            bitmap
+        }
+    }
+
+    Log.d("FRUCTUS_LOG", "📸 Background Thread: Starting Analysis on ${workingBitmap.width}x${workingBitmap.height} image")
+
+    // 🔹 Step 1: Fruit classification
+    val fruitResult = classifyFruit(workingBitmap, context)
+    var ripenessResult: ClassificationResult? = null
+    var ripeningMethodResult: ClassificationResult? = null
+
+    // 🔹 Step 2: Continue only if fruit is detected
+    if (fruitResult.label != "No fruit detected") {
+
+        // Ripeness Classification
+        ripenessResult = classifyRipeness(fruitResult.label, workingBitmap, context)
+
+        // 🔹 Step 3: Ripening Method (Only for Carabao Mangoes)
+        if (fruitResult.label.equals("Carabao", true) &&
+            (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true))
+        ) {
+            val segmented = workingBitmap.segmentFruit()
+            ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, segmented, context)
+        }
+    }
+
+    // Cleanup: If we created a scaled copy, recycle it to save RAM
+    if (workingBitmap != bitmap) {
+        workingBitmap.recycle()
+    }
+
+    Log.d("FRUCTUS_LOG", "✅ Background Thread: Analysis Complete.")
+
+    return@withContext Triple(fruitResult, ripenessResult, ripeningMethodResult)
+}
+
 // --------------------- FRUIT TYPE CLASSIFIER ---------------------
 fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     val modelName = "fruit_type_model.tflite"
@@ -38,14 +99,21 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
         "Spoiled Banana", "Spoiled Mango", "Spoiled Tomato", "Tomato"
     )
 
-    val model = Interpreter(loadModelFile(context, modelName))
-    val cropped = bitmap.cropToScanBox(context)
+    // Safe Check for Hardware Bitmap
+    val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bitmap.config == Bitmap.Config.HARDWARE) {
+        bitmap.copy(Bitmap.Config.ARGB_8888, true)
+    } else {
+        bitmap
+    }
+
+    val cropped = safeBitmap.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
-        model.close()
+        if (safeBitmap != bitmap) safeBitmap.recycle()
         return ClassificationResult("No fruit detected", 0f)
     }
 
+    val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(cropped)
     val output = Array(1) { FloatArray(labels.size) }
     model.run(input, output)
@@ -56,13 +124,13 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
     val thresholds = mapOf(
-        "Tomato" to 0.9f,
-        "Lakatan" to 0.85f,
-        "Saba" to 0.85f,
-        "Cavendish" to 0.85f,
-        "Carabao" to 0.95f,
-        "Spoiled Banana" to 0.9f,
-        "Spoiled Mango" to 0.7f,
+        "Tomato" to 0.8f,
+        "Lakatan" to 0.8f,
+        "Saba" to 0.8f,
+        "Cavendish" to 0.80f,
+        "Carabao" to 0.8f,
+        "Spoiled Banana" to 0.95f,
+        "Spoiled Mango" to 0.8f,
         "Spoiled Tomato" to 0.8f
     )
     val threshold = thresholds[predictedLabel] ?: 0.6f
@@ -73,19 +141,19 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
         val hue = cropped.computeHueBalance()
         Log.d("FRUCTUS_LOG", "Curvature: $curvature, Hue: $hue")
 
-        // Cavendish: More curved, lighter hue (yellow)
-        // Lakatan: Straighter, more orange hue
         when {
-            curvature > 0.3f && hue > 22f -> {
+            curvature > 0.28f && hue > 20f -> {
                 predictedLabel = "Cavendish"
-                confidence = (confidence + 0.1f).coerceAtMost(1f)
+                confidence = (confidence + 0.15f).coerceAtMost(1f)
             }
-            curvature < 0.25f && hue < 22f -> {
+            curvature < 0.25f && hue < 25f -> {
                 predictedLabel = "Lakatan"
-                confidence = (confidence + 0.1f).coerceAtMost(1f)
+                confidence = (confidence + 0.15f).coerceAtMost(1f)
             }
         }
     }
+
+    if (safeBitmap != bitmap) safeBitmap.recycle()
 
     return if (confidence >= threshold) {
         ClassificationResult(predictedLabel, confidence)
@@ -94,84 +162,118 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     }
 }
 
-// --------------------- CURVATURE FACTOR ---------------------
+// --------------------- CURVATURE FACTOR (SAFE VERSION) ---------------------
 fun Bitmap.computeCurvatureFactor(): Float {
-    val src = Mat()
-    Utils.bitmapToMat(this, src)
-    Imgproc.cvtColor(src, src, Imgproc.COLOR_RGBA2GRAY)
-    Imgproc.GaussianBlur(src, src, Size(7.0, 7.0), 0.0)
+    try {
+        val maxDimension = 600
+        val scale = min(maxDimension.toFloat() / width, maxDimension.toFloat() / height)
 
-    // Edge detection
-    val edges = Mat()
-    Imgproc.Canny(src, edges, 40.0, 120.0)
+        val workingBitmap = if (scale < 1.0f) {
+            Bitmap.createScaledBitmap(this, (width * scale).toInt(), (height * scale).toInt(), true)
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this.config == Bitmap.Config.HARDWARE) {
+                this.copy(Bitmap.Config.ARGB_8888, true)
+            } else {
+                this
+            }
+        }
 
-    // Find contours
-    val contours = mutableListOf<MatOfPoint>()
-    Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-    if (contours.isEmpty()) {
-        src.release(); edges.release()
+        val src = Mat()
+        Utils.bitmapToMat(workingBitmap, src)
+
+        // Process
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGBA2GRAY)
+        Imgproc.GaussianBlur(src, src, Size(7.0, 7.0), 0.0)
+
+        val edges = Mat()
+        Imgproc.Canny(src, edges, 40.0, 120.0)
+
+        val contours = mutableListOf<MatOfPoint>()
+        Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        src.release()
+        edges.release()
+
+        if (contours.isEmpty()) {
+            if (workingBitmap != this) workingBitmap.recycle()
+            return 0f
+        }
+
+        val largest = contours.maxByOrNull { Imgproc.contourArea(it) }
+        if (largest == null) {
+            if (workingBitmap != this) workingBitmap.recycle()
+            return 0f
+        }
+
+        val approx = MatOfPoint2f()
+        val contour2f = MatOfPoint2f(*largest.toArray())
+        Imgproc.approxPolyDP(contour2f, approx, 0.01 * Imgproc.arcLength(contour2f, true), true)
+
+        if (approx.toArray().size < 5) {
+            if (workingBitmap != this) workingBitmap.recycle()
+            return 0f
+        }
+
+        val ellipse = Imgproc.fitEllipse(approx)
+        val major = max(ellipse.size.width, ellipse.size.height)
+        val minor = min(ellipse.size.width, ellipse.size.height)
+
+        val curvature = 1f - (minor / major).toFloat()
+
+        if (workingBitmap != this) workingBitmap.recycle()
+
+        return curvature.coerceIn(0f, 1f)
+
+    } catch (e: Exception) {
+        Log.e("FRUCTUS_ERROR", "Curvature calculation failed: ${e.message}")
         return 0f
     }
-
-    // Largest contour = fruit
-    val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return 0f
-
-    // Smooth the contour → reduces sensitivity
-    val approx = MatOfPoint2f()
-    val contour2f = MatOfPoint2f(*largest.toArray())
-    Imgproc.approxPolyDP(contour2f, approx, 0.01 * Imgproc.arcLength(contour2f, true), true)
-
-    // Fit ellipse → gives major/minor axis → curvature measure
-    if (approx.rows() < 5) {
-        src.release(); edges.release()
-        return 0f
-    }
-
-    val ellipse = Imgproc.fitEllipse(approx)
-
-    val major = max(ellipse.size.width, ellipse.size.height)
-    val minor = min(ellipse.size.width, ellipse.size.height)
-
-    // Curvature ratio (0 = straight, higher = more curve)
-    val curvature = 1f - (minor / major).toFloat()
-
-    src.release(); edges.release()
-    return curvature.coerceIn(0f, 1f)
 }
 
-
-// --------------------- HUE BALANCE (Improved Median-Based) ---------------------
+// --------------------- HUE BALANCE ---------------------
 fun Bitmap.computeHueBalance(): Float {
-    val mat = Mat()
-    Utils.bitmapToMat(this, mat)
-    Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV)
-
-    val hsvChannels = mutableListOf<Mat>()
-    Core.split(mat, hsvChannels)
-    val h = hsvChannels[0]
-    val s = hsvChannels[1]
-    val v = hsvChannels[2]
-
-    val mask = Mat()
-    Core.inRange(v, Scalar(50.0), Scalar(230.0), mask)
-
-    val hueValues = Mat()
-    h.copyTo(hueValues, mask)
-    val hueList = mutableListOf<Double>()
-
-    for (row in 0 until hueValues.rows()) {
-        for (col in 0 until hueValues.cols()) {
-            val hueVal = hueValues.get(row, col)?.firstOrNull()?.toDouble() ?: continue
-            if (hueVal > 0) hueList.add(hueVal)
+    try {
+        val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this.config == Bitmap.Config.HARDWARE) {
+            this.copy(Bitmap.Config.ARGB_8888, true)
+        } else {
+            this
         }
+
+        val mat = Mat()
+        Utils.bitmapToMat(safeBitmap, mat)
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2HSV)
+
+        val hsvChannels = mutableListOf<Mat>()
+        Core.split(mat, hsvChannels)
+        val h = hsvChannels[0]
+        val v = hsvChannels[2]
+
+        val mask = Mat()
+        Core.inRange(v, Scalar(50.0), Scalar(230.0), mask)
+
+        val hueValues = Mat()
+        h.copyTo(hueValues, mask)
+        val hueList = mutableListOf<Double>()
+
+        val step = 5
+        for (row in 0 until hueValues.rows() step step) {
+            for (col in 0 until hueValues.cols() step step) {
+                val hueVal = hueValues.get(row, col)?.firstOrNull()?.toDouble() ?: continue
+                if (hueVal > 0) hueList.add(hueVal)
+            }
+        }
+
+        mat.release(); h.release(); v.release(); mask.release(); hueValues.release()
+        if (safeBitmap != this) safeBitmap.recycle()
+
+        if (hueList.isEmpty()) return 0f
+
+        hueList.sort()
+        val medianHue = hueList[hueList.size / 2]
+        return medianHue.toFloat()
+    } catch (e: Exception) {
+        return 0f
     }
-
-    mat.release(); h.release(); s.release(); v.release(); mask.release(); hueValues.release()
-    if (hueList.isEmpty()) return 0f
-
-    hueList.sort()
-    val medianHue = hueList[hueList.size / 2]
-    return medianHue.toFloat()
 }
 
 // --------------------- RIPENESS CLASSIFICATION ---------------------
@@ -194,11 +296,17 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     }
 
     val labels = listOf("Overripe", "Ripe", "Unripe")
-    val model = Interpreter(loadModelFile(context, modelName))
-    val segmented = bitmap.segmentFruit()
+
+    val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bitmap.config == Bitmap.Config.HARDWARE) {
+        bitmap.copy(Bitmap.Config.ARGB_8888, true)
+    } else {
+        bitmap
+    }
+
+    val segmented = safeBitmap.segmentFruit()
     val cropped = segmented.cropToScanBox(context)
 
-
+    val model = Interpreter(loadModelFile(context, modelName))
     val input = preprocessBitmap(cropped)
     val output = Array(1) { FloatArray(labels.size) }
     model.run(input, output)
@@ -208,11 +316,9 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
     var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-
+    // Color Assist Logic
     if (!fruitType.equals("tomato", ignoreCase = true)) {
         val colorAssist = cropped.computeColorAssist()
-        Log.d("FRUCTUS_LOG", "Color Assist Ratio: $colorAssist")
-
         when {
             colorAssist > 0.6f && predictedLabel == "Unripe" -> {
                 predictedLabel = "Ripe"
@@ -225,15 +331,12 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
         }
     }
 
-    // Exempt ONLY Unripe Saba from spot logic
+    // Spot Factor Logic
     val skipSpotLogic = fruitType.equals("saba", ignoreCase = true) &&
             predictedLabel.equals("Unripe", ignoreCase = true)
 
     if (!fruitType.equals("tomato", ignoreCase = true) && !skipSpotLogic) {
-
         val spotFactor = cropped.computeSpotFactor()
-        Log.d("FRUCTUS_LOG", "Spot Factor (ripeness): $spotFactor")
-
         val thresholds = when (fruitType.lowercase()) {
             "cavendish" -> Pair(60f, 50f)
             "lakatan" -> Pair(50f, 40f)
@@ -251,17 +354,15 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
                 predictedLabel = "Spoiled"
                 confidence = 0.95f
             }
-
             spotFactor in overripeThreshold..(spoiledThreshold - 1) &&
                     predictedLabel == "Ripe" -> {
                 predictedLabel = "Overripe"
                 confidence = (confidence + 0.1f).coerceAtMost(1f)
             }
         }
-    } else {
-        Log.d("FRUCTUS_LOG", "Spot factor skipped for this case.")
     }
 
+    if (safeBitmap != bitmap) safeBitmap.recycle()
 
     val ripenessThreshold = 0.6f
     return if (confidence >= ripenessThreshold) {
@@ -270,8 +371,6 @@ fun classifyRipeness(fruitType: String, bitmap: Bitmap, context: Context): Class
         ClassificationResult("Unknown", confidence)
     }
 }
-
-
 
 // --------------------- MANGO RIPENING METHOD CLASSIFIER ---------------------
 fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Context): ClassificationResult {
@@ -284,11 +383,18 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
     val model = Interpreter(loadModelFile(context, modelName))
     val labels = listOf("Artificial", "Natural")
 
-    val segmented = bitmap.segmentFruit()
+    val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bitmap.config == Bitmap.Config.HARDWARE) {
+        bitmap.copy(Bitmap.Config.ARGB_8888, true)
+    } else {
+        bitmap
+    }
+
+    val segmented = safeBitmap.segmentFruit()
     val cropped = segmented.cropToScanBox(context)
 
     if (cropped.isMostlyBackground()) {
         model.close()
+        if (safeBitmap != bitmap) safeBitmap.recycle()
         return ClassificationResult("No fruit detected", 0f)
     }
 
@@ -301,25 +407,13 @@ fun classifyRipeningMethod(ripenessLabel: String, bitmap: Bitmap, context: Conte
     var confidence = if (maxIndex != -1) output[0][maxIndex] else 0f
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
-    // 🟢 Spot factor based on research paper
     val spotFactor = cropped.computeSpotFactor()
-    Log.d("FRUCTUS_LOG", "Spot Factor: $spotFactor")
-
     predictedLabel = if (spotFactor >= 7f) "Natural" else "Artificial"
     confidence = (spotFactor / 10f).coerceIn(0f, 1f)
 
-    return ClassificationResult(predictedLabel, confidence)
-}
+    if (safeBitmap != bitmap) safeBitmap.recycle()
 
-// --------------------- RIPENING STAGE MAPPER ---------------------
-fun mapRipeningStage(fruitResult: ClassificationResult): String {
-    return when {
-        fruitResult.label.contains("Spoiled", ignoreCase = true) -> "Spoiled"
-        fruitResult.label.contains("Unripe", ignoreCase = true) -> "Unripe"
-        fruitResult.label.contains("Ripe", ignoreCase = true) -> "Ripe"
-        fruitResult.label.contains("Overripe", ignoreCase = true) -> "Overripe"
-        else -> "Unknown"
-    }
+    return ClassificationResult(predictedLabel, confidence)
 }
 
 // --------------------- HELPERS ---------------------
@@ -347,7 +441,234 @@ fun preprocessBitmap(bitmap: Bitmap): ByteBuffer {
         byteBuffer.putFloat(g)
         byteBuffer.putFloat(b)
     }
+    resized.recycle()
     return byteBuffer
+}
+
+// --------------------- FIXED CROP TO SCAN BOX ---------------------
+fun Bitmap.cropToScanBox(context: Context): Bitmap {
+    try {
+        val screenWidthPx = context.resources.displayMetrics.widthPixels
+        val screenHeightPx = context.resources.displayMetrics.heightPixels
+        val boxSizePx = (460 * context.resources.displayMetrics.density).toInt()
+
+        val scaleX = this.width.toFloat() / screenWidthPx
+        val scaleY = this.height.toFloat() / screenHeightPx
+        val scale = max(scaleX, scaleY)
+
+        val boxWidthOnBitmap = (boxSizePx * scaleX).toInt()
+        val boxHeightOnBitmap = (boxSizePx * scaleY).toInt()
+
+        val left = (this.width - boxWidthOnBitmap) / 2
+        val top = (this.height - boxHeightOnBitmap) / 2
+
+        val safeLeft = left.coerceIn(0, this.width - 1)
+        val safeTop = top.coerceIn(0, this.height - 1)
+        val safeWidth = boxWidthOnBitmap.coerceAtMost(this.width - safeLeft)
+        val safeHeight = boxHeightOnBitmap.coerceAtMost(this.height - safeTop)
+
+        if (safeWidth <= 0 || safeHeight <= 0) return this
+
+        return Bitmap.createBitmap(this, safeLeft, safeTop, safeWidth, safeHeight)
+    } catch (e: Exception) {
+        return this
+    }
+}
+
+// --------------------- BACKGROUND CHECK ---------------------
+fun Bitmap.isMostlyBackground(
+    blackThreshold: Int = 30,
+    whiteThreshold: Int = 220,
+    grayTolerance: Int = 15,
+    ratio: Double = 0.9
+): Boolean {
+    val pixels = IntArray(width * height)
+    getPixels(pixels, 0, width, 0, 0, width, height)
+    var backgroundCount = 0
+    val step = if (pixels.size > 100000) 4 else 1
+
+    for (i in pixels.indices step step) {
+        val p = pixels[i]
+        val r = (p shr 16) and 0xFF
+        val g = (p shr 8) and 0xFF
+        val b = p and 0xFF
+        val avg = (r + g + b) / 3
+
+        if (avg < blackThreshold) {
+            backgroundCount++
+        } else if (avg > whiteThreshold) {
+            backgroundCount++
+        } else if (
+            abs(r - g) < grayTolerance &&
+            abs(g - b) < grayTolerance &&
+            abs(r - b) < grayTolerance
+        ) {
+            backgroundCount++
+        }
+    }
+    val totalChecked = pixels.size / step
+    return backgroundCount > totalChecked * ratio
+}
+
+// --------------------- SPOT FACTOR DETECTION ---------------------
+fun Bitmap.computeSpotFactor(): Float {
+    try {
+        val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this.config == Bitmap.Config.HARDWARE) {
+            this.copy(Bitmap.Config.ARGB_8888, true)
+        } else {
+            this
+        }
+
+        val src = Mat()
+        Utils.bitmapToMat(safeBitmap, src)
+
+        val gray = Mat()
+        Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
+        Imgproc.medianBlur(gray, gray, 5)
+
+        val edges = Mat()
+        Imgproc.Canny(gray, edges, 10.0, 100.0)
+        Imgproc.dilate(edges, edges, Mat(), Point(-1.0, -1.0), 1)
+
+        val contours = mutableListOf<MatOfPoint>()
+        Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        edges.release()
+
+        if (contours.isEmpty()) {
+            src.release(); gray.release()
+            if (safeBitmap != this) safeBitmap.recycle()
+            return 0f
+        }
+
+        val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: run {
+            src.release(); gray.release()
+            if (safeBitmap != this) safeBitmap.recycle()
+            return 0f
+        }
+
+        val mask = Mat.zeros(src.size(), CvType.CV_8UC1)
+        Imgproc.drawContours(mask, listOf(largest), -1, Scalar(255.0), -1)
+
+        val thresh = Mat()
+        Imgproc.adaptiveThreshold(
+            gray, thresh, 255.0,
+            Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+            Imgproc.THRESH_BINARY_INV, 11, 2.0
+        )
+
+        val spotPixelsMat = Mat()
+        Core.bitwise_and(thresh, mask, spotPixelsMat)
+        val totalBlackPixels = Core.countNonZero(spotPixelsMat)
+        val mangoArea = Core.countNonZero(mask)
+        val adjustedSpots = totalBlackPixels * 0.955f
+        val spotFactor = if (mangoArea > 0) (adjustedSpots / mangoArea) * 100f else 0f
+
+        src.release(); gray.release(); mask.release()
+        thresh.release(); spotPixelsMat.release()
+
+        if (safeBitmap != this) safeBitmap.recycle()
+
+        return spotFactor
+    } catch (e: Exception) {
+        return 0f
+    }
+}
+
+// --------------------- SEGMENTATION ---------------------
+fun Bitmap.segmentFruit(): Bitmap {
+    try {
+        if (this.isMostlyBackground()) {
+            return this
+        }
+
+        val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && this.config == Bitmap.Config.HARDWARE) {
+            this.copy(Bitmap.Config.ARGB_8888, true)
+        } else {
+            this
+        }
+
+        val src = Mat()
+        Utils.bitmapToMat(safeBitmap, src)
+
+        val gray = Mat()
+        Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
+        Imgproc.medianBlur(gray, gray, 5)
+
+        val edges = Mat()
+        Imgproc.Canny(gray, edges, 10.0, 100.0)
+        Imgproc.dilate(edges, edges, Mat(), Point(-1.0, -1.0), 1)
+
+        val contours = mutableListOf<MatOfPoint>()
+        Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+
+        if (contours.isEmpty()) {
+            src.release(); gray.release(); edges.release()
+            if (safeBitmap != this) safeBitmap.recycle()
+            return this
+        }
+
+        val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: run {
+            src.release(); gray.release(); edges.release()
+            if (safeBitmap != this) safeBitmap.recycle()
+            return this
+        }
+
+        val mask = Mat.zeros(src.size(), CvType.CV_8UC1)
+        Imgproc.drawContours(mask, listOf(largest), -1, Scalar(255.0), -1)
+
+        val result = Mat()
+        src.copyTo(result, mask)
+        val rect = Imgproc.boundingRect(largest)
+
+        // 🔴 FIX: Explicitly use org.opencv.core.Rect for Mat constructor
+        // Android has a 'Rect' class too, which causes the collision.
+        val safeRect = org.opencv.core.Rect(
+            max(0, rect.x), max(0, rect.y),
+            min(result.cols() - rect.x, rect.width),
+            min(result.rows() - rect.y, rect.height)
+        )
+
+        val cropped = Mat(result, safeRect)
+
+        val output = Bitmap.createBitmap(cropped.cols(), cropped.rows(), Bitmap.Config.ARGB_8888)
+        Utils.matToBitmap(cropped, output)
+
+        // Cleanup
+        src.release(); gray.release(); edges.release(); mask.release(); result.release(); cropped.release()
+        if (safeBitmap != this) safeBitmap.recycle()
+
+        if (output.width < width * 0.2 || output.height < height * 0.2) {
+            return this
+        }
+
+        return output
+    } catch (e: Exception) {
+        Log.e("FRUCTUS_SEGMENT", "Segmentation failed", e)
+        return this
+    }
+}
+
+fun Bitmap.computeColorAssist(): Float {
+    val small = Bitmap.createScaledBitmap(this, 64, 64, true)
+    val pixels = IntArray(small.width * small.height)
+    small.getPixels(pixels, 0, small.width, 0, 0, small.width, small.height)
+
+    var yellowish = 0
+    var greenish = 0
+
+    for (p in pixels) {
+        val r = (p shr 16) and 0xFF
+        val g = (p shr 8) and 0xFF
+        val b = p and 0xFF
+
+        if (r > 150 && g > 100 && b < 100) yellowish++
+        else if (g > r + 20 && g > b + 20) greenish++
+    }
+
+    small.recycle()
+    val total = yellowish + greenish
+    return if (total == 0) 0f else yellowish.toFloat() / total
 }
 
 @androidx.camera.core.ExperimentalGetImage
@@ -365,7 +686,10 @@ fun ImageProxy.toBitmap(): Bitmap? {
     uBuffer.get(nv21, ySize + vSize, uSize)
     val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
     val out = ByteArrayOutputStream()
-    yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
+
+    // Explicitly use Android Rect here to avoid confusion
+    yuvImage.compressToJpeg(android.graphics.Rect(0, 0, width, height), 100, out)
+
     val jpegBytes = out.toByteArray()
     this.close()
     return BitmapFactory.decodeByteArray(jpegBytes, 0, jpegBytes.size)
@@ -384,214 +708,12 @@ fun saveBitmapToFile(context: Context, bitmap: Bitmap, fileName: String = "fruit
     return file.absolutePath
 }
 
-// --------------------- FIXED CROP TO SCAN BOX ---------------------
-fun Bitmap.cropToScanBox(context: Context): Bitmap {
-    val screenWidthPx = context.resources.displayMetrics.widthPixels
-    val screenHeightPx = context.resources.displayMetrics.heightPixels
-    val boxSizePx = (460 * context.resources.displayMetrics.density).toInt()
-
-    val scaleX = this.width.toFloat() / screenWidthPx
-    val scaleY = this.height.toFloat() / screenHeightPx
-    val boxWidthOnBitmap = (boxSizePx * scaleX).toInt()
-    val boxHeightOnBitmap = (boxSizePx * scaleY).toInt()
-    val left = (this.width - boxWidthOnBitmap) / 2
-    val top = (this.height - boxHeightOnBitmap) / 2
-
-    val safeLeft = left.coerceAtLeast(0)
-    val safeTop = top.coerceAtLeast(0)
-    val safeWidth = boxWidthOnBitmap.coerceAtMost(this.width - safeLeft)
-    val safeHeight = boxHeightOnBitmap.coerceAtMost(this.height - safeTop)
-
-    return Bitmap.createBitmap(this, safeLeft, safeTop, safeWidth, safeHeight)
-}
-
-// --------------------- BACKGROUND CHECK ---------------------
-fun Bitmap.isMostlyBackground(
-    blackThreshold: Int = 30,
-    whiteThreshold: Int = 220,
-    grayTolerance: Int = 15,
-    ratio: Double = 0.9
-): Boolean {
-    val pixels = IntArray(width * height)
-    getPixels(pixels, 0, width, 0, 0, width, height)
-    var backgroundCount = 0
-
-    for (p in pixels) {
-        val r = (p shr 16) and 0xFF
-        val g = (p shr 8) and 0xFF
-        val b = p and 0xFF
-        val avg = (r + g + b) / 3
-
-        if (avg < blackThreshold) {
-            backgroundCount++
-        } else if (avg > whiteThreshold) {
-            backgroundCount++
-        } else if (
-            kotlin.math.abs(r - g) < grayTolerance &&
-            kotlin.math.abs(g - b) < grayTolerance &&
-            kotlin.math.abs(r - b) < grayTolerance
-        ) {
-            backgroundCount++
-        }
+fun mapRipeningStage(fruitResult: ClassificationResult): String {
+    return when {
+        fruitResult.label.contains("Spoiled", ignoreCase = true) -> "Spoiled"
+        fruitResult.label.contains("Unripe", ignoreCase = true) -> "Unripe"
+        fruitResult.label.contains("Ripe", ignoreCase = true) -> "Ripe"
+        fruitResult.label.contains("Overripe", ignoreCase = true) -> "Overripe"
+        else -> "Unknown"
     }
-
-    return backgroundCount > width * height * ratio
-}
-
-// --------------------- SPOT FACTOR DETECTION (Research Accurate) ---------------------
-fun Bitmap.computeSpotFactor(): Float {
-    val src = Mat()
-    Utils.bitmapToMat(this, src)
-
-    val gray = Mat()
-    Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
-    Imgproc.medianBlur(gray, gray, 5)
-
-    val edges = Mat()
-    Imgproc.Canny(gray, edges, 10.0, 100.0)
-    Imgproc.dilate(edges, edges, Mat(), Point(-1.0, -1.0), 1)
-
-    val contours = mutableListOf<MatOfPoint>()
-    Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-    if (contours.isEmpty()) {
-        src.release(); gray.release(); edges.release()
-        return 0f
-    }
-
-    val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return 0f
-    val mask = Mat.zeros(src.size(), CvType.CV_8UC1)
-    Imgproc.drawContours(mask, listOf(largest), -1, Scalar(255.0), -1)
-
-    val thresh = Mat()
-    Imgproc.adaptiveThreshold(
-        gray, thresh, 255.0,
-        Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
-        Imgproc.THRESH_BINARY_INV, 11, 2.0
-    )
-
-    val spotPixelsMat = Mat()
-    Core.bitwise_and(thresh, mask, spotPixelsMat)
-    val totalBlackPixels = Core.countNonZero(spotPixelsMat)
-    val mangoArea = Core.countNonZero(mask)
-    val adjustedSpots = totalBlackPixels * 0.955f
-    val spotFactor = if (mangoArea > 0) (adjustedSpots / mangoArea) * 100f else 0f
-
-    src.release(); gray.release(); edges.release(); mask.release()
-    thresh.release(); spotPixelsMat.release()
-
-    return spotFactor
-}
-
-// --------------------- 11-STEP SEGMENTATION ---------------------
-fun Bitmap.segmentFruit(): Bitmap {
-    if (this.isMostlyBackground()) {
-        return this
-    }
-
-    val src = Mat()
-    Utils.bitmapToMat(this, src)
-
-    val gray = Mat()
-    Imgproc.cvtColor(src, gray, Imgproc.COLOR_RGBA2GRAY)
-    Imgproc.medianBlur(gray, gray, 5)
-
-    val edges = Mat()
-    Imgproc.Canny(gray, edges, 10.0, 100.0)
-    Imgproc.dilate(edges, edges, Mat(), Point(-1.0, -1.0), 1)
-
-    val contours = mutableListOf<MatOfPoint>()
-    Imgproc.findContours(edges, contours, Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
-
-    if (contours.isEmpty()) return this
-    val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return this
-
-    val mask = Mat.zeros(src.size(), CvType.CV_8UC1)
-    Imgproc.drawContours(mask, listOf(largest), -1, Scalar(255.0), -1)
-
-    val result = Mat()
-    src.copyTo(result, mask)
-    val rect = Imgproc.boundingRect(largest)
-    val cropped = Mat(result, rect)
-    val output = Bitmap.createBitmap(cropped.width(), cropped.height(), Bitmap.Config.ARGB_8888)
-    Utils.matToBitmap(cropped, output)
-
-    if (output.width < width * 0.2 || output.height < height * 0.2) {
-        return this
-    }
-
-    return output
-}
-
-// --------------------- GALLERY IMAGE DETECTION ---------------------
-suspend fun analyzeBitmap(
-    bitmap: Bitmap,
-    context: Context
-): Triple<ClassificationResult, ClassificationResult?, ClassificationResult?> {
-
-    // 🔹 Preprocess image just like camera
-    val processedBitmap = bitmap.prepareForModel()  // optional helper if you use normalization, rotation, etc.
-
-    // 🔹 Step 1: Fruit classification
-    val fruitResult = classifyFruit(processedBitmap, context)
-    var ripenessResult: ClassificationResult? = null
-    var ripeningMethodResult: ClassificationResult? = null
-
-    // 🔹 Step 2: Continue only if fruit is detected
-    if (fruitResult.label != "No fruit detected") {
-
-        // --- Cavendish or Carabao banana or mango get their own rules ---
-        ripenessResult = classifyRipeness(fruitResult.label, processedBitmap, context)
-
-        // --- Spot factor, color assist, etc. already happen inside classifyRipeness() ---
-        // So you don't need to manually call those here.
-
-        // 🔹 Step 3: If it's a Carabao mango and is ripe/overripe → check ripening method
-        if (fruitResult.label.equals("Carabao", true) &&
-            (ripenessResult.label.equals("Ripe", true) || ripenessResult.label.equals("Overripe", true))
-        ) {
-            val segmented = processedBitmap.segmentFruit()
-            ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, segmented, context)
-        }
-    }
-
-    // 🔹 Logging
-    Log.d("FRUCTUS_LOG", "📸 [GALLERY DETECTION]")
-    Log.d("FRUCTUS_LOG", "Fruit Type: ${fruitResult.label} (Conf: ${fruitResult.confidence})")
-    ripenessResult?.let {
-        Log.d("FRUCTUS_LOG", "Ripeness: ${it.label} (Conf: ${it.confidence})")
-    }
-    ripeningMethodResult?.let {
-        Log.d("FRUCTUS_LOG", "Ripening Method: ${it.label} (Conf: ${it.confidence})")
-    }
-
-    return Triple(fruitResult, ripenessResult, ripeningMethodResult)
-}
-
-fun Bitmap.computeColorAssist(): Float {
-    val small = Bitmap.createScaledBitmap(this, 64, 64, true)
-    val pixels = IntArray(small.width * small.height)
-    small.getPixels(pixels, 0, small.width, 0, 0, small.width, small.height)
-
-    var yellowish = 0
-    var greenish = 0
-
-    for (p in pixels) {
-        val r = (p shr 16) and 0xFF
-        val g = (p shr 8) and 0xFF
-        val b = p and 0xFF
-
-        // Hue-like logic but faster (no color conversion)
-        if (r > 150 && g > 100 && b < 100) yellowish++
-        else if (g > r + 15 && g > b + 15) greenish++   // much less sensitive
-    }
-
-    small.recycle()
-    val total = yellowish + greenish
-    return if (total == 0) 0f else yellowish.toFloat() / total
-}
-fun Bitmap.prepareForModel(): Bitmap {
-    // Ensure same input size and orientation as camera
-    val targetSize = 224
-    val scaled = Bitmap.createScaledBitmap(this, targetSize, targetSize, true)
-    return scaled
 }

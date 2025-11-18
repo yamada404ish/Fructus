@@ -185,7 +185,7 @@ fun CustomBottomSheetDetail(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .size(100.dp)
-                            .clickable { isDialogOpen.value = false },
+                            .clickable { isDialogOpen.value = true },
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(R.drawable.unknown_fruit),
                         error = painterResource(R.drawable.unknown_fruit)
