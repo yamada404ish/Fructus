@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,11 +98,11 @@ fun RecipeInformation(
                     contentDescription = "Recipe Image",
                     contentScale = ContentScale.Crop, // keeps proportions & fills rounded area
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(140.dp)
                         .clip(RoundedCornerShape(16.dp)) // 👈 adds corner radius
                 )
 
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Column (
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -112,19 +113,27 @@ fun RecipeInformation(
                         fontSize = 22.sp,
                         color = colors.textPrimary
                     )
-                    Text (
-                        text = "Description",
-                        fontFamily = poppinsFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = colors.textSecondary
-                    )
+//                    Text (
+//                        text = "Description",
+//                        fontFamily = poppinsFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 14.sp,
+//                        color = colors.textSecondary
+//                    )
                     Text (
                         text = description,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp,
                         color = colors.textPrimary
+                    )
+                    Text (
+                        text = "Source: ${recipe?.source}",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 10.sp,
+                        color = colors.textSecondary
                     )
 
                 }

@@ -60,7 +60,7 @@ class FruitCheckWorker(
         fruits.forEach { fruit ->
             android.util.Log.d("FruitCheckWorker", "Checking fruit: ${fruit.name} (ID: ${fruit.id})")
 
-            val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
+            val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage, fruit.ripeningProcess)
             val estimatedShelfLife = shelfLifeRange.minDays
             val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
             val remainingShelfLife = estimatedShelfLife - daysSinceScan

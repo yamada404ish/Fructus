@@ -12,18 +12,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.guide.components.UserGuideInformation
 import com.example.fructus.ui.home.components.Dropdown
 import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.util.ClickGuard
-import kotlinx.coroutines.coroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +57,8 @@ fun UserGuideScreenContent(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Row(
@@ -72,7 +75,6 @@ fun UserGuideScreenContent(
                     enabled = isProcessEnabled,
                     clickGuard = clickGuard,
                     coroutineScope = coroutineScope
-
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -87,8 +89,9 @@ fun UserGuideScreenContent(
             }
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
                     .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
                     .padding(bottom = 16.dp)
             ) {
                 UserGuideInformation(
@@ -97,6 +100,14 @@ fun UserGuideScreenContent(
                         selectedProcess = selectedProcess
                 )
             }
+            Text(
+                text = "Shelf Life acquired from Bureau of Plant Industries",
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
         }
     }
 }

@@ -251,7 +251,7 @@ fun HomeScreenContent(
                             "Ripe" -> state.fruits.filter { it.ripeningStage.equals("ripe", true) }
                             "Overripe" -> state.fruits.filter { it.ripeningStage.equals("overripe", true) }
                             "Spoiling" -> state.fruits.filter { fruit ->
-                                val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
+                                val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage, fruit.ripeningProcess)
                                 val estimatedShelfLife = shelfLifeRange.minDays
                                 val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
                                 val remainingShelfLife = estimatedShelfLife - daysSinceScan

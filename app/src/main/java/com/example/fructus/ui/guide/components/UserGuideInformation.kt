@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Unspecified
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -140,6 +141,7 @@ fun FruitGuideCard(
             },
             fontFamily = poppinsFontFamily,
             fontSize = 10.sp,
+            fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center,
             color = colors.textSecondary,
             softWrap = true,

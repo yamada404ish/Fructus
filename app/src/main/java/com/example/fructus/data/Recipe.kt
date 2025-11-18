@@ -6,6 +6,7 @@ data class Recipe(
     val imageResName: String,
     val fruitType: String,
     val stage: String,
+    val source: String,
     val ingredients: List<String>,
     val directions: List<String>,
 )

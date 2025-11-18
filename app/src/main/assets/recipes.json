@@ -5,6 +5,7 @@
     "imageResName": "recipe_banana_flour",
     "fruitType": "cavendish",
     "stage": "unripe",
+    "source": "oliviaoven.com",
     "ingredients": [
       "6-8 green bananas",
       "1 large chopped onion",
@@ -31,6 +32,7 @@
     "imageResName": "recipe_banana_fries",
     "fruitType": "cavendish",
     "stage": "unripe",
+    "source": "allrecipes.com",
     "ingredients": [
       "5 unripe green bananas",
       "Cooking oil",
@@ -49,6 +51,7 @@
     "imageResName": "recipe_banana_chocolate",
     "fruitType": "cavendish",
     "stage": "ripe",
+    "source": "thehealthymaven.com",
     "ingredients": [
       "Banana",
       "Chocolate",
@@ -69,6 +72,7 @@
     "imageResName": "recipe_banana_pancake",
     "fruitType": "cavendish",
     "stage": "ripe",
+    "source": "thehealthymaven.com",
     "ingredients": [
       "1 1/2 cups rolled oats",
       "2 teaspoon baking powder",
@@ -94,6 +98,7 @@
     "imageResName": "recipe_banana_bread",
     "fruitType": "cavendish",
     "stage": "overripe",
+    "source": "panlasangpinoy.com",
     "ingredients": [
       "1 cup mashed bananas",
       "1 1/2 cups all purpose flour",
@@ -119,6 +124,7 @@
     "imageResName": "recipe_banana_fritters",
     "fruitType": "cavendish",
     "stage": "overripe",
+    "source": "cookindocs.com",
     "ingredients": [
       "Banana",
       "All purpose flour",
@@ -144,6 +150,7 @@
     "imageResName": "recipe_banana_flour",
     "fruitType": "lakatan",
     "stage": "unripe",
+    "source": "oliviaoven.com",
     "ingredients": [
       "6-8 green bananas",
       "1 large chopped onion",
@@ -170,6 +177,7 @@
     "imageResName": "recipe_banana_fries",
     "fruitType": "lakatan",
     "stage": "unripe",
+    "source": "allrecipes.com",
     "ingredients": [
       "5 unripe green bananas",
       "Cooking oil",
@@ -188,6 +196,7 @@
     "imageResName": "recipe_banana_pancake",
     "fruitType": "lakatan",
     "stage": "ripe",
+    "source": "thehealthymaven.com",
     "ingredients": [
       "1 1/2 cups rolled oats",
       "2 teaspoon baking powder",
@@ -214,6 +223,7 @@
     "imageResName": "recipe_banana_chocolate",
     "fruitType": "lakatan",
     "stage": "ripe",
+    "source": "thehealthymaven.com",
     "ingredients": [
       "Banana",
       "Chocolate",
@@ -234,6 +244,7 @@
     "imageResName": "recipe_banana_fritters",
     "fruitType": "lakatan",
     "stage": "overripe",
+    "source": "cookindocs.com",
     "ingredients": [
       "Banana",
       "All purpose flour",
@@ -256,6 +267,7 @@
     "imageResName": "recipe_banana_bread",
     "fruitType": "lakatan",
     "stage": "overripe",
+    "source": "panlasangpinoy.com",
     "ingredients": [
       "1 cup mashed bananas",
       "1 1/2 cups all purpose flour",
@@ -281,6 +293,7 @@
     "imageResName": "recipe_banana_nilupak",
     "fruitType": "saba",
     "stage": "unripe",
+    "source": "kusinasecrets.com",
     "ingredients": [
       "15 pieces unripe saba bananas",
       "1 whole coconut, freshly grated",
@@ -305,6 +318,7 @@
     "imageResName": "recipe_banana_pinakro",
     "fruitType": "saba",
     "stage": "unripe",
+    "source": "goodfoodcommunity.com",
     "ingredients": [
       "1 kg saging na saba",
       "2 cups coconut cream",
@@ -326,6 +340,7 @@
     "imageResName": "recipe_banana_fried_saba",
     "fruitType": "saba",
     "stage": "ripe",
+    "source": "deliciouslyrushed.com",
     "ingredients": [
       "Saba banana",
       "Cooking oil",
@@ -347,6 +362,7 @@
     "imageResName": "recipe_banana_turon",
     "fruitType": "saba",
     "stage": "ripe",
+    "source": "recipesbynora.com",
     "ingredients": [
       "Saba banana",
       "Spring roll wrappers",
@@ -368,6 +384,7 @@
     "imageResName": "recipe_banana_cue",
     "fruitType": "saba",
     "stage": "ripe",
+    "source": "recipesbynora.com",
     "ingredients": [
       "Saba banana",
       "Brown Sugar",
@@ -387,6 +404,7 @@
     "imageResName": "recipe_banana_bread",
     "fruitType": "saba",
     "stage": "overripe",
+    "source": "panlasangpinoy.com",
     "ingredients": [
       "1 cup mashed bananas",
       "1 1/2 cups all purpose flour",
@@ -413,6 +431,7 @@
     "imageResName": "recipe_banana_fritters",
     "fruitType": "saba",
     "stage": "overripe",
+    "source": "cookindocs.com",
     "ingredients": [
       "Banana",
       "All purpose flour",
@@ -436,6 +455,7 @@
     "imageResName": "recipe_mango_pickled",
     "fruitType": "carabao",
     "stage": "unripe",
+    "source": "kawalingpinoy.com",
     "ingredients": [
       "3 large unripe mangoes",
       "1 1/2 cups vinegar",
@@ -458,6 +478,7 @@
     "imageResName": "recipe_mango_ensaladang_mangga",
     "fruitType": "carabao",
     "stage": "unripe",
+    "source": "panlasangpinoy.com",
     "ingredients": [
       "2 medium green mangoes peeled and sliced into cube",
       "3 medium tomato cubed",
@@ -480,6 +501,7 @@
     "imageResName": "recipe_mango_jelly",
     "fruitType": "carabao",
     "stage": "ripe",
+    "source": "foxyfolksy.com",
     "ingredients": [
       "1 pouch 25g mango-flavored jelly powder gulaman",
       "5 cups water",
@@ -504,6 +526,7 @@
     "imageResName": "recipe_mango_salad",
     "fruitType": "carabao",
     "stage": "ripe",
+    "source": "iankewks.com",
     "ingredients": [
       "1 ripe mango, peeled and julienned",
       "1/2 small red onion, julienned",
@@ -531,6 +554,7 @@
     "imageResName": "recipe_mango_pudding",
     "fruitType": "carabao",
     "stage": "overripe",
+    "source": "christieathome.com",
     "ingredients": [
       "Mangoes",
       "Full fat coconut milk",
@@ -554,22 +578,20 @@
     "imageResName": "recipe_mango_cake",
     "fruitType": "carabao",
     "stage": "overripe",
+    "source": "recipetineats.com",
     "ingredients": [
       "150 g plain sweet biscuits",
       "100 g melted unsalted butter",
       "2 tbsp white sugar",
-      "",
       "2 large mangoes",
       "4 1/2 gelatin powder",
       "1/2 cup cold water",
       "500 g softened cream cheese",
       "150 g caster sugar",
       "300 ml whipping cream",
-      "",
       "3/4 teaspoon gelatin powder",
       "1/4 cup cold water",
       "1 tablespoon lemon juice",
-      "",
       "300 ml whipping cream",
       "1 tablespoon white sugar",
       "1 tablespoon vanilla extract",
@@ -581,13 +603,11 @@
       "Add melted butter and sugar, then mix well until crumbs look like wet sand.",
       "Press the mixture firmly into the bottom of a springform pan.",
       "Chill in the fridge.",
-      "",
       "Sprinkle gelatin over cold water in a small bowl and let sit for 5 minutes to thicken.",
       "Microwave for about 15 seconds at a time until gelatin fully melts and let it sit cool slightly.",
       "Blend the mangoes until smooth. Save ¾ cups of the puree for the topping later.",
       "In a large bowl, combine cream cheese, sugar, whipping cream, mango puree, and melted gelatin.",
       "Beat or blend until smooth and creamy, then pour the mixture into the crust, spread evenly, and chill for at least 3 hours or until firm.",
-      "",
       "In  a small bowl, sprinkle ¾ tsp gelatin over ¼ cup cold water and let it sit for 5 mins.",
       "Microwave until melted then let it cool for a few minutes.",
       "Mix the saved ¾ cups mango puree and lemon juice in a bowl.",
@@ -603,6 +623,7 @@
     "imageResName": "recipe_tomato_fried",
     "fruitType": "tomato",
     "stage": "unripe",
+    "source": "allrecipes.com",
     "ingredients": [
       "4 green tomatoes, cut into 1/4-inch slices",
       "Salt and ground black pepper",
@@ -615,7 +636,6 @@
       "1/2 teaspoon dried paprika",
       "1/2 teaspoon cayenne pepper",
       "2 cups canola oil",
-      "",
       "1/2 cup ranch dressing",
       "1 tablespoon Cajun seasoning",
       "2 tablespoon hot pepper sauce"
@@ -634,6 +654,7 @@
     "imageResName": "recipe_tomato_tapenade",
     "fruitType": "tomato",
     "stage": "unripe",
+    "source": "allrecipes.com",
     "ingredients": [
       "1 teaspoon olive oil",
       "1/4 large onion, diced",
@@ -660,6 +681,7 @@
     "imageResName": "recipe_tomato_sauteed",
     "fruitType": "tomato",
     "stage": "ripe",
+    "source": "rezelkealoha.com",
     "ingredients": [
       "5 tomatoes",
       "2 eggs",
@@ -679,6 +701,7 @@
     "imageResName": "recipe_tomato_juice",
     "fruitType": "tomato",
     "stage": "ripe",
+    "source": "filipino-recipes.com",
     "ingredients": [
       "1 can Evaporated milk",
       "5 large tomatoes",
@@ -686,10 +709,12 @@
       "1 teaspoon salt"
     ],
     "directions": [
-      "Boil ripe tomatoes in water until soft.",
-      "Blend the tomatoes, then strain to remove seeds and skin.",
-      "Add sugar, salt, and more water to taste.",
-      "Chill in the refrigerator before serving."
+      "Clean the tomatoes and cut every tomato into small pieces.",
+      "Put all the tomatoes in a cooking pan and cook the tomatoes.",
+      "Mix the tomatoes while cooking to make the tomatoes soft until it’s a paste.",
+      "With a sieve we will separate the tomato juice from the skin and seeds. (use a spoon to get as much juice as possible)",
+      "When ready we add all the other ingredients (Evaporated milk, water, and salt) together with the tomato juice and put it in the ref.",
+      "Finally, serve the juice cold. (Optionally you can add a quarter of lemon juice)"
     ]
   },
 
@@ -699,6 +724,7 @@
     "imageResName": "recipe_tomato_sauce",
     "fruitType": "tomato",
     "stage": "overripe",
+    "source": "onceuponachef.com",
     "ingredients": [
       "4 lb plum tomatoes (or two 28-oz cans whole peeled plum tomatoes)",
       "6 tablespoon unsalted butter",
@@ -720,11 +746,12 @@
 
 
 
-  { "name": "Salsa",
+  { "name": "Tomato Salsa",
     "description": "Homemade salsa with a hint of spice is the perfect condiment for snacking.",
     "imageResName": "recipe_tomato_salsa",
     "fruitType": "tomato",
     "stage": "overripe",
+    "source": "cookingclassy.com",
     "ingredients": [
       "Tomatoes",
       "1 can of diced tomatoes",

@@ -126,19 +126,19 @@
       {
         "image": "guide_unripe_mango",
         "stage": "Unripe",
-        "shelfLifeNatural": "18-21 days",
-        "shelfLifeArtificial": "---"
+        "shelfLifeNatural": "13-15 days",
+        "shelfLifeArtificial": "11-13 days"
       },
       {
         "image": "guide_ripe_mango",
         "stage": "Ripe",
-        "shelfLifeNatural": "10-14 days",
+        "shelfLifeNatural": "5-8 days",
         "shelfLifeArtificial": "3-6 days"
       },
       {
         "image": "guide_overripe_mango",
         "stage": "Overripe",
-        "shelfLifeNatural": "6-8 days",
+        "shelfLifeNatural": "4-7 days",
         "shelfLifeArtificial": "2-5 days"
       },
       {
