@@ -196,7 +196,7 @@ fun CameraScreenContent(
     }
 
     // 🍌 Shelf life info
-    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness)
+    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness, isNaturalRipening.value)
     val shelfLifeDisplay =
         if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
 

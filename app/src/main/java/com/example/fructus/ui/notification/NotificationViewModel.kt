@@ -59,7 +59,7 @@ class NotificationViewModel(
         viewModelScope.launch {
             fruitDao.getAllFruits().collect { fruits ->
                 fruits.forEach { fruit ->
-                    val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage)
+                    val shelfLifeRange = getShelfLifeRange(fruit.name, fruit.ripeningStage, fruit.ripeningProcess)
                     val estimatedShelfLife = shelfLifeRange.minDays
 
                     val daysSinceScan = calculateDaysSince(fruit.scannedTimestamp)
