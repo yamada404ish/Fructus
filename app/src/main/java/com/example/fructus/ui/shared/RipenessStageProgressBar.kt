@@ -1,6 +1,7 @@
 package com.example.fructus.ui.shared
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -39,6 +41,7 @@ enum class RipenessStage(val displayName: String) {
 }
 
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun RipenessProgressBar(
     currentStage: RipenessStage,
@@ -50,6 +53,14 @@ fun RipenessProgressBar(
 ) {
 
     val colors = MaterialTheme.appColors
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
+
+    val isSmallScreen = screenWidth < 360
+
+
+    val displayText = if (isSmallScreen) 9.sp else 11.sp
 
     // Update colors based on current stage - only current stage lights up
     val segmentColors = RipenessStage.entries.map { stage ->
@@ -107,7 +118,7 @@ fun RipenessProgressBar(
                 ) {
                     Text(
                         text = stage.displayName,
-                        fontSize = 11.sp,
+                        fontSize = displayText,
                         fontFamily = poppinsFontFamily,
                         color = textColor,
                         fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,

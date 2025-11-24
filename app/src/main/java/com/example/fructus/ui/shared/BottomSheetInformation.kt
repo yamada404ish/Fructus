@@ -1,12 +1,16 @@
 package com.example.fructus.ui.shared
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +69,7 @@ fun CustomBottomSheet(
     val disableSave = isSpoiled || isSaved
 
     val context = LocalContext.current
-    val allRecipes = context.loadRecipesFromJson()
+    context.loadRecipesFromJson()
     val displayName = getDisplayFruitName(fruitName)
 
     Box(
@@ -292,16 +297,17 @@ fun  FruitAnalysis(
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier
+                    .height(IntrinsicSize.Max)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f))
-                InfoCard(title = "Ripeness \nAccuracy", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f))
+                InfoCard(title = "Fruit \nShelf Life", value = shelfLifeDisplay, modifier = Modifier.weight(1f).fillMaxHeight())
+                InfoCard(title = "Ripeness \nAccuracy", value = "${(confidence * 100).toInt()}%", modifier = Modifier.weight(1f).fillMaxHeight())
                 InfoCard(
                     title = "Ripening \nProcess",
                     value = ripeningProcessValue,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).fillMaxHeight()
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -320,6 +326,7 @@ fun  FruitAnalysis(
     }
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun InfoCard(
     title: String,
@@ -329,10 +336,21 @@ fun InfoCard(
 
     val colors = MaterialTheme.appColors
 
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+
+
+    val isSmallScreen = screenWidth < 360
+
+
+    val titleFontSize = if (isSmallScreen) 10.sp else 12.sp
+    val valueFontSize = if (isSmallScreen) 12.sp else 14.sp
+    val cardPadding = if (isSmallScreen) 6.dp else 10.dp
+
     Card(
         modifier = modifier
-            .height(90.dp)
-            .width(90.dp)
+            .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .shadow(8.dp, RoundedCornerShape(2.dp)),
         colors = CardDefaults.cardColors(containerColor = colors.innerBox),
@@ -341,13 +359,13 @@ fun InfoCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp),
+                .padding(cardPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
-                fontSize = 12.sp,
+                fontSize = titleFontSize,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
@@ -356,7 +374,7 @@ fun InfoCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = 14.sp,
+                fontSize = valueFontSize,
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = colors.textPrimary,
@@ -365,3 +383,5 @@ fun InfoCard(
         }
     }
 }
+
+
