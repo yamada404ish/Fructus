@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +44,8 @@ import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.loadRecipesFromJson
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 import com.example.fructus.util.toRipenessStage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +96,7 @@ fun CustomBottomSheet(
                     text = displayName,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
+                    fontSize = responsiveSp(28,30,32),
                     color = colors.textPrimary
                 )
 
@@ -126,7 +125,7 @@ fun CustomBottomSheet(
                             text = "Tips to Prolong Shelf life:",
                             fontFamily = poppinsFontFamily,
                             fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp,
+                            fontSize =responsiveSp(14,16,18),
                             color = colors.textPrimary
                         )
 
@@ -162,7 +161,7 @@ fun CustomBottomSheet(
                                     isSpoiled -> "Fruit is already spoiled"
                                     isSaved -> "Saved" else -> "Save" },
                                 color = if (isSpoiled) colors.saveText else Color.Black,
-                                fontSize = 18.sp,
+                                fontSize = responsiveSp(16,18,20),
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Normal
                             )
@@ -179,7 +178,7 @@ fun CustomBottomSheet(
                             Text(
                                 "Scan Again",
                                 fontFamily = poppinsFontFamily,
-                                fontSize = 18.sp,
+                                fontSize = responsiveSp(16,18,20),
                                 fontWeight = FontWeight.Normal,
                                 color = colors.textPrimary
                             )
@@ -206,7 +205,7 @@ fun CustomBottomSheet(
                             Text(
                                 "Cancel",
                                 fontFamily = poppinsFontFamily,
-                                fontSize = 18.sp,
+                                fontSize = responsiveSp(16,18,20),
                                 fontWeight = FontWeight.Normal,
                                 color = colors.textPrimary
                             )
@@ -225,7 +224,7 @@ fun CustomBottomSheet(
                             Text(
                                 text = if (isSaved) "Saved" else "Save",
                                 color = Color.Black,
-                                fontSize = 18.sp,
+                                fontSize = responsiveSp(16,18,20),
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.Normal
                             )
@@ -275,14 +274,14 @@ fun  FruitAnalysis(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(responsiveDp(14,16,18)),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = "Fruit Analysis",
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                fontSize = responsiveSp(14,16,18),
                 color = colors.textPrimary
 
             )
@@ -290,7 +289,7 @@ fun  FruitAnalysis(
                 text = "Accuracy may be compromised due to unforeseen conditions",
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
-                fontSize = 10.sp,
+                fontSize = responsiveSp(8,10,12),
                 letterSpacing = 0.1f.sp,
                 color = colors.textSecondary
             )
@@ -315,7 +314,7 @@ fun  FruitAnalysis(
                 "Ripeness Stage upon scanning",
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
-                fontSize = 10.sp,
+                fontSize = responsiveSp(8,10,12),
                 color = colors.textSecondary,
             )
             RipenessProgressBar(
@@ -337,17 +336,6 @@ fun InfoCard(
     val colors = MaterialTheme.appColors
 
 
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
-
-
-    val isSmallScreen = screenWidth < 360
-
-
-    val titleFontSize = if (isSmallScreen) 10.sp else 12.sp
-    val valueFontSize = if (isSmallScreen) 12.sp else 14.sp
-    val cardPadding = if (isSmallScreen) 6.dp else 10.dp
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -359,13 +347,13 @@ fun InfoCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(cardPadding),
+                .padding(responsiveDp(8,10,12)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
-                fontSize = titleFontSize,
+                fontSize = responsiveSp(10,12,14),
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
@@ -374,7 +362,7 @@ fun InfoCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = valueFontSize,
+                fontSize = responsiveSp(12,14,16),
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = colors.textPrimary,
