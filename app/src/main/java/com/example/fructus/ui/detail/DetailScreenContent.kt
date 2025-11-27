@@ -20,6 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +58,7 @@ import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getDrawableIdByName
 import com.example.fructus.util.getFruitDescription
 import com.example.fructus.util.loadRecipesFromJson
+import com.example.fructus.util.responsiveSp
 import com.example.fructus.util.safeClickable
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
@@ -270,6 +273,24 @@ fun CustomBottomSheetDetail(
                                 }
                             )
                         }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button (
+                        onClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.button
+                        )
+                    ) {
+                        Text(
+                            text = "Scan",
+                            color = Color.Black,
+                            fontSize = responsiveSp(16,18,20),
+                            fontFamily = poppinsFontFamily,
+                            fontWeight = FontWeight.Normal
+                        )
                     }
                 }
             }
