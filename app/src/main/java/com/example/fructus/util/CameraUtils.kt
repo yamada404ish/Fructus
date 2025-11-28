@@ -114,7 +114,7 @@ fun classifyFruit(bitmap: Bitmap, context: Context): ClassificationResult {
     var predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
 
     val thresholds = mapOf(
-        "Tomato" to 0.9f,
+        "Tomato" to 0.97f,
         "Lakatan" to 0.9f,
         "Saba" to 0.8f,
         "Cavendish" to 0.9f,
