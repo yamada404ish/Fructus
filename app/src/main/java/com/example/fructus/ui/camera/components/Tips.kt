@@ -41,6 +41,8 @@ import com.example.fructus.ui.detail.components.HorizontalLine
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 
 @Composable
 fun Tips(modifier: Modifier = Modifier) {
@@ -118,14 +120,14 @@ fun InfoCard(
             Icon(
                 painter = painterResource(icon),
                 contentDescription = "Tips icon",
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(responsiveDp(30,32,34))
             )
             Spacer(modifier = Modifier.width(8.dp))
 
             Column(Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    fontSize = 14.sp,
+                    fontSize = responsiveSp(12,14,16),
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     color = colors.textPrimary,
@@ -133,7 +135,7 @@ fun InfoCard(
                 )
                 Text(
                     text = subtitle,
-                    fontSize = 10.sp,
+                    fontSize = responsiveSp(8,10,12),
                     fontFamily = poppinsFontFamily,
                     color = colors.textPrimary,
                     textAlign = TextAlign.Center,
@@ -146,7 +148,7 @@ fun InfoCard(
                 contentDescription = "arrow icon",
                 modifier = Modifier
                     .rotate(rotationState)
-                    .size(16.dp),
+                    .size(responsiveDp(14,16,18)),
                 tint = colors.textTertiary
             )
         }
@@ -158,7 +160,7 @@ fun InfoCard(
             Text(
                 text = subtext,
                 fontFamily = poppinsFontFamily,
-                fontSize = 12.sp,
+                fontSize = responsiveSp(10,12,14),
                 color = colors.textPrimary,
                 modifier = Modifier.padding(16.dp)
             )
@@ -167,7 +169,7 @@ fun InfoCard(
                 text = sourceText,
                 fontFamily = poppinsFontFamily,
                 fontStyle = FontStyle.Italic,
-                fontSize = 10.sp,
+                fontSize = responsiveSp(8,10,12),
                 color = colors.textPrimary,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
             )

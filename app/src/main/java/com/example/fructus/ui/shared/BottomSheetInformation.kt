@@ -93,24 +93,21 @@ fun CustomBottomSheet(
                     )
 
                     // ❌ REMOVED: Angle badge display logic
-                    /*
                     if (anglesScanned > 1 && !isSpoiled) {
                         Spacer(modifier = Modifier.width(10.dp))
                         Surface(
                             color = colors.button,
-                            shape = RoundedCornerShape(50),
-                            modifier = Modifier.height(24.dp)
+                            shape = RoundedCornerShape(40),
                         ) {
                             Text(
-                                text = "$anglesScanned Angles",
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                text = "$anglesScanned angles",
+                                fontSize = responsiveSp(10,12,14),
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                     }
-                    */
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
