@@ -275,23 +275,23 @@ fun CustomBottomSheetDetail(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button (
-                        onClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(45.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.button
-                        )
-                    ) {
-                        Text(
-                            text = "Scan",
-                            color = Color.Black,
-                            fontSize = responsiveSp(16,18,20),
-                            fontFamily = poppinsFontFamily,
-                            fontWeight = FontWeight.Normal
-                        )
-                    }
+//                    Button (
+//                        onClick = {},
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(45.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = colors.button
+//                        )
+//                    ) {
+//                        Text(
+//                            text = "Scan",
+//                            color = Color.Black,
+//                            fontSize = responsiveSp(16,18,20),
+//                            fontFamily = poppinsFontFamily,
+//                            fontWeight = FontWeight.Normal
+//                        )
+//                    }
                 }
             }
             if (isDialogOpen.value) {
