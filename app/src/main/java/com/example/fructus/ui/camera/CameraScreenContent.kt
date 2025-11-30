@@ -89,6 +89,19 @@ fun CameraScreenContent(
 
     val clickGuard = remember { ClickGuard() }
 
+    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness, isNaturalRipening.value)
+    val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
+
+    val showScanAgainDialog = remember { mutableStateOf(false) }
+    val showHowTo = remember { mutableStateOf(false) }
+
+    val handleCancel: () -> Unit = {
+        isBottomSheetVisible.value = false
+        detectedState.value = false
+        isSaved.value = false
+    }
+
+
     // 🔹 LOGIC: Combine results from multiple angles
     fun calculateCombinedResult() {
         if (multiAngleResults.isEmpty()) return
@@ -230,6 +243,8 @@ fun CameraScreenContent(
         isSaved.value = false
         isBottomSheetVisible.value = false
         isScanning.value = false
+        showScanAgainDialog.value = false
+
 
         // Reset dialogs
         showNoFruitDetected.value = false
@@ -306,17 +321,6 @@ fun CameraScreenContent(
         }
     }
 
-    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness, isNaturalRipening.value)
-    val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
-
-    val showScanAgainDialog = remember { mutableStateOf(false) }
-    val showHowTo = remember { mutableStateOf(false) }
-
-    val handleCancel: () -> Unit = {
-        isBottomSheetVisible.value = false
-        detectedState.value = false
-        isSaved.value = false
-    }
 
     BackHandler {
         when {
@@ -530,7 +534,7 @@ fun CameraScreenContent(
                                         detectedRipeness,
                                         isNaturalRipening.value,
                                         detectedConfidence.value,
-                                        capturedImagePath.value
+                                        capturedImagePath.value,
                                     )
                                     isSaved.value = true
                                     showScanAgainDialog.value = true
@@ -578,7 +582,9 @@ fun CameraScreenContent(
 
     if (showScanAgainDialog.value) {
         ScanAgain(
-            onYes = { resetScan() },
+            onYes = {
+                resetScan()
+            },
             onNo = {
                 cameraRef.value?.cameraControl?.enableTorch(false)
                 flashEnabled.value = false
