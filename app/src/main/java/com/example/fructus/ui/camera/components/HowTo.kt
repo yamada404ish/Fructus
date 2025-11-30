@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 
 @Composable
 fun HowTo(
@@ -80,7 +82,7 @@ fun HowTo(
                 Text(
                     step.title,
                     fontFamily = poppinsFontFamily,
-                    fontSize = 20.sp,
+                    fontSize = responsiveSp(18,20,22),
                     fontWeight = FontWeight.Bold,
                     color = colors.textPrimary,
                     textAlign = TextAlign.Center,
@@ -149,7 +151,7 @@ fun HowTo(
                             painter = painterResource(R.drawable.r),
                             contentDescription = "Next",
                             modifier = Modifier
-                                .size(22.dp)
+                                .size(responsiveDp(20,22,24))
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
@@ -163,13 +165,10 @@ fun HowTo(
                     }
                 }
 
-
-                Spacer(modifier = Modifier.height(0.dp))
-
                 Text(
                     step.subtitle,
                     fontFamily = poppinsFontFamily,
-                    fontSize = 14.sp,
+                    fontSize = responsiveSp(12,14,16),
                     fontWeight = FontWeight.Normal,
                     color = colors.textPrimary,
                     textAlign = TextAlign.Center,
@@ -178,14 +177,12 @@ fun HowTo(
                         .padding(24.dp)
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-
                 Button(
                     onClick = { onClose ()},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp)
-                        .height(40.dp)
+//                        .height(40.dp)
                         .padding(horizontal = 30.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.button, // background
@@ -198,7 +195,7 @@ fun HowTo(
                     Text(
                         "Got it",
                         fontFamily = poppinsFontFamily,
-                        fontSize = 16.sp,
+                        fontSize = responsiveSp(14,16,18),
                         fontWeight = FontWeight.Normal,
                         color = Color.Black
                     )
