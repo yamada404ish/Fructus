@@ -120,7 +120,7 @@ fun CustomBottomSheet(
                         shape = RoundedCornerShape(40),
                     ) {
                         Text(
-                            text = "$anglesScanned angles",
+                            text = if (anglesScanned == 1) "$anglesScanned angle" else "$anglesScanned angles",
                             fontSize = responsiveSp(10,12,14),
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                             color = Color.Black,

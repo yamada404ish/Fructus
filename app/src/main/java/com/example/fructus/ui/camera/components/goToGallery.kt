@@ -42,7 +42,7 @@ fun GoToGallery(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "The previous scan may reset when you go to the gallery.",
+                    text = "Your previous scan will be deleted, Proceed?",
                     fontWeight = FontWeight.Medium,
                     fontFamily = poppinsFontFamily,
                     fontSize = 22.sp,

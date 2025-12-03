@@ -44,6 +44,7 @@ import com.example.fructus.util.*
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.example.fructus.ui.camera.components.GoToGallery
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +66,7 @@ fun CameraScreenContent(
 
     val fromGallery = remember { mutableStateOf(false) }
 
+    val colors = MaterialTheme.appColors
 
     // 🔧 Core states
     val detectedConfidence = remember { mutableStateOf(0f) }
@@ -438,50 +440,96 @@ fun CameraScreenContent(
         )
 
         // 🔦 Top bar (Back + Flash)
-        Row(
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .padding(top = 50.dp, start = 16.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(top = 50.dp)
         ) {
-            if (!isBottomSheetVisible.value) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back),
-                    contentDescription = "Back",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .safeClickable(clickGuard, coroutineScope) {
-                            cameraRef.value?.cameraControl?.enableTorch(false)
-                            flashEnabled.value = false
-                            onNavigateUp()
-                        },
-                    tint = Color.Unspecified
-                )
-            }
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Back Icon
+                if (!isBottomSheetVisible.value) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_back),
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .safeClickable(clickGuard, coroutineScope) {
+                                cameraRef.value?.cameraControl?.enableTorch(false)
+                                flashEnabled.value = false
+                                onNavigateUp()
+                            },
+                        tint = Color.Unspecified
+                    )
+                } else {
+                    Spacer(modifier = Modifier.width(50.dp))
+                }
 
-            Spacer(modifier = Modifier.weight(1f))
+                // Cancel Button in the middle
+                if (isScanningAnotherAngle.value && !isBottomSheetVisible.value) {
+                    Button(
+                        onClick = {
+                            // Cancel scanning another angle
+                            isScanningAnotherAngle.value = false
+                            angleScansCount.value = 0
+                            angleScanResults.clear()
+                            showDifferentFruitMessage.value = false
 
-            if (!isBottomSheetVisible.value) {
-                Icon(
-                    painter = painterResource(
-                        if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
-                    ),
-                    contentDescription = "Flashlight",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .safeClickable(
-                            clickGuard,
-                            coroutineScope,
-                            enabled = !showHowTo.value
-                        ) {
-                            cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
-                            flashEnabled.value = !flashEnabled.value
+                            // Reset detection
+                            detectedState.value = false
+                            detectedFruitState.value = ""
+                            detectedRipenessState.value = ""
+                            detectedConfidence.value = 0f
+                            isBottomSheetVisible.value = false
                         },
-                    tint = Color.Unspecified
-                )
+                        colors = ButtonDefaults.buttonColors(containerColor = colors.button),
+                        shape = RoundedCornerShape(18.dp),
+                        modifier = Modifier.height(40.dp)
+                    ) {
+                        Text(
+                            "Cancel Scanning",
+                            fontFamily = poppinsFontFamily,
+                            fontSize = responsiveSp(8, 10, 12),
+                            fontWeight = FontWeight.Normal,
+                            color = Color.Black
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+
+                // Flash Icon
+                if (!isBottomSheetVisible.value) {
+                    Icon(
+                        painter = painterResource(
+                            if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
+                        ),
+                        contentDescription = "Flashlight",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .safeClickable(
+                                clickGuard,
+                                coroutineScope,
+                                enabled = !showHowTo.value
+                            ) {
+                                cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
+                                flashEnabled.value = !flashEnabled.value
+                            },
+                        tint = Color.Unspecified
+                    )
+                } else {
+                    Spacer(modifier = Modifier.width(50.dp))
+                }
             }
         }
+
+
 
         // 📸 Bottom buttons
         if (!detected && !isScanning.value) {
