@@ -7,13 +7,19 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.*
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,10 +41,10 @@ import com.example.fructus.ui.shared.CustomBottomSheet
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.*
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import com.example.fructus.ui.camera.components.GoToGallery
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +62,9 @@ fun CameraScreenContent(
     onHome: () -> Unit
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+
+    val fromGallery = remember { mutableStateOf(false) }
+
 
     // 🔧 Core states
     val detectedConfidence = remember { mutableStateOf(0f) }
@@ -66,20 +74,26 @@ fun CameraScreenContent(
     val isScanning = remember { mutableStateOf(false) }
     val isBottomSheetVisible = remember { mutableStateOf(false) }
     val capturedImagePath = remember { mutableStateOf<String?>(null) }
+    val showNoFruitDetected = remember { mutableStateOf(false) }
     val isNaturalRipening = remember { mutableStateOf(true) }
 
-    // ⚠️ Error Message States
-    val showNoFruitDetected = remember { mutableStateOf(false) }
-    val showDifferentFruitError = remember { mutableStateOf(false) }
+    // 🆕 Scan Another Angle states
+    val isScanningAnotherAngle = remember { mutableStateOf(false) }
+    val originalScannedFruit = remember { mutableStateOf<String?>(null) }
+    val angleScansCount = remember { mutableStateOf(0) }
+    val showDifferentFruitMessage = remember { mutableStateOf(false) }
 
-    // Job to handle error timers (Debouncing)
-    var errorJob by remember { mutableStateOf<Job?>(null) }
+    // Store all angle scan results to find the highest confidence
+    data class AngleScanResult(
+        val fruit: String,
+        val ripeness: String,
+        val confidence: Float,
+        val isNatural: Boolean,
+        val imagePath: String?
+    )
+    val angleScanResults = remember { mutableStateListOf<AngleScanResult>() }
 
-    // 🔹 MULTI-ANGLE STATE
-    val multiAngleResults = remember { mutableStateListOf<ScanResult>() }
-    val MAX_ANGLES = 5
-
-    // 🔧 PreviewView ref
+    // 🔧 PreviewView ref (required for metering point factory)
     val previewViewRef = remember { mutableStateOf<PreviewView?>(null) }
 
     // 🔍 Auto-focus helpers
@@ -87,195 +101,54 @@ fun CameraScreenContent(
     val autoFocusCooldownMs = 1500L
     val scanBoxDp = 460f
 
-    val clickGuard = remember { ClickGuard() }
-
-    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness, isNaturalRipening.value)
-    val shelfLifeDisplay = if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
-
-    val showScanAgainDialog = remember { mutableStateOf(false) }
-    val showHowTo = remember { mutableStateOf(false) }
-
-    val handleCancel: () -> Unit = {
-        isBottomSheetVisible.value = false
-        detectedState.value = false
-        isSaved.value = false
-    }
-
-
-    // 🔹 LOGIC: Combine results from multiple angles
-    fun calculateCombinedResult() {
-        if (multiAngleResults.isEmpty()) return
-
-        // 1. Spoilage Check
-        val spoiledEntry = multiAngleResults.firstOrNull {
-            it.ripeness.contains("Spoiled", ignoreCase = true) ||
-                    it.fruit.contains("Spoiled", ignoreCase = true)
-        }
-
-        if (spoiledEntry != null) {
-            detectedFruitState.value = spoiledEntry.fruit
-            detectedRipenessState.value = "Spoiled"
-            detectedConfidence.value = spoiledEntry.confidence
-            isNaturalRipening.value = false
-            return
-        }
-
-        // 2. Fruit Type Vote
-        val mostFrequentFruit = multiAngleResults.groupingBy { it.fruit }
-            .eachCount().maxByOrNull { it.value }?.key ?: "Unknown"
-
-        // 3. Ripeness Vote
-        val relevantScans = multiAngleResults.filter { it.fruit == mostFrequentFruit }
-        val ripenessScores = mutableMapOf<String, Float>()
-        relevantScans.forEach {
-            val current = ripenessScores.getOrDefault(it.ripeness, 0f)
-            ripenessScores[it.ripeness] = current + it.confidence
-        }
-        val bestRipeness = ripenessScores.maxByOrNull { it.value }?.key ?: "Unknown"
-        val avgConfidence = relevantScans.map { it.confidence }.average().toFloat()
-
-        // 4. Natural/Artificial Vote
-        val naturalCount = relevantScans.count { it.isNatural }
-        val artificialCount = relevantScans.count { !it.isNatural }
-        val finalIsNatural = naturalCount >= artificialCount
-
-        detectedFruitState.value = mostFrequentFruit
-        detectedRipenessState.value = bestRipeness
-        detectedConfidence.value = avgConfidence
-        isNaturalRipening.value = finalIsNatural
-    }
-
-    // 🔹 HELPER: Process Scan Results
-    fun processScanResult(
-        fruitLabel: String,
-        ripenessLabel: String,
-        confidence: Float,
-        isNatural: Boolean,
-        imagePath: String?
-    ) {
-        if (fruitLabel != "No fruit detected" && ripenessLabel != "Unknown") {
-            // ✅ SUCCESS: FRUIT FOUND
-
-            // 1. Cancel pending errors
-            errorJob?.cancel()
-            errorJob = null
-            showNoFruitDetected.value = false
-            showDifferentFruitError.value = false
-
-            // 2. CHECK: Different Fruit?
-            if (multiAngleResults.isNotEmpty()) {
-                val originalFruit = multiAngleResults.first().fruit
-                if (!fruitLabel.equals(originalFruit, ignoreCase = true)) {
-                    isScanning.value = false // Stop scanning
-                    showDifferentFruitError.value = true
-                    errorJob = coroutineScope.launch {
-                        delay(2000)
-                        showDifferentFruitError.value = false
-                    }
-                    return
-                }
-            }
-
-            // 3. Save Data
-            isScanning.value = false // Stop scanning
-            multiAngleResults.add(
-                ScanResult(fruitLabel, ripenessLabel, confidence, isNatural)
-            )
-            calculateCombinedResult()
-
-            if (capturedImagePath.value == null || imagePath != null) {
-                capturedImagePath.value = imagePath
-            }
-
-            detectedState.value = true
-            isBottomSheetVisible.value = true
-
-        } else {
-            // 🟥 FAILURE: NO FRUIT
-            // Logic: Wait 0.8s. If still no fruit, show error and stop scanning.
-
-            if (isScanning.value && !isBottomSheetVisible.value && !detectedState.value) {
-                if (errorJob == null) {
-                    errorJob = coroutineScope.launch {
-                        delay(800) // Buffer delay
-
-                        if (isScanning.value && !detectedState.value) {
-                            showNoFruitDetected.value = true
-                            isScanning.value = false // Stop scanning
-
-                            delay(1000)
-                            showNoFruitDetected.value = false
-                        }
-                        errorJob = null
-                    }
-                }
-            }
-        }
-    }
-
-    // 🔹 ACTION: Scan Another Angle
-    fun scanAnotherAngle() {
-        if (multiAngleResults.size >= MAX_ANGLES) {
-            Toast.makeText(context, "Maximum $MAX_ANGLES angles allowed", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        isBottomSheetVisible.value = false
-        detectedState.value = false
-
-        // Reset errors
-        errorJob?.cancel()
-        errorJob = null
-        showNoFruitDetected.value = false
-        showDifferentFruitError.value = false
-
-        // Ensure scanning is OFF (User clicks button to start)
-        isScanning.value = false
-    }
-
-    // 🔹 ACTION: Reset
-    fun resetScan() {
-        multiAngleResults.clear()
-        detectedState.value = false
-        detectedFruitState.value = ""
-        detectedRipenessState.value = ""
-        detectedConfidence.value = 0f
-        isSaved.value = false
-        isBottomSheetVisible.value = false
-        isScanning.value = false
-        showScanAgainDialog.value = false
-
-
-        // Reset dialogs
-        showNoFruitDetected.value = false
-        showDifferentFruitError.value = false
-        capturedImagePath.value = null
-        errorJob?.cancel()
-        errorJob = null
-    }
-
+    // Helper function to safely parse ripening method
     fun parseRipeningMethod(label: String?): Boolean {
         val ripeningLabel = label?.trim()?.lowercase() ?: "unknown"
-        return ripeningLabel == "natural"
+        return when (ripeningLabel) {
+            "natural" -> true
+            "artificial" -> false
+            else -> {
+                Log.w("RipeningMethod", "Unexpected label: $label")
+                false
+            }
+        }
     }
 
+    val clickGuard = remember { ClickGuard() }
+    val coroutineScope = rememberCoroutineScope()
+
+    // 🔎 Trigger autofocus (center of the scan box)
     fun triggerAutoFocus(camera: Camera?) {
         try {
             camera ?: return
+            val cameraControl = camera.cameraControl
+
             val previewView = previewViewRef.value ?: return
+
             val factory = SurfaceOrientedMeteringPointFactory(
-                previewView.width.toFloat(), previewView.height.toFloat()
+                previewView.width.toFloat(),
+                previewView.height.toFloat()
             )
+
             val density = context.resources.displayMetrics.density
             val boxPx = scanBoxDp * density
-            val centerX = (previewView.width) / 2f
-            val centerY = (previewView.height) / 2f
+
+            val left = (previewView.width - boxPx) / 2f
+            val top = (previewView.height - boxPx) / 2f
+            val centerX = left + (boxPx / 2f)
+            val centerY = top + (boxPx / 2f)
+
             val point = factory.createPoint(centerX, centerY)
+
             val action = FocusMeteringAction.Builder(point, FocusMeteringAction.FLAG_AF)
                 .setAutoCancelDuration(2, TimeUnit.SECONDS)
                 .build()
-            camera.cameraControl.startFocusAndMetering(action)
-        } catch (e: Exception) { Log.e("AutoFocus", "Error", e) }
+
+            cameraControl.startFocusAndMetering(action)
+            Log.d("AutoFocus", "Triggered AF at scan-box center: x=$centerX y=$centerY")
+        } catch (e: Exception) {
+            Log.e("AutoFocus", "Error triggering autofocus", e)
+        }
     }
 
     fun maybeAutoFocus(camera: Camera?) {
@@ -291,37 +164,117 @@ fun CameraScreenContent(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            coroutineScope.launch {
+            val inputStream = context.contentResolver.openInputStream(it)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+
+            fromGallery.value = true
+
+            bitmap?.let { selectedImage ->
                 isScanning.value = true
                 showNoFruitDetected.value = false
 
-                val inputStream = context.contentResolver.openInputStream(it)
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
+                // 🆕 Reset angle scanning state for gallery scans
+                isScanningAnotherAngle.value = false
+                originalScannedFruit.value = null
+                angleScansCount.value = 0
+                angleScanResults.clear()
+                showDifferentFruitMessage.value = false
 
-                if (bitmap != null) {
+                try {
                     val fileName = "fruit_gallery_${System.currentTimeMillis()}"
-                    val imagePath = saveBitmapToInternalStorage(context, bitmap, fileName)
+                    val imagePath = saveBitmapToInternalStorage(context, selectedImage, fileName)
+                    capturedImagePath.value = imagePath
 
-                    val resultTriple = analyzeBitmap(bitmap, context)
-                    val fruit = resultTriple.first
-                    val ripeness = resultTriple.second
-                    val ripeningMethod = resultTriple.third
-                    val isNatural = parseRipeningMethod(ripeningMethod?.label)
-
-                    processScanResult(
-                        fruit.label,
-                        ripeness?.label ?: "Unknown",
-                        ripeness?.confidence ?: 0f,
-                        isNatural,
-                        imagePath
+                    val fruitResult = classifyFruit(selectedImage, context)
+                    val ripenessResult = classifyRipeness(fruitResult.label, selectedImage, context)
+                    val ripeningMethodResult = classifyRipeningMethod(
+                        ripenessResult.label,
+                        selectedImage,
+                        context
                     )
+
+                    isNaturalRipening.value = parseRipeningMethod(ripeningMethodResult.label)
+
+                    detectedFruitState.value = fruitResult.label
+                    detectedRipenessState.value = ripenessResult.label
+                    detectedConfidence.value = ripenessResult.confidence
+                    detectedState.value = true
+
+                    if (fruitResult.label != "No fruit detected" && ripenessResult.label != "Unknown") {
+                        isBottomSheetVisible.value = true
+                    } else {
+                        isBottomSheetVisible.value = false
+                        showNoFruitDetected.value = true
+                    }
+
+                    Log.d(
+                        "GalleryDetection",
+                        "Fruit: ${fruitResult.label}, Ripeness: ${ripenessResult.label}, Confidence: ${ripenessResult.confidence}"
+                    )
+                } catch (e: Exception) {
+                    Log.e("GalleryError", "Error during gallery classification", e)
+                    showNoFruitDetected.value = true
+                } finally {
+                    isScanning.value = false
                 }
             }
         }
     }
 
+    // 🍌 Shelf life info
+    val shelfLifeRange = getShelfLifeRange(detectedFruit, detectedRipeness, isNaturalRipening.value)
+    val shelfLifeDisplay =
+        if (shelfLifeRange.minDays == -1) "---" else formatShelfLifeRange(shelfLifeRange)
 
+    val showScanAgainDialog = remember { mutableStateOf(false) }
+    val showHowTo = remember { mutableStateOf(false) }
+    val showGoToGalleryDialog = remember { mutableStateOf(false) }
+    MaterialTheme.appColors
+
+    val handleCancel: () -> Unit = {
+        isBottomSheetVisible.value = false
+        detectedState.value = false
+        isSaved.value = false
+
+        // Reset angle scanning states
+        isScanningAnotherAngle.value = false
+        originalScannedFruit.value = null
+        angleScansCount.value = 0
+        angleScanResults.clear()
+        showDifferentFruitMessage.value = false
+    }
+
+    // 🆕 Handle Scan Another Angle
+    val handleScanAnotherAngle: () -> Unit = {
+        if (angleScansCount.value >= 5) {
+            Toast.makeText(context, "Scanning different angle reach limit", Toast.LENGTH_SHORT).show()
+        } else {
+            // Store the original fruit if this is the first angle scan
+            if (!isScanningAnotherAngle.value) {
+                originalScannedFruit.value = detectedFruit
+                // Store the initial scan result
+                angleScanResults.add(
+                    AngleScanResult(
+                        fruit = detectedFruit,
+                        ripeness = detectedRipeness,
+                        confidence = detectedConfidence.value,
+                        isNatural = isNaturalRipening.value,
+                        imagePath = capturedImagePath.value
+                    )
+                )
+            }
+
+            isScanningAnotherAngle.value = true
+            isBottomSheetVisible.value = false
+            detectedState.value = false
+//            isScanning.value = true
+            angleScansCount.value += 1
+            showDifferentFruitMessage.value = false
+        }
+    }
+
+    // 🪟 Back button behavior
     BackHandler {
         when {
             showHowTo.value -> showHowTo.value = false
@@ -333,6 +286,36 @@ fun CameraScreenContent(
             }
         }
     }
+
+    // ⚙️ FIX: Move resetScan function up so it can be called by the scan button
+    fun resetScan() {
+        // normal scan reset
+        isScanning.value = false
+        detectedState.value = false
+        detectedFruitState.value = ""
+        detectedRipenessState.value = ""
+        detectedConfidence.value = 0f
+        isSaved.value = false
+
+        isBottomSheetVisible.value = false
+        showNoFruitDetected.value = false
+
+        // 🔥 DO NOT RESET angle scanning here when scanning another angle
+        if (!isScanningAnotherAngle.value) {
+            // only reset these when starting a completely new scan
+            isScanningAnotherAngle.value = false
+            originalScannedFruit.value = null
+            angleScanResults.clear()
+            angleScansCount.value = 0
+            showDifferentFruitMessage.value = false
+        }
+
+        capturedImagePath.value = null
+
+        Log.d("SCAN_RESET", "Reset done (angle mode preserved: ${isScanningAnotherAngle.value})")
+    }
+
+
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -347,8 +330,14 @@ fun CameraScreenContent(
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .build()
                     .also { analysis ->
-                        // 🟢 RUNNING ON MAIN EXECUTOR (Your original "Fast" way)
                         analysis.setAnalyzer(ContextCompat.getMainExecutor(it)) { imageProxy ->
+
+                            // Guard clause to stop analysis if a photo is captured/analyzed and we're not angle scanning
+                            if (capturedImagePath.value != null && !isScanningAnotherAngle.value) {
+                                imageProxy.close()
+                                return@setAnalyzer
+                            }
+
                             if (isScanning.value && !detectedState.value) {
                                 val bitmap = imageProxy.toBitmap() ?: run {
                                     imageProxy.close()
@@ -357,35 +346,67 @@ fun CameraScreenContent(
 
                                 try {
                                     val croppedForBox = bitmap.cropToScanBox(it)
-                                    val rotatedBitmap = croppedForBox.rotate(imageProxy.imageInfo.rotationDegrees)
+                                    val rotatedBitmap =
+                                        croppedForBox.rotate(imageProxy.imageInfo.rotationDegrees)
 
                                     val fruitResult = classifyFruit(rotatedBitmap, it)
 
-                                    // Logic split: Found vs Not Found
-                                    if (fruitResult.label != "No fruit detected") {
-                                        val ripenessResult = classifyRipeness(fruitResult.label, rotatedBitmap, it)
-                                        val ripeningMethodResult = classifyRipeningMethod(ripenessResult.label, rotatedBitmap, it)
+                                    // 🆕 Check if scanning another angle and fruit is different
+                                    if (isScanningAnotherAngle.value &&
+                                        originalScannedFruit.value != null &&
+                                        fruitResult.label != "No fruit detected" &&
+                                        fruitResult.label != originalScannedFruit.value) {
 
-                                        maybeAutoFocus(cameraRef.value)
+                                        showDifferentFruitMessage.value = true
+                                        isScanning.value = false
 
-                                        val isNatural = parseRipeningMethod(ripeningMethodResult.label)
-                                        val fileName = "fruit_${System.currentTimeMillis()}"
-                                        val imagePath = saveBitmapToInternalStorage(it, rotatedBitmap, fileName)
-
-                                        // Call Helper
-                                        processScanResult(
-                                            fruitResult.label,
-                                            ripenessResult.label,
-                                            ripenessResult.confidence,
-                                            isNatural,
-                                            imagePath
-                                        )
-                                    } else {
-                                        // Call Helper with "No fruit"
-                                        processScanResult("No fruit detected", "Unknown", 0f, false, null)
+                                        imageProxy.close()
+                                        return@setAnalyzer
                                     }
+
+                                    val ripenessResult =
+                                        classifyRipeness(fruitResult.label, rotatedBitmap, it)
+                                    val ripeningMethodResult =
+                                        classifyRipeningMethod(ripenessResult.label, rotatedBitmap, it)
+
+                                    if (fruitResult.label != "No fruit detected") {
+                                        maybeAutoFocus(cameraRef.value)
+                                    }
+
+                                    isNaturalRipening.value = parseRipeningMethod(ripeningMethodResult.label)
+                                    isSaved.value = false
+
+                                    val fileName = "fruit_${System.currentTimeMillis()}"
+                                    val imagePath = saveBitmapToInternalStorage(
+                                        it,
+                                        rotatedBitmap,
+                                        fileName
+                                    )
+                                    capturedImagePath.value = imagePath
+
+                                    detectedFruitState.value = fruitResult.label
+                                    detectedRipenessState.value = ripenessResult.label
+                                    detectedConfidence.value = ripenessResult.confidence
+
+                                    // 🆕 If scanning another angle, store the result
+                                    if (isScanningAnotherAngle.value &&
+                                        fruitResult.label != "No fruit detected" &&
+                                        ripenessResult.label != "Unknown") {
+                                        angleScanResults.add(
+                                            AngleScanResult(
+                                                fruit = fruitResult.label,
+                                                ripeness = ripenessResult.label,
+                                                confidence = ripenessResult.confidence,
+                                                isNatural = isNaturalRipening.value,
+                                                imagePath = imagePath
+                                            )
+                                        )
+                                    }
+
+                                    detectedState.value = true
+                                    isScanning.value = false
                                 } catch (e: Exception) {
-                                    Log.e("PredictionError", "Error", e)
+                                    Log.e("PredictionError", "Error during classification", e)
                                 }
                             }
                             imageProxy.close()
@@ -406,7 +427,9 @@ fun CameraScreenContent(
                             lifecycleOwner, cameraSelector, preview, analyzer
                         )
                         cameraRef.value = camera
-                    } catch (e: Exception) { Log.e("CameraX", "Error", e) }
+                    } catch (e: Exception) {
+                        Log.e("CameraX", "Use case binding failed", e)
+                    }
                 }, ContextCompat.getMainExecutor(it))
 
                 previewView
@@ -414,7 +437,7 @@ fun CameraScreenContent(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 🔦 Top bar
+        // 🔦 Top bar (Back + Flash)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -426,23 +449,35 @@ fun CameraScreenContent(
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
                     contentDescription = "Back",
-                    modifier = Modifier.size(50.dp).safeClickable(clickGuard, coroutineScope) {
-                        cameraRef.value?.cameraControl?.enableTorch(false)
-                        flashEnabled.value = false
-                        onNavigateUp()
-                    },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .safeClickable(clickGuard, coroutineScope) {
+                            cameraRef.value?.cameraControl?.enableTorch(false)
+                            flashEnabled.value = false
+                            onNavigateUp()
+                        },
                     tint = Color.Unspecified
                 )
             }
+
             Spacer(modifier = Modifier.weight(1f))
+
             if (!isBottomSheetVisible.value) {
                 Icon(
-                    painter = painterResource(if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button),
+                    painter = painterResource(
+                        if (flashEnabled.value) R.drawable.flash_on_button else R.drawable.flash_off_button
+                    ),
                     contentDescription = "Flashlight",
-                    modifier = Modifier.size(50.dp).safeClickable(clickGuard, coroutineScope, enabled = !showHowTo.value) {
-                        cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
-                        flashEnabled.value = !flashEnabled.value
-                    },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            cameraRef.value?.cameraControl?.enableTorch(!flashEnabled.value)
+                            flashEnabled.value = !flashEnabled.value
+                        },
                     tint = Color.Unspecified
                 )
             }
@@ -451,50 +486,79 @@ fun CameraScreenContent(
         // 📸 Bottom buttons
         if (!detected && !isScanning.value) {
             Row(
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 50.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 50.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = painterResource(R.drawable.gallery),
                     contentDescription = "Gallery",
-                    modifier = Modifier.size(50.dp).safeClickable(clickGuard, coroutineScope, enabled = !showHowTo.value) {
-                        cameraRef.value?.cameraControl?.enableTorch(false)
-                        flashEnabled.value = false
-                        showHowTo.value = false
-                        galleryLauncher.launch("image/*")
-                    },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            cameraRef.value?.cameraControl?.enableTorch(false)
+                            flashEnabled.value = false
+                            showHowTo.value = false
+
+                            // 🆕 Check if in angle scanning mode
+                            if (isScanningAnotherAngle.value) {
+                                showGoToGalleryDialog.value = true
+                            } else {
+                                galleryLauncher.launch("image/*")
+                            }
+                        },
                     tint = Color.Unspecified
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Icon(
                     painter = painterResource(R.drawable.camera_scan_icon),
-                    contentDescription = "scan",
-                    modifier = Modifier.size(100.dp).safeClickable(clickGuard, coroutineScope, enabled = !showHowTo.value) {
-                        // Clear errors instantly on click
-                        showNoFruitDetected.value = false
-                        showDifferentFruitError.value = false
-                        isScanning.value = true
-                    },
+                    contentDescription = "camera icon",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            // 🔥 FIX: Reset all previous detection states before scanning again
+                            fromGallery.value = false
+                            resetScan()
+                            isScanning.value = true
+
+                        },
                     tint = Color.Unspecified
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Icon(
                     painter = painterResource(R.drawable.howtouse),
                     contentDescription = "How to use",
-                    modifier = Modifier.size(50.dp).safeClickable(clickGuard, coroutineScope, enabled = !showHowTo.value) {
-                        showHowTo.value = true
-                    },
+                    modifier = Modifier
+                        .size(50.dp)
+                        .safeClickable(
+                            clickGuard,
+                            coroutineScope,
+                            enabled = !showHowTo.value
+                        ) {
+                            showHowTo.value = true
+                        },
                     tint = Color.Unspecified
                 )
             }
         }
 
-        // 📦 Scan box
+        // 📦 Scan box overlay
         if (!isBottomSheetVisible.value && (isScanning.value || !detected)) {
             Icon(
                 painter = painterResource(R.drawable.camera_scan_box),
-                contentDescription = "scan",
-                modifier = Modifier.align(Alignment.Center).size(460.dp),
+                contentDescription = "camera scan",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(460.dp),
                 tint = Color.Unspecified
             )
         }
@@ -502,15 +566,36 @@ fun CameraScreenContent(
         // 🧠 Detection handling
         LaunchedEffect(detected, detectedFruit) {
             if (detected) {
-                isBottomSheetVisible.value = !(detectedFruit == "No fruit detected" || detectedRipeness == "Unknown")
+                isBottomSheetVisible.value =
+                    !(detectedFruit == "No fruit detected" || detectedRipeness == "Unknown")
             }
         }
 
         if (detected) {
             when {
                 detectedFruit == "No fruit detected" || detectedRipeness == "Unknown" -> {
-                    // Logic handled in helper
+                    Text(
+                        "No fruit detected",
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                    LaunchedEffect(detectedFruit) {
+                        delay(800)
+                        detectedState.value = false
+                        isScanning.value = false
+                        showNoFruitDetected.value = false
+
+                        // Resume angle scanning if active
+                        if (isScanningAnotherAngle.value && angleScansCount.value < 5) {
+                            delay(200)
+                            isScanning.value = true
+                        }
+                    }
                 }
+
                 isBottomSheetVisible.value -> {
                     AnimatedVisibility(
                         visible = isBottomSheetVisible.value,
@@ -518,6 +603,7 @@ fun CameraScreenContent(
                         exit = slideOutVertically(targetOffsetY = { it }, animationSpec = tween(900))
                     ) {
                         CustomBottomSheet(
+
                             fruitName = detectedFruit,
                             ripeningStage = detectedRipeness,
                             ripeningProcess = isNaturalRipening.value,
@@ -525,23 +611,39 @@ fun CameraScreenContent(
                             shelfLifeRange = shelfLifeRange,
                             shelfLifeDisplay = shelfLifeDisplay,
                             isSaved = isSaved.value,
-                            anglesScanned = multiAngleResults.size,
-                            onScanAngle = { scanAnotherAngle() },
                             onSave = {
                                 if (!isSaved.value) {
+                                    // 🆕 Find the highest confidence result
+                                    val bestResult = if (angleScanResults.isNotEmpty()) {
+                                        angleScanResults.maxByOrNull { it.confidence }!!
+                                    } else {
+                                        AngleScanResult(
+                                            fruit = detectedFruit,
+                                            ripeness = detectedRipeness,
+                                            confidence = detectedConfidence.value,
+                                            isNatural = isNaturalRipening.value,
+                                            imagePath = capturedImagePath.value
+                                        )
+                                    }
+
                                     onSaveFruit(
-                                        detectedFruit,
-                                        detectedRipeness,
-                                        isNaturalRipening.value,
-                                        detectedConfidence.value,
-                                        capturedImagePath.value,
+                                        bestResult.fruit,
+                                        bestResult.ripeness,
+                                        bestResult.isNatural,
+                                        bestResult.confidence,
+                                        bestResult.imagePath
                                     )
                                     isSaved.value = true
                                     showScanAgainDialog.value = true
                                 }
                             },
-                            onCancel = { resetScan() }
-                        )
+                            onCancel = {
+                                handleCancel() },
+                            onScanOtherAngle = handleScanAnotherAngle,
+                            showScanOtherAngle = !fromGallery.value,
+                            anglesScanned = angleScansCount.value,
+
+                            )
                     }
                 }
             }
@@ -554,36 +656,51 @@ fun CameraScreenContent(
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.Center)
             )
-        }
-
-        // 🔴 ERROR MESSAGES
-        if (showNoFruitDetected.value && !isBottomSheetVisible.value && !detectedState.value) {
+        } else if (showNoFruitDetected.value) {
             Text(
                 "No fruit detected",
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 20.sp,
-                color = Color.Red,
+                color = Color.Gray,
                 modifier = Modifier.align(Alignment.Center)
             )
-        }
-
-        if (showDifferentFruitError.value && !isBottomSheetVisible.value) {
+        } else if (showDifferentFruitMessage.value) {
             Text(
-                "Different fruit detected",
+                "A different fruit is scanned",
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 20.sp,
                 color = Color.Red,
                 modifier = Modifier.align(Alignment.Center)
             )
+            LaunchedEffect(Unit) {
+                delay(1500)
+                showDifferentFruitMessage.value = false
+                // Don't auto-resume - let user click scan button again
+            }
         }
     }
 
+    // 🔁 Scan again dialog
     if (showScanAgainDialog.value) {
         ScanAgain(
             onYes = {
-                resetScan()
+                detectedState.value = false
+                detectedFruitState.value = ""
+                detectedRipenessState.value = ""
+                detectedConfidence.value = 0f
+                isSaved.value = false
+                isBottomSheetVisible.value = false
+                isScanning.value = false
+                showScanAgainDialog.value = false
+
+                // Reset angle scanning states
+                isScanningAnotherAngle.value = false
+                originalScannedFruit.value = null
+                angleScansCount.value = 0
+                angleScanResults.clear()
+                showDifferentFruitMessage.value = false
             },
             onNo = {
                 cameraRef.value?.cameraControl?.enableTorch(false)
@@ -595,14 +712,40 @@ fun CameraScreenContent(
         )
     }
 
+    // 🧾 How to use overlay
     if (showHowTo.value) {
         HowToOverlay(onDismiss = { showHowTo.value = false })
     }
-}
 
-data class ScanResult(
-    val fruit: String,
-    val ripeness: String,
-    val confidence: Float,
-    val isNatural: Boolean
-)
+    // 🆕 Go to gallery dialog
+    if (showGoToGalleryDialog.value) {
+        GoToGallery(
+            isDarkMode = isDarkMode,
+            onYes = {
+                showGoToGalleryDialog.value = false
+
+                // Stop any ongoing scanning
+                isScanning.value = false
+                detectedState.value = false
+                isBottomSheetVisible.value = false
+
+                // Reset angle scanning state
+                isScanningAnotherAngle.value = false
+                originalScannedFruit.value = null
+                angleScansCount.value = 0
+                angleScanResults.clear()
+                showDifferentFruitMessage.value = false
+
+                // Reset captured image path (optional, avoids stale path)
+                capturedImagePath.value = null
+
+                // Now launch gallery safely
+                galleryLauncher.launch("image/*")
+            },
+
+            onNo = {
+                showGoToGalleryDialog.value = false
+            }
+        )
+    }
+}
