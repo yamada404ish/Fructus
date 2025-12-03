@@ -179,7 +179,7 @@ fun CameraScreenContent(
                 // 🆕 Reset angle scanning state for gallery scans
                 isScanningAnotherAngle.value = false
                 originalScannedFruit.value = null
-                angleScansCount.value = 0
+                angleScansCount.value = 1
                 angleScanResults.clear()
                 showDifferentFruitMessage.value = false
 
@@ -242,7 +242,7 @@ fun CameraScreenContent(
         // Reset angle scanning states
         isScanningAnotherAngle.value = false
         originalScannedFruit.value = null
-        angleScansCount.value = 0
+        angleScansCount.value = 1
         angleScanResults.clear()
         showDifferentFruitMessage.value = false
     }
@@ -308,7 +308,7 @@ fun CameraScreenContent(
             isScanningAnotherAngle.value = false
             originalScannedFruit.value = null
             angleScanResults.clear()
-            angleScansCount.value = 0
+            angleScansCount.value = 1
             showDifferentFruitMessage.value = false
         }
 
@@ -477,7 +477,7 @@ fun CameraScreenContent(
                         onClick = {
                             // Cancel scanning another angle
                             isScanningAnotherAngle.value = false
-                            angleScansCount.value = 0
+                            angleScansCount.value = 1
                             angleScanResults.clear()
                             showDifferentFruitMessage.value = false
 
@@ -746,7 +746,7 @@ fun CameraScreenContent(
                 // Reset angle scanning states
                 isScanningAnotherAngle.value = false
                 originalScannedFruit.value = null
-                angleScansCount.value = 0
+                angleScansCount.value = 1
                 angleScanResults.clear()
                 showDifferentFruitMessage.value = false
             },
@@ -780,7 +780,7 @@ fun CameraScreenContent(
                 // Reset angle scanning state
                 isScanningAnotherAngle.value = false
                 originalScannedFruit.value = null
-                angleScansCount.value = 0
+                angleScansCount.value = 1
                 angleScanResults.clear()
                 showDifferentFruitMessage.value = false
 

@@ -109,12 +109,12 @@ fun CustomBottomSheet(
                     text = displayName,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = responsiveSp(28,30,32),
+                    fontSize = responsiveSp(26,28,30),
                     color = colors.textPrimary
                 )
+//                Spacer(modifier = Modifier.height(4.dp))
 
-                if (anglesScanned > 0 && !isSpoiled) {
-                    Spacer(modifier = Modifier.width(10.dp))
+                if (anglesScanned > 1 && !isSpoiled) {
                     Surface(
                         color = colors.button,
                         shape = RoundedCornerShape(40),
@@ -129,7 +129,8 @@ fun CustomBottomSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Column(
                     modifier = Modifier
@@ -287,6 +288,7 @@ fun CustomBottomSheet(
                                     color = colors.textPrimary
                                 )
                             }
+                            Spacer(modifier = Modifier.width(10.dp))
 
                             Button(
                                 onClick = onSave,
