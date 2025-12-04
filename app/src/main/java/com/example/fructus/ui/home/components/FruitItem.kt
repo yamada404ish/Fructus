@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -66,7 +67,8 @@ fun FruitItem(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
 //            .height(224.dp)
-            .width(148.dp)
+//            .width(148.dp)
+            .fillMaxWidth()
             .safeClickable(clickGuard, coroutineScope) {
                 onFruitClick(fruit)
             }
@@ -113,9 +115,12 @@ fun FruitItem(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = responsiveSp(11,13,15),
-                        color = colors.textPrimary
+                        fontSize = responsiveSp(12, 14, 16),
+                        color = colors.textPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

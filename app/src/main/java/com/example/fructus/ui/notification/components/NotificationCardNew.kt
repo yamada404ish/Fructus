@@ -79,10 +79,10 @@ fun NotificationCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            val imageModel: Any = if (!notification.imagePath.isNullOrEmpty()) {
-                File(notification.imagePath)
-            } else {
-                R.drawable.unknown_fruit
+            val imageFile = notification.imagePath?.let { File(it) }
+            val imageModel: Any = when {
+                imageFile != null && imageFile.exists() -> imageFile
+                else -> R.drawable.unknown_fruit
             }
 
             AsyncImage(
@@ -95,6 +95,8 @@ fun NotificationCard(
                 placeholder = painterResource(R.drawable.unknown_fruit),
                 error = painterResource(R.drawable.unknown_fruit)
             )
+
+
 
 
             Spacer(modifier = Modifier.size(12.dp))

@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 
 @Composable
 fun About(
@@ -85,19 +87,19 @@ fun About(
                 Text(
                     "Development Team",
                     fontFamily = poppinsFontFamily,
-                    fontSize = 26.sp,
+                    fontSize = responsiveSp(22,26,18),
                     fontWeight = FontWeight.Bold,
                     color = colors.textPrimary
                 )
 
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(responsiveDp(24,28,30)))
 
                 // Loop through each section
                 teamSections.forEach { (role, members) ->
                     Text(
                         role,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 20.sp,
+                        fontSize = responsiveSp(18,20,22),
                         fontWeight = FontWeight.Bold,
                         color = colors.textPrimary
                     )
@@ -105,7 +107,7 @@ fun About(
                         Text(
                             member,
                             fontFamily = poppinsFontFamily,
-                            fontSize = 14.sp,
+                            fontSize = responsiveSp(12,14,16),
                             fontWeight = FontWeight.Normal,
                             color = colors.textPrimary
                         )
@@ -113,7 +115,7 @@ fun About(
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(responsiveDp(20,24,24)))
             }
         }
 
