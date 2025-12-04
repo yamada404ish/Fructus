@@ -35,6 +35,8 @@ import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.formatTimeAgo
 import com.example.fructus.util.getFruitDrawableId
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 import java.io.File
 
 @Composable
@@ -87,7 +89,7 @@ fun NotificationCard(
                 model = imageModel,
                 contentDescription = "Fruit Image",
                 modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(responsiveDp(14,16,18)))
                     .aspectRatio(1f),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.unknown_fruit),
@@ -102,7 +104,7 @@ fun NotificationCard(
             ) {
                 Text(
                     text = notification.message,
-                    fontSize = 12.sp,
+                    fontSize = responsiveSp(10,12,14),
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     letterSpacing = 0.1.sp,
@@ -113,7 +115,7 @@ fun NotificationCard(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     formatTimeAgo(notification.timestamp),
-                    fontSize = 10.sp,
+                    fontSize = responsiveSp(8,10,12),
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
                     lineHeight = 13.sp,

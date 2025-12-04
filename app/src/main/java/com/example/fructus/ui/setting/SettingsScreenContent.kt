@@ -105,7 +105,7 @@ fun SettingsScreenContent(
             ) {
                 SettingsOptionCard(
                     iconRes = R.drawable.ic_about,
-                    iconSize = 34,
+//                    iconSize = 34,
                     title = "About",
 //                    onClick = { showAbout = true },
                     modifier = Modifier
@@ -121,10 +121,11 @@ fun SettingsScreenContent(
                     contentColor = Color.White,
                     centerText = true,
                     modifier = Modifier
+                        .weight(1f)
                         .safeClickable(clickGuard, coroutineScope) {
                             onShowClearDialog()
                         }
-                        .weight(1f),
+//                        .weight(1f),
 
                 )
             }

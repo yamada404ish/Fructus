@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveSp
 
 @Composable
 fun ClearNotificationsDialog(
@@ -37,7 +38,9 @@ fun ClearNotificationsDialog(
 
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = colors.card
+            color = colors.card,
+            modifier = Modifier
+                .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 16.dp ),
         ) {
             Column(
                 modifier = Modifier
@@ -48,13 +51,13 @@ fun ClearNotificationsDialog(
                     text = "Erase All Data?",
                     fontWeight = FontWeight.Medium,
                     fontFamily = poppinsFontFamily,
-                    fontSize = 22.sp,
+                    fontSize = responsiveSp(18,22,24),
                     color = colors.textPrimary
                 )
                 Text(
                     text = "This action cannot be undone.",
                     fontFamily = poppinsFontFamily,
-                    fontSize = 18.sp,
+                    fontSize = responsiveSp(14,18,20),
                     color = colors.textSecondary
                 )
 
@@ -70,13 +73,14 @@ fun ClearNotificationsDialog(
                         shape = RoundedCornerShape(50),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = Color(0xFFF55D5D)
-                        )
+                        ),
+
                     ) {
                         Text(
                             text = "Cancel",
                             fontFamily = poppinsFontFamily,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 18.sp,
+                            fontSize = responsiveSp(14,18,20),
                             color = Color(0xFFF55D5D)
                         )
                     }
@@ -94,7 +98,7 @@ fun ClearNotificationsDialog(
                     ) {
                         Text(
                             text = "Erase All",
-                            fontSize = 18.sp,
+                            fontSize = responsiveSp(14,18,20),
                             fontFamily = poppinsFontFamily,
                             fontWeight = FontWeight.Normal
                         )

@@ -31,6 +31,8 @@ import com.example.fructus.util.calculateDaysSince
 import com.example.fructus.util.getDisplayFruitName
 import com.example.fructus.util.getDisplayShelfLife
 import com.example.fructus.util.getShelfLifeRange
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 import com.example.fructus.util.safeClickable
 import kotlinx.coroutines.CoroutineScope
 import java.io.File
@@ -93,7 +95,7 @@ fun FruitItem(
                     contentDescription = null,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .size(140.dp),
+                        .size(responsiveDp(120,140,150)),
                     contentScale = ContentScale.Crop,
                     placeholder = androidx.compose.ui.res.painterResource(R.drawable.unknown_fruit),
                     error = androidx.compose.ui.res.painterResource(R.drawable.unknown_fruit)
@@ -111,7 +113,7 @@ fun FruitItem(
                         text = getDisplayFruitName(fruit.name),
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
+                        fontSize = responsiveSp(11,13,15),
                         color = colors.textPrimary
                     )
 
@@ -124,7 +126,7 @@ fun FruitItem(
                             text = fruit.scannedDate,
                             fontFamily = poppinsFontFamily,
                             fontStyle = FontStyle.Italic,
-                            fontSize = 10.sp,
+                            fontSize = responsiveSp(9,10,12),
                             color = colors.textSecondary
                         )
 
@@ -140,8 +142,8 @@ fun FruitItem(
                             Text(
                                 text = displayShelfLife,
                                 fontFamily = poppinsFontFamily,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = responsiveSp(9,10,12),
                                 color = if (displayShelfLife == "Spoiled!") Color.White else Color.Black
                             )
                         }

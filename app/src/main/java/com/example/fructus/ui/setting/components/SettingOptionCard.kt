@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.notification.components.CustomSwitchButton
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveDp
+import com.example.fructus.util.responsiveSp
 
 @Composable
 fun SettingsOptionCard(
@@ -78,7 +80,7 @@ fun SettingsOptionCard(
                         painter = painterResource(iconRes),
                         contentDescription = null,
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(iconSize.dp)
+                        modifier = Modifier.size(responsiveDp(30,40,50))
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                 }
@@ -91,7 +93,7 @@ fun SettingsOptionCard(
                         text = title,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp,
+                        fontSize = responsiveSp(14,16,18),
                         color = contentColor,
                         lineHeight = 18.sp,
                     )

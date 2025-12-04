@@ -289,8 +289,8 @@ fun HomeScreenContent(
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(20.dp),
-                                horizontalArrangement = Arrangement.spacedBy(18.dp)
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 itemsIndexed(
                                     items = filteredFruits,

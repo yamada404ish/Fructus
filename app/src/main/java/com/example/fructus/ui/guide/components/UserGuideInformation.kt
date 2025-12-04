@@ -29,6 +29,7 @@ import com.example.fructus.ui.guide.model.FruitStage
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.loadFruitGuides
+import com.example.fructus.util.responsiveSp
 
 @Composable
 fun UserGuideInformation(
@@ -71,7 +72,7 @@ fun FruitGuideCard(
             text = guide.fruitName,
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
+            fontSize = responsiveSp(26,28,30),
             textAlign = TextAlign.Center,
             color = colors.textPrimary
         )
@@ -94,7 +95,7 @@ fun FruitGuideCard(
                         "Color",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 20.sp,
+                        fontSize = responsiveSp(18,20,22),
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
@@ -106,7 +107,7 @@ fun FruitGuideCard(
                         "Stage",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 20.sp,
+                        fontSize = responsiveSp(18,20,22),
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
@@ -117,7 +118,7 @@ fun FruitGuideCard(
                         "Shelf life",
                         fontWeight = FontWeight.Bold,
                         fontFamily = poppinsFontFamily,
-                        fontSize = 20.sp,
+                        fontSize = responsiveSp(18,20,22),
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .weight(1f),
@@ -189,7 +190,7 @@ fun FruitStageRow(
         Text(
             text = stage.stage,
             fontFamily = poppinsFontFamily,
-            fontSize = 16.sp,
+            fontSize = responsiveSp(14,16,18),
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
@@ -205,7 +206,7 @@ fun FruitStageRow(
             },
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
-            fontSize = 15.sp,
+            fontSize = responsiveSp(13,15,17),
             modifier = Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
