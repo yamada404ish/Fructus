@@ -22,6 +22,7 @@ import com.example.fructus.R
 import com.example.fructus.ui.theme.AppColors
 import com.example.fructus.ui.theme.poppinsFontFamily
 import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.responsiveDp
 import com.example.fructus.util.safeClickable
 import kotlinx.coroutines.CoroutineScope
 
@@ -40,7 +41,7 @@ fun ScreenTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 80.dp, start = 24.dp, end = 24.dp),
+            .padding(top = responsiveDp(30,80,90), start = 24.dp, end = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

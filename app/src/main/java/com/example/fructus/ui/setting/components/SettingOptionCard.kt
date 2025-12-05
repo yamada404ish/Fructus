@@ -62,7 +62,7 @@ fun SettingsOptionCard(
                     text = title,
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Medium,
-                    fontSize = responsiveSp(14,16,18),
+                    fontSize = responsiveSp(12,16,18),
                     color = contentColor,
                     lineHeight = 18.sp,
                 )

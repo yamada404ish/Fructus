@@ -113,7 +113,7 @@ fun ClearNotificationsDialog(
                         Text(
                             "Cancel",
                             fontFamily = poppinsFontFamily,
-                            fontSize = responsiveSp(14, 18, 20),
+                            fontSize = responsiveSp(10, 18, 20),
                             color = Color(0xFFF55D5D)
                         )
                     }
@@ -131,7 +131,8 @@ fun ClearNotificationsDialog(
                         Text(
                             "Erase All",
                             fontFamily = poppinsFontFamily,
-                            fontSize = responsiveSp(14, 18, 20)
+                            fontSize = responsiveSp(10, 18, 20),
+                            fontWeight = FontWeight.Normal
                         )
                     }
                 }
