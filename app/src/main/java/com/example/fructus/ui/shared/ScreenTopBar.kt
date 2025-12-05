@@ -41,7 +41,7 @@ fun ScreenTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = responsiveDp(30,80,90), start = 24.dp, end = 24.dp),
+            .padding(top = responsiveDp(60,80,90), start = 24.dp, end = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

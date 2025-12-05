@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.R
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveSp
 
 
 @Composable
@@ -75,7 +76,7 @@ fun OnboardingPage2(
                     "Identify your",
                     fontFamily = poppinsFontFamily,
                     color = colors.textPrimary,
-                    fontSize = 18.sp,
+                    fontSize =  responsiveSp(12,14,16),
                     fontWeight = FontWeight.Normal
                 )
 
@@ -98,7 +99,7 @@ fun OnboardingPage2(
                     "Fruits",
                     fontFamily = poppinsFontFamily,
                     color = colors.textPrimary,
-                    fontSize = 50.sp,
+                    fontSize = responsiveSp(30,50,60),
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -121,7 +122,7 @@ fun OnboardingPage2(
                 "Know your fruits and keep track of them before they spoil!",
                 fontFamily = poppinsFontFamily,
                 textAlign = TextAlign.Center,
-                fontSize = 16.sp,
+                fontSize =responsiveSp(14,16,18),
                 fontWeight = FontWeight.Normal,
                 color = colors.textPrimary,
             )
