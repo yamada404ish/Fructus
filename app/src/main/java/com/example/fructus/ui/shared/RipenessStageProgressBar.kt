@@ -60,7 +60,7 @@ fun RipenessProgressBar(
     val isSmallScreen = screenWidth < 360
 
 
-    val displayText = if (isSmallScreen) 9.sp else 11.sp
+    val displayText = if (isSmallScreen) 7.sp else 9.sp
 
     // Update colors based on current stage - only current stage lights up
     val segmentColors = RipenessStage.entries.map { stage ->

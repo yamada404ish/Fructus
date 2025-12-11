@@ -1,7 +1,6 @@
 package com.example.fructus.ui.shared
 
 import android.annotation.SuppressLint
-import android.widget.Gallery
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -416,7 +415,6 @@ fun InfoCard(
 ) {
 
     val colors = MaterialTheme.appColors
-
 
     Card(
         modifier = modifier

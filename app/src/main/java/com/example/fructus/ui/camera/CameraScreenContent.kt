@@ -12,17 +12,41 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,17 +59,28 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.fructus.R
+import com.example.fructus.ui.camera.components.GoToGallery
 import com.example.fructus.ui.camera.components.HowToOverlay
 import com.example.fructus.ui.camera.components.ScanAgain
+import com.example.fructus.ui.camera.components.ScanWarningDialog
 import com.example.fructus.ui.shared.CustomBottomSheet
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
-import com.example.fructus.util.*
+import com.example.fructus.util.ClickGuard
+import com.example.fructus.util.DataStoreManager
+import com.example.fructus.util.classifyFruit
+import com.example.fructus.util.classifyRipeness
+import com.example.fructus.util.classifyRipeningMethod
+import com.example.fructus.util.cropToScanBox
+import com.example.fructus.util.formatShelfLifeRange
+import com.example.fructus.util.getShelfLifeRange
+import com.example.fructus.util.responsiveSp
+import com.example.fructus.util.rotate
+import com.example.fructus.util.safeClickable
+import com.example.fructus.util.saveBitmapToInternalStorage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-import androidx.camera.core.SurfaceOrientedMeteringPointFactory
-import androidx.compose.foundation.shape.RoundedCornerShape
-import com.example.fructus.ui.camera.components.GoToGallery
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +103,7 @@ fun CameraScreenContent(
 
     val colors = MaterialTheme.appColors
 
-    // 🔧 Core states
+    //Core states
     val detectedConfidence = remember { mutableStateOf(0f) }
     val isSaved = remember { mutableStateOf(false) }
     val flashEnabled = remember { mutableStateOf(false) }
@@ -79,12 +114,24 @@ fun CameraScreenContent(
     val showNoFruitDetected = remember { mutableStateOf(false) }
     val isNaturalRipening = remember { mutableStateOf(true) }
 
-    // 🆕 Scan Another Angle states
+    //Scan Another Angle states
     val isScanningAnotherAngle = remember { mutableStateOf(false) }
     val originalScannedFruit = remember { mutableStateOf<String?>(null) }
     val angleScansCount = remember { mutableStateOf(0) }
     val showDifferentFruitMessage = remember { mutableStateOf(false) }
 
+    //DataStore and warning state
+    val dataStoreManager = remember { DataStoreManager(context) }
+    val scanWarningShown by dataStoreManager.scanWarningShownFlow.collectAsState(initial = false)
+    var showScanWarningOnCamera by remember { mutableStateOf(false) }
+
+
+    LaunchedEffect(Unit) {
+        delay(300) // Small delay for smooth transition
+        if (!scanWarningShown) {
+            showScanWarningOnCamera = true
+        }
+    }
     // Store all angle scan results to find the highest confidence
     data class AngleScanResult(
         val fruit: String,
@@ -276,9 +323,10 @@ fun CameraScreenContent(
         }
     }
 
-    // 🪟 Back button behavior
+    //Back button behavior
     BackHandler {
         when {
+             showScanWarningOnCamera -> showScanWarningOnCamera = false
             showHowTo.value -> showHowTo.value = false
             isBottomSheetVisible.value -> handleCancel()
             else -> {
@@ -289,7 +337,7 @@ fun CameraScreenContent(
         }
     }
 
-    // ⚙️ FIX: Move resetScan function up so it can be called by the scan button
+    //Move resetScan function up so it can be called by the scan button
     fun resetScan() {
         // normal scan reset
         isScanning.value = false
@@ -302,7 +350,7 @@ fun CameraScreenContent(
         isBottomSheetVisible.value = false
         showNoFruitDetected.value = false
 
-        // 🔥 DO NOT RESET angle scanning here when scanning another angle
+        //DO NOT RESET angle scanning here when scanning another angle
         if (!isScanningAnotherAngle.value) {
             // only reset these when starting a completely new scan
             isScanningAnotherAngle.value = false
@@ -763,6 +811,28 @@ fun CameraScreenContent(
     // 🧾 How to use overlay
     if (showHowTo.value) {
         HowToOverlay(onDismiss = { showHowTo.value = false })
+    }
+
+    if (showScanWarningOnCamera) {
+        // Dim background
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.6f))
+        )
+
+        // Warning dialog
+        ScanWarningDialog(
+            onDismiss = { dontShowAgain ->
+                showScanWarningOnCamera = false
+                coroutineScope.launch {
+                    if (dontShowAgain) {
+                        dataStoreManager.setScanWarningShown(true)
+                    }
+                }
+            },
+            isDarkMode = isDarkMode
+        )
     }
 
     // 🆕 Go to gallery dialog

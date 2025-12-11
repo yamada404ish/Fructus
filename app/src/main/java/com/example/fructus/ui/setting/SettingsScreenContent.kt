@@ -24,6 +24,7 @@ import com.example.fructus.R
 import com.example.fructus.ui.notification.components.EnableNotificationBottomSheet
 import com.example.fructus.ui.setting.components.AboutOverlay
 import com.example.fructus.ui.setting.components.ClearNotificationsDialog
+import com.example.fructus.ui.setting.components.DisclaimerOverlay
 import com.example.fructus.ui.setting.components.SettingsOptionCard
 import com.example.fructus.ui.shared.ScreenTopBar
 import com.example.fructus.ui.theme.appColors
@@ -45,6 +46,7 @@ fun SettingsScreenContent(
     onShowOnboarding: () -> Unit
 ) {
     var showAbout by remember { mutableStateOf(false) }
+    var showDisclaimer by remember { mutableStateOf(false) }
     val clickGuard = remember { ClickGuard() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -97,6 +99,16 @@ fun SettingsScreenContent(
                 }
             )
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            SettingsOptionCard(
+                iconRes = R.drawable.disclaimer,
+                title = "Disclaimer",
+                modifier = Modifier.safeClickable(clickGuard, coroutineScope) {
+                    showDisclaimer = true
+                }
+            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,9 +117,7 @@ fun SettingsScreenContent(
             ) {
                 SettingsOptionCard(
                     iconRes = R.drawable.ic_about,
-//                    iconSize = 34,
                     title = "About",
-//                    onClick = { showAbout = true },
                     modifier = Modifier
                         .weight(1f)
                         .safeClickable(clickGuard, coroutineScope) {
@@ -125,7 +135,6 @@ fun SettingsScreenContent(
                         .safeClickable(clickGuard, coroutineScope) {
                             onShowClearDialog()
                         }
-//                        .weight(1f),
 
                 )
             }
@@ -150,6 +159,10 @@ fun SettingsScreenContent(
     }
 
     if (showAbout) {
-        AboutOverlay(onDismiss = { showAbout = false })
+        AboutOverlay(onDismiss = {showAbout = false })
+    }
+
+    if (showDisclaimer) {
+        DisclaimerOverlay (onDismiss = { showDisclaimer = false })
     }
 }

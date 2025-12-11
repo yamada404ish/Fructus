@@ -16,7 +16,8 @@ class DataStoreManager(private val context: Context) {
         private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
         private val RECEIVE_NOTIFICATIONS_KEY = booleanPreferencesKey("receive_notifications")
         private val SHOULD_REQUEST_NOTIFICATION_KEY = booleanPreferencesKey("should_request_notification")
-        private val DARK_MODE_KEY = booleanPreferencesKey("dark_mode_enabled") // New key for dark mode
+        private val DARK_MODE_KEY = booleanPreferencesKey("dark_mode_enabled")
+        private val SCAN_WARNING_SHOWN_KEY = booleanPreferencesKey("scan_warning_shown")
     }
 
     // --- ONBOARDING ---
@@ -57,6 +58,15 @@ class DataStoreManager(private val context: Context) {
     suspend fun setDarkMode(enabled: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[DARK_MODE_KEY] = enabled
+        }
+    }
+
+    val scanWarningShownFlow: Flow<Boolean> = context.dataStore.data
+        .map { prefs -> prefs[SCAN_WARNING_SHOWN_KEY] ?: false }
+
+    suspend fun setScanWarningShown(shown: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[SCAN_WARNING_SHOWN_KEY] = shown
         }
     }
 
