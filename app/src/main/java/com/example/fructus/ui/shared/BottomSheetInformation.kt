@@ -442,7 +442,7 @@ fun InfoCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = responsiveSp(12,14,16),
+                fontSize = responsiveSp(10,12,14),
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = colors.textPrimary,

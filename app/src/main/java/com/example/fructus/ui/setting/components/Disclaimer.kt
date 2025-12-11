@@ -15,6 +15,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -93,23 +94,56 @@ fun Disclaimer(
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(responsiveDp(24,28,30)))
+                Spacer(modifier = Modifier.height(responsiveDp(10,18,20)))
 
                 // Loop through each section
 
                     Text(
-                        text = "Fruit detection may not always be accurate. Some fruits stay green or have colors that confuse the scanner. Objects with similar shapes or colors may also be misidentified as fruits. Lighting, fruit type, and camera angle can affect results. Always double-check the fruit yourself.",
+                        text = "Fructus uses AI to detect fruits and their ripeness. Results are estimates, not guarantees.",
                         fontFamily = poppinsFontFamily,
                         fontSize = responsiveSp(11,15,18),
                         fontWeight = FontWeight.Normal,
                         color = colors.textPrimary,
-                        textAlign = TextAlign.Center,
+//                        textAlign = TextAlign.Center,
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
 
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                val bulletPoints = listOf(
+                    "Some fruits may stay green or have colors that confuse the scanner.",
+                    "Objects with similar shapes or colors can be misidentified.",
+                    "Lighting, camera angle, and fruit type affect accuracy.",
+                    "Always double-check fruits manually."
+                )
+
+                Column(
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    bulletPoints.forEach { point ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text(
+                                "\u2022",
+                                fontSize = responsiveSp(12, 14, 16),
+                                color = colors.textPrimary,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(
+                                point,
+                                fontFamily = poppinsFontFamily,
+                                fontSize = responsiveSp(12, 14, 16),
+                                color = colors.textPrimary,
+                                textAlign = TextAlign.Start
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
                 }
 
                 Spacer(modifier = Modifier.height(responsiveDp(20,24,24)))

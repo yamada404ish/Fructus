@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fructus.ui.theme.FructusTheme
 import com.example.fructus.ui.theme.appColors
 import com.example.fructus.ui.theme.poppinsFontFamily
+import com.example.fructus.util.responsiveSp
 
 @OptIn(ExperimentalMaterial3Api::class)
 enum class RipenessStage(val displayName: String) {
@@ -118,10 +119,10 @@ fun RipenessProgressBar(
                 ) {
                     Text(
                         text = stage.displayName,
-                        fontSize = displayText,
+                        fontSize = responsiveSp(6,9,10),
                         fontFamily = poppinsFontFamily,
                         color = textColor,
-                        fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
+                        fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
                     )
                 }
             }
