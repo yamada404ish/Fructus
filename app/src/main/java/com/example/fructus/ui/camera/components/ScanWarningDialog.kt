@@ -78,7 +78,7 @@ fun ScanWarningDialog(
 
                 // Warning message
                 Text(
-                    text = "Results may not always be accurate. Objects with similar shapes or colors may be misidentified.",
+                    text = "Results may not always be accurate.",
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
