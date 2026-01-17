@@ -1,16 +1,22 @@
-FRUCTUS - an Android Application for Determining the Ripeness and Predicting the Shelf Life of Climacteric Fruits using CNN
+# 🍌 Fructus v2.0
 
-📌 PLEASE! DO BRANCH 👉👈
+**Fructus** brings live fruit scanning and ripeness detection straight to your Android device. Use your camera or gallery images to analyze fruits and get shelf life estimates.
 
-📌 Always create a new branch from the latest main so you don’t bring old code or conflicts into your branch.
+## Key Features
+- Scan fruits with your camera or gallery
+- Detect ripeness stage (green → orange → red)
+- Identify ripening method: natural or artificial
+- Estimate shelf life for single fruits
+- Flash toggle for low-light environments
+- User-friendly UI with bottom sheets and overlays
 
+## Supported Fruits
+- Banana (Cavendish, Lakatan, Saba)
+- Carabao Mango
+- Tomatoes (green → orange → red pattern)
 
-# How to merge your branch into main using terminal:
-```
-git checkout main
-git pull origin main
-git merge your-branch-name
-git add .
-git commit -m "commit message nyo dito"
-git push origin main
-```
+## Installation
+1. Download the APK: [Fructusv2.0.apk](https://github.com/yamada404ish/Fructus/releases/tag/v2.0)
+2. Open your Downloads folder and tap the file
+3. If prompted, go to **Settings → Allow from this source**
+4. Tap **Install** and open the app
